@@ -1,0 +1,34 @@
+/* Outer blue container */
+.outer-container {
+    background-color: #FFFFFF; /* Light blue background */
+    padding: 50px 0; /* Top and bottom spacing */
+    display: flex;
+    flex-direction: column; /* For vertical alignment of header and inner container */
+    align-items: center;
+    border-bottom: 1px solid #000000; /* Thin black underline */
+  }
+  
+  /* Header styling (Valued Partners text) */
+  .header {
+    font-size: 39px; /* Matches the image font size */
+    font: weight 600;
+    font-family: 'Poppins', sans-serif; /* Poppins font for modern look */
+    color: #000000; /* Black text color */
+    margin-bottom: 20px; /* Space below the header */
+  }
+  
+  /* Inner white container */
+  .inner-container {
+    background-color: #FFFFFF; /* White background for the nested container */
+    /* padding: 20px 60px; Horizontal padding for width */
+    /* border-radius: 12px; Rounded corners */
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
+     /* Longer container */
+    width: 100%; /* Responsive width */
+    display: flex;
+    justify-content: center ;
+    width: 1660px;
+  
+  }
+  
+  

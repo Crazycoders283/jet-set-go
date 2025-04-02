@@ -1,0 +1,365 @@
+/* Global Styles */
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .loading {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 50px;
+    color: #007bff;
+  }
+  
+  /* Container Styling */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px;
+    margin-left: 80px;
+  }
+
+  .search-bar-section {
+    position: relative;
+    height: 436px;
+    max-width: 100%;
+  }
+  
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("https://www.devotional-reflections-from-the-bible.com/images/IMG_1342.jpg") 
+      no-repeat center center / cover;
+    z-index: -1;
+  }
+  
+  .search-container {
+    width: 100%;
+    display: flex;
+    color: aliceblue;
+    flex-direction: column;
+    height: 436px;
+    margin: 20px auto;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    backdrop-filter: blur(8px);
+  }
+  .price-val {
+    font-size: 20px !important;
+    font-weight: 800!important;  /* Extra-bold weight */
+    color: #FFFFFF!important;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .item-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .item-label {
+    font-size: 1rem;
+    color: #FFFFFF;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  
+  .item-value {
+    font-size: 1.5rem;
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+  
+  .search-content {
+    position: relative;
+    padding: 0;
+    margin: 25px;
+    z-index: 1;
+  }
+  /* Updated Search Bar Styling */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    position: relative;
+    border-top: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent background */
+    padding: 1.5rem;
+    border-radius: 4px;
+    width: 50%;
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1; /* Distributes items evenly */
+    min-width: 180px; /* Prevents collapsing */
+    color: #FFFFFF;
+  }
+  
+  .divider {
+    height: 40px;
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .price-range {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 180px;
+  }
+  /* Slider container */
+  .slider-container {
+    width: 180px;  /* Fixed width for the container */
+    height: 83px;  /* Fixed height for the container */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  /* Price slider */
+  .price-slider {
+    appearance: none;
+    width: 100%; /* Full width of the container */
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    outline: none;
+    position: relative;
+    left: 0; /* Reset any left shift */
+  }
+  
+  /* Slider thumb (knob) styling for Webkit browsers */
+  .price-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Slider thumb styling for Firefox */
+  .price-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  
+  
+  .price-labels price-value {
+    font-size: 1.5rem; /* Adjust font size as needed */
+    font-weight: bold; /* Make the price stand out */
+    color: #ffffff; /* Default white color */
+    padding: 0.25rem 0.5rem; /* Optional padding for spacing*/
+    border-radius: 8px; /* Rounded corners for better aesthetics */
+    text-align: center; /* Align text to the center */
+    display: inline-block; /* Ensure the element adapts to content size */
+  }
+  
+  .price-labels {
+      display: flex;
+      justify-content: flex-start; /* Align items to the start */
+      gap: 0.5rem; /* Add a small gap between items */
+      width: 100%;
+      color: #ffffff;
+      font-size: 0.2rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+  }
+  
+  
+  .price-range-labels span {
+    color: #FFFFFF;
+    font-size: 0.5rem;
+  }
+  
+  
+  .search-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3b82f6;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .search-button:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Cruise Card Styling */
+  .curise-container {
+    display:flex;
+    gap: 40px;
+    justify-content: flex-end;
+    padding: 60px;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .cruise-card {
+    display: flex;
+    align-items: center;
+    gap: 90px ;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    background-color: white;
+    max-width: 1369px;
+    min-height: 354px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-left:6%;
+    
+  }
+  
+  .cruise-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cruise-card-image {
+    width: 522px;
+    height: 309px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 15px;
+  }
+  
+  .cruise-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .cruise-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .cruise-title {
+    font-size: 38px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 1000;
+    margin: 0;
+    color: #000000;
+  }
+  
+  .cruise-ship {
+    font-size: 24px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #000000;
+    margin: 8px 0;
+  }
+  
+  .cruise-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #000000;
+  }
+  
+  .cruise-info .icon {
+    color: #055B75;
+    gap: 2px;
+  }
+  
+  .view-itinerary-btn {
+    width: 186px;
+    height: 63px;
+    background-color: #0855A2;
+    color: #FFFFFF;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s;
+  }
+  
+  .view-itinerary-btn:hover {
+    background-color: #003f88;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .search-bar {
+      flex-direction: column; /* Stack items vertically */
+      gap: 1rem;
+    }
+  
+    .search-item,
+    .price-range,
+    .search-button {
+      width: 100%; /* Full-width items */
+      text-align: center;
+    }
+  
+    .cruise-card {
+      flex-direction: column;
+    }
+  
+    .cruise-card-image {
+      width: 100%;
+      height: 200px;
+    }
+  
+    .cruise-card-content {
+      padding: 16px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .cruise-title {
+      font-size: 1.5rem;
+    }
+  
+    .view-itinerary-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+  
+    .filter-item h4 {
+      font-size: 1rem;
+    }
+  }
+  

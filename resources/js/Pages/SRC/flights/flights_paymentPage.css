@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.payment-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.fare-summary{
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.emi-plans{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.967);*/
+    margin-bottom: 20px;
+    height: 250px;
+    border: 0.2px solid rgba(128, 128, 128, 0.408);
+  }
+  
+.emi-plans h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    gap: 1px;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    margin-left: 3rem;
+
+}
+
+.payment-options {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+   /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
+    margin-bottom: 20px;
+    border: 0.2px solid rgba(128, 128, 128, 0.408);
+}
+  
+   
+.payment-options h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.fare-summary h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #055B75;
+  margin-bottom: 1rem;
+}
+
+.fare-amount-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.fare-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.discount {
+    background: #e6ffed;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+
+
+.flight-details-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.airline-logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.flight-details {
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.traveller-details {
+  color: #1f2937;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.payment-logos {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-logo {
+  height: 24px;
+}
+
+
+.emi-options {
+  display: flex;
+  gap: 20%;
+  margin-top: 10px;
+  width: 75%;
+  align-items: center;
+  margin-left: 3rem;
+}
+
+.emi-options button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid gray;
+  cursor: pointer;
+  background: white;
+  border-radius: 1.5rem !important;
+  font-weight: bold;
+}
+
+.emi-options .selected {
+  color: #055B75;
+  border: 2.5px solid #055B75;
+  border-radius: 1.5rem !important;
+  font-weight: bold;
+}
+
+.paypal {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+  margin-top: 2rem;
+  margin-left: 3rem;
+
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  justify-content: space-between;
+}
+
+.payment-option .icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #055B75;
+}
+
+.payment-option h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+}
+
+.payment-option p {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.chevron-icon {
+  color: #4b5563;
+}
+
+.Credit{
+  background-color: #055B75;
+  color: #ffffff;
+  width: 50%;
+  border-radius: 9px;
+
+}

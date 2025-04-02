@@ -1,0 +1,109 @@
+/* Main container and grid styling */
+.main-container {
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.heading {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Card styling */
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 395px; /* Card width */
+  height: 507px; /* Card height */
+}
+/* 
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); */
+
+
+/* Image container and badge */
+.image-container {
+  position: relative;
+}
+
+.card-image {
+  width: 392px; /* Image width */
+  height: 311px; /* Image height */
+  object-fit: cover;
+}
+
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 0, 0.1);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Card body styling */
+.card-body {
+  padding: 15px;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.card-title {
+  font-size: 28px; /* Font size */
+  font-weight: 400; /* Regular font weight */
+  color: #222222; /* Corrected color code */
+  margin-left: 30px; /* Gap of 30px on the left */
+  margin-bottom: 10px; /* Margin at the bottom */
+  font-family: 'Worksans', sans-serif; /* Worksans font family */
+  text-align: left; /* Align text to the left */
+}
+
+
+.card-description {
+  font-size: 16px; /* Font size of 16px */
+  font-weight: 400; /* Regular font weight */
+  color: #222222; /* Corrected color code */
+  margin-bottom: 30px; /* Margin at the bottom */
+  font-family: 'Poppins', sans-serif; /* Poppins font family */
+  margin-left: 30px;
+  text-align: left;
+}
+
+
+/* Updated Button Styling */
+.book-button {
+  background: none;
+  color: #007bff;
+  border: none;
+  padding: 10px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px; /* Adds space between text and underline */
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: block; /* Ensures button takes full width available */
+  margin: 0 auto; /* Centers the button horizontally */
+}
+
+
+.book-button:hover {
+  color: #0056b3;
+}
