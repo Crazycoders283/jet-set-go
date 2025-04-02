@@ -1,0 +1,71 @@
+/* Import Poppins font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+
+.cruise-deals {
+  position: relative;
+  height: 70vh; /* Reduced height */
+  background: url("../../assets/images/gallery/cruise2.png") no-repeat center center/cover; /* Background image */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align text to the right */
+  padding-right: 3rem; /* Add some spacing to the right */
+  color: #222222; /* Default text color */
+}
+
+.cruise-deals-content h1 {
+  font-size: 2.5rem; /* Adjust the size as needed */
+  font-family: "Poppins", sans-serif;
+  font-weight: 500; /* Poppins Medium */
+  color: #222222; /* Black */
+  margin-bottom: 1rem;
+}
+
+.cruise-deals-content p {
+  font-size: 1rem; /* Adjust the size as needed */
+  font-family: "Poppins", sans-serif;
+  font-weight: 400; /* Poppins Regular */
+  color: #191825; /* Signup sentence color */
+  margin-bottom: 1.5rem;
+}
+
+.email-input-container {
+  position: relative;
+  display: flex;
+  margin-top: 20px;
+  --tw-ring-colour:#FFFFFF;
+}
+
+.email-input {
+  width: 97%;
+  /* padding: 12px 2px; */
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  font-size: 13.81px;
+
+}
+.email-submit-btn {
+  position: relative;
+  right: 9%;
+  top: 50%;
+  width: 40px; /* Set width to 40px */
+  height: 40px; /* Set height to 40px */
+  background-color: #0855a2;
+  border: none;
+  padding: 16px,3px !important; /* Adjust padding for a smaller size */
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  display: flex; /* Center align the button content */
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+
+
+
