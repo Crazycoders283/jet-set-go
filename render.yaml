@@ -6,7 +6,7 @@ services:
     plan: free
     runtime: php
     buildCommand: "./render-build.sh"
-    startCommand: "heroku-php-apache2 public/"
+    startCommand: "heroku-php-apache2 -p ${PORT:-8000} public/"
     autoDeploy: true
     healthCheckPath: /
     envVars:
