@@ -2,8 +2,11 @@
 # exit on error
 set -o errexit
 
+# Define PHP version to use
+export PHP_VERSION="8.2"
+
 # Install PHP dependencies
-composer install --optimize-autoloader --no-dev
+/opt/render/project/util/render-php.sh composer install --optimize-autoloader --no-dev
 
 # Install NPM dependencies
 npm ci
@@ -12,9 +15,9 @@ npm ci
 npm run build
 
 # Laravel optimizations
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+/opt/render/project/util/render-php.sh php artisan config:cache
+/opt/render/project/util/render-php.sh php artisan route:cache
+/opt/render/project/util/render-php.sh php artisan view:cache
 
 # Storage permissions
 chmod -R 775 storage bootstrap/cache

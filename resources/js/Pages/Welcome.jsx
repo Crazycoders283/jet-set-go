@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import Mani from './Mani';
+// Removed direct import of Mani to avoid duplicate import issues
 import Navbar from './Common/Navbar';
 import Footer from './Common/Footer';
 import Homepage from './Common/cruise/Homepage';

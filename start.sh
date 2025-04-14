@@ -1,16 +1,19 @@
-composer install --no-dev --optimize-autoloader
+# Use Render's PHP utilities
+export PHP_VERSION="8.2"
+
+# Install dependencies
+/opt/render/project/util/render-php.sh composer install --no-dev --optimize-autoloader
 
 # Clear and optimize
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+/opt/render/project/util/render-php.sh php artisan cache:clear
+/opt/render/project/util/render-php.sh php artisan config:clear
+/opt/render/project/util/render-php.sh php artisan route:clear
+/opt/render/project/util/render-php.sh php artisan view:clear
 
 # Optimize for production
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+/opt/render/project/util/render-php.sh php artisan optimize
+/opt/render/project/util/render-php.sh php artisan config:cache
+/opt/render/project/util/render-php.sh php artisan route:cache
+/opt/render/project/util/render-php.sh php artisan view:cache
 
-# Start the server
-php artisan serve --host=0.0.0.0 --port=8000
+# We don't need to start the server here - Render will use the startCommand from render.yaml

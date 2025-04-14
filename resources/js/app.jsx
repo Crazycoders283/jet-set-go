@@ -10,6 +10,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
+        // Use a single approach - either all eager or all dynamic
         const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
         // First try the exact path
         if (pages[`./Pages/${name}.jsx`]) {
@@ -19,11 +20,9 @@ createInertiaApp({
         if (pages[`./Pages/Common/${name}.jsx`]) {
             return pages[`./Pages/Common/${name}.jsx`];
         }
-        // If not found, try resolving with the original function
-        return resolvePageComponent(
-            `./Pages/${name}.jsx`,
-            import.meta.glob('./Pages/**/*.jsx'),
-        );
+        // If not found in our eager imports, return a custom error page or null
+        console.error(`Page ${name} not found`);
+        return pages['./Pages/Error.jsx'] || null;
     },
     setup({ el, App, props }) {
         const root = createRoot(el);

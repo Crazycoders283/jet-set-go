@@ -64,3 +64,116 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Laravel React Cruise App
+
+This project is a cruise booking application built with Laravel and React.
+
+## Development with Docker
+
+This project uses Docker for local development to ensure a consistent environment across all developers' machines.
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your machine
+- Git
+
+### Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd New-App
+   ```
+
+2. For HTTPS support (recommended for production-like environments):
+   ```bash
+   # Generate self-signed certificates
+   ./generate-certs.sh
+   ```
+
+3. Start the Docker development environment:
+   ```bash
+   # With HTTPS enabled
+   ENABLE_HTTPS=true make build
+   ENABLE_HTTPS=true make up
+   
+   # OR without HTTPS
+   make build
+   make up
+   ```
+
+4. The application will be available at:
+   - Laravel: http://localhost:8000
+   - Vite Dev Server:
+     - HTTP: http://localhost:5173 (if HTTPS is disabled)
+     - HTTPS: https://localhost:5173 (if HTTPS is enabled)
+
+### Available Commands
+
+We've included a Makefile to simplify common tasks:
+
+```bash
+make up        # Start the containers
+make down      # Stop the containers
+make restart   # Restart the containers
+make build     # Rebuild the containers
+make shell     # Access the container's shell
+make logs      # View container logs
+make install   # Install dependencies
+
+# Run artisan commands
+make artisan migrate
+make artisan db:seed
+
+# Run npm commands
+make npm install
+make npm update
+```
+
+### Development Workflow
+
+1. The source code is mounted into the container, so any changes you make locally will be reflected in real-time
+2. Vite's hot module replacement is enabled, so changes to React components will be instantly reflected in the browser
+3. The Laravel development server will automatically reload when PHP files are changed
+
+### Troubleshooting
+
+If you encounter any issues with the Vite manifest:
+
+1. Access the container shell:
+   ```bash
+   make shell
+   ```
+
+2. Clear the Laravel cache:
+   ```bash
+   php artisan optimize:clear
+   ```
+
+3. Restart the servers:
+   ```bash
+   exit
+   make restart
+   ```
+
+### Troubleshooting Mixed Content Errors
+
+If you're experiencing mixed content errors (HTTP resources loaded over HTTPS):
+
+1. Ensure you're using HTTPS for your Vite development server:
+   ```bash
+   ENABLE_HTTPS=true make restart
+   ```
+
+2. If you're deploying to a production environment like Render:
+   - Ensure your app is configured to use HTTPS for all resources
+   - The Content-Security-Policy header is added to the HTML to upgrade insecure requests
+   - You might need to rebuild and redeploy your container with HTTPS enabled:
+   ```bash
+   ENABLE_HTTPS=true ./build-push.sh
+   ```
+
+## Production Deployment
+
+For production deployment, the build process should be used instead of the development server. Modify the Dockerfile to use `npm run build` instead of `npm run dev` for production deployments.
