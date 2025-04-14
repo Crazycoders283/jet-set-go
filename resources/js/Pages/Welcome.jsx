@@ -1,8 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import Header from '../../js/Pages/SRC/components/Common/Header/Header';
-// import Banner from '../Pages/SRC/components/Banner/Banner';
-import Footer from "../../js/Pages/SRC/components/Common/Footer/Footer";
-import Home from "../../js/Pages/SRC/packeges/p_Home";
+import Mani from './Mani';
 export default function Welcome({ auth, laravelVersion, phpVersion,IternaryList }) {
     const handleImageError = () => {
         document
@@ -18,20 +15,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion,IternaryList 
     return (
         
         <>
-            {/* Head Metadata */}
-            <Head title="Home" />
-
-            {/* Header Section */}
-            <Header />
-
-            {/* Banner Section */}
-
-            {/* Home Section */}
-            <Home  />
-
-            {/* Footer Section */}
-            <Footer />
-   
+        <h1>Hello I'm Manindar Reddy Lakkireddy </h1>
+        <p>I have  3 years of exp</p>
+        <Mani/>
         </>
     );
 }
