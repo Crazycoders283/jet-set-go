@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: new-app
+    env: php
+    buildCommand: |
+      composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+      npm ci
+      npm run build
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: heroku-php-apache2 public/
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        fromService:
+          type: web
+          name: new-app
+          property: host
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: new-app-db
+          property: connectionString
+
+databases:
+  - name: new-app-db
+    databaseName: new_app
+    user: new_app_user
+    plan: free

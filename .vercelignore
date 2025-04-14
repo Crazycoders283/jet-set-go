@@ -1,0 +1,9 @@
+/.git
+/vendor
+/node_modules
+/.github
+/storage/logs
+/tests
+/.editorconfig
+/.gitattributes
+/.phpunit.result.cache
