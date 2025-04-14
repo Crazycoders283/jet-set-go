@@ -5,8 +5,8 @@ services:
     region: singapore
     plan: free
     runtime: php
-    buildCommand: "./render-build.sh"
-    startCommand: "heroku-php-apache2 -p ${PORT:-8000} public/"
+    buildCommand: "./build.sh"
+    startCommand: "./start.sh && vendor/bin/heroku-php-apache2 -p ${PORT:-8000} public/"
     autoDeploy: true
     healthCheckPath: /
     envVars:
