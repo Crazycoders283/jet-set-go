@@ -34,7 +34,9 @@ export default defineConfig(({ mode }) => {
         ],
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, './resources/js')
+                '@': path.resolve(__dirname, './resources/js'),
+                './pages': path.resolve(__dirname, './resources/js/Pages'),
+                './Pages': path.resolve(__dirname, './resources/js/Pages')
             }
         },
         build: {
@@ -49,6 +51,12 @@ export default defineConfig(({ mode }) => {
                             return 'vendor';
                         }
                     }
+                },
+                // Force all path resolutions to be case-sensitive
+                onwarn(warning, warn) {
+                    // Skip certain warnings
+                    if (warning.code === 'MIXED_EXPORTS') return;
+                    warn(warning);
                 }
             }
         },

@@ -6,47 +6,14 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
-// Import your pages using dynamic imports that will work regardless of case
-const Dashboard = React.lazy(() => {
-  try {
-    return import('./Pages/Dashboard').catch(() => import('./pages/Dashboard'));
-  } catch (e) {
-    return import('./pages/Dashboard');
-  }
-});
+// Import your pages from uppercase Pages directory - this is critical for case-sensitive filesystems
+const Dashboard = React.lazy(() => import('./Pages/Dashboard'));
+const Welcome = React.lazy(() => import('./Pages/Welcome'));
+const Error = React.lazy(() => import('./Pages/Error'));
 
-const Welcome = React.lazy(() => {
-  try {
-    return import('./Pages/Welcome').catch(() => import('./pages/Welcome'));
-  } catch (e) {
-    return import('./pages/Welcome');
-  }
-});
-
-const Error = React.lazy(() => {
-  try {
-    return import('./Pages/Error').catch(() => import('./pages/Error'));
-  } catch (e) {
-    return import('./pages/Error');
-  }
-});
-
-// Auth pages with dynamic imports
-const Login = React.lazy(() => {
-  try {
-    return import('./Pages/Auth/Login').catch(() => import('./pages/Auth/Login'));
-  } catch (e) {
-    return import('./pages/Auth/Login');
-  }
-});
-
-const Register = React.lazy(() => {
-  try {
-    return import('./Pages/Auth/Register').catch(() => import('./pages/Auth/Register'));
-  } catch (e) {
-    return import('./pages/Auth/Register');
-  }
-});
+// Auth pages with uppercase paths
+const Login = React.lazy(() => import('./Pages/Auth/Login'));
+const Register = React.lazy(() => import('./Pages/Auth/Register'));
 
 const App = () => {
   return (
