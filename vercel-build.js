@@ -339,6 +339,210 @@ export default CustomRegister;`;
 fs.writeFileSync(path.join(pagesAuthDir, 'CustomRegister.jsx'), registerContent);
 console.log('✅ Created CustomRegister.jsx in Pages/Auth directory');
 
+// Create Dashboard.jsx
+console.log('📝 Creating Dashboard, Welcome, and Error pages...');
+
+// Create Dashboard.jsx
+const dashboardContent = `import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
+const Dashboard = () => {
+  const { currentUser, logout } = useAuth();
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Redirect happens automatically through AuthProvider
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
+
+  return (
+    <div style={{ padding: '30px', maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h1>Dashboard</h1>
+        <div>
+          <span style={{ marginRight: '15px' }}>
+            {currentUser?.name || currentUser?.email || 'User'}
+          </span>
+          <button 
+            onClick={handleLogout}
+            style={{ padding: '8px 15px', background: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Log Out
+          </button>
+        </div>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+        <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
+          <h2>My Bookings</h2>
+          <p>View and manage your current bookings</p>
+          <Link to="/cruises" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
+            Browse Cruises →
+          </Link>
+        </div>
+        
+        <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
+          <h2>Account Settings</h2>
+          <p>Update your profile and preferences</p>
+          <Link to="/" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
+            Manage Account →
+          </Link>
+        </div>
+        
+        <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
+          <h2>Saved Itineraries</h2>
+          <p>View your saved travel plans</p>
+          <Link to="/itinerary" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
+            View Itinerary →
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;`;
+
+fs.writeFileSync(path.join(pagesDir, 'Dashboard.jsx'), dashboardContent);
+console.log('✅ Created Dashboard.jsx');
+
+// Create Welcome.jsx
+const welcomeContent = `import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Welcome = () => {
+  return (
+    <div>
+      <div style={{ 
+        backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1548574505-5e239809ee19?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        color: 'white',
+        padding: '100px 20px',
+        textAlign: 'center'
+      }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Welcome to JetSet</h1>
+        <p style={{ fontSize: '1.2rem', maxWidth: '800px', margin: '0 auto 30px' }}>
+          Your passport to extraordinary travel experiences. Discover amazing cruise destinations and book your dream vacation.
+        </p>
+        <div>
+          <Link to="/login" style={{ 
+            display: 'inline-block', 
+            margin: '10px', 
+            padding: '12px 30px', 
+            background: '#0066B2', 
+            color: 'white', 
+            textDecoration: 'none', 
+            borderRadius: '4px',
+            fontWeight: 'bold'
+          }}>
+            Login
+          </Link>
+          <Link to="/register" style={{ 
+            display: 'inline-block', 
+            margin: '10px', 
+            padding: '12px 30px', 
+            background: 'white', 
+            color: '#0066B2', 
+            textDecoration: 'none', 
+            borderRadius: '4px',
+            fontWeight: 'bold'
+          }}>
+            Register
+          </Link>
+        </div>
+      </div>
+      
+      <div style={{ padding: '60px 20px', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        <h2 style={{ marginBottom: '40px' }}>Popular Destinations</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
+          <div>
+            <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Caribbean" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
+            <h3>Caribbean Cruises</h3>
+            <p>Experience crystal clear waters and beautiful beaches</p>
+            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Caribbean →</Link>
+          </div>
+          
+          <div>
+            <img src="https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Mediterranean" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
+            <h3>Mediterranean Adventures</h3>
+            <p>Discover ancient history and diverse cultures</p>
+            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Mediterranean →</Link>
+          </div>
+          
+          <div>
+            <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="European Rivers" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
+            <h3>European River Cruises</h3>
+            <p>Journey through picturesque waterways and charming towns</p>
+            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Europe →</Link>
+          </div>
+        </div>
+      </div>
+      
+      <footer style={{ backgroundColor: '#f5f5f5', padding: '40px 20px', textAlign: 'center' }}>
+        <p>&copy; {new Date().getFullYear()} JetSet - All rights reserved</p>
+        <div style={{ margin: '20px 0' }}>
+          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Terms of Service</a>
+          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Privacy Policy</a>
+          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Contact Us</a>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Welcome;`;
+
+fs.writeFileSync(path.join(pagesDir, 'Welcome.jsx'), welcomeContent);
+console.log('✅ Created Welcome.jsx');
+
+// Create Error.jsx
+const errorContent = `import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Error = () => {
+  return (
+    <div style={{ 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      padding: '30px',
+      textAlign: 'center',
+      backgroundColor: '#f8f9fa'
+    }}>
+      <h1 style={{ fontSize: '8rem', margin: '0', color: '#0066B2' }}>404</h1>
+      <h2 style={{ fontSize: '2rem', margin: '20px 0' }}>Page Not Found</h2>
+      <p style={{ maxWidth: '500px', marginBottom: '30px', color: '#666' }}>
+        The page you are looking for might have been removed, had its name changed, 
+        or is temporarily unavailable.
+      </p>
+      <Link to="/" style={{ 
+        padding: '10px 30px', 
+        backgroundColor: '#0066B2', 
+        color: 'white',
+        textDecoration: 'none',
+        borderRadius: '4px',
+        fontWeight: 'bold',
+        transition: 'background-color 0.3s'
+      }}>
+        Return Home
+      </Link>
+    </div>
+  );
+};
+
+export default Error;`;
+
+fs.writeFileSync(path.join(pagesDir, 'Error.jsx'), errorContent);
+console.log('✅ Created Error.jsx');
+
 // Special handling for Auth files
 const lowerAuthDir = path.join(lowerPagesDir, 'Auth');
 if (fs.existsSync(lowerAuthDir)) {
