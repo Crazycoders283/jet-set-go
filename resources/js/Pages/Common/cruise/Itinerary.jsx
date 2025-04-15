@@ -1,67 +1,561 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { FaShip } from 'react-icons/fa';
+
+const cruiseHighlights = [
+  { title: "Cruise Dining", img: "/images/dining.jpg" },
+  { title: "Cruise Party", img: "/images/party.jpg" },
+  { title: "Cruise Entertainment", img: "/images/entertainment.jpg" }
+];
+
+const reviewers = [
+  { id: 1, image: "/images/reviewer1.jpg", isActive: true },
+  { id: 2, image: "/images/reviewer2.jpg", isActive: false },
+  { id: 3, image: "/images/reviewer3.jpg", isActive: false },
+  { id: 4, image: "/images/reviewer4.jpg", isActive: false },
+  { id: 5, image: "/images/reviewer5.jpg", isActive: false }
+];
+
+const CombinedStyles = () => (
+  <style jsx global>{`
+    .itinerary-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: transparent;
+    }
+
+    .cruise-header {
+      background: linear-gradient(to right, #ffffff, #f8faff);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+      margin-bottom: 1.5rem;
+      position: relative;
+      border: 1px solid rgba(230, 235, 245, 0.8);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .destination-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e4799 0%, #1e88e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .arrow-icon {
+      color: #1e88e5;
+      font-size: 1.5rem;
+      font-weight: bold;
+      opacity: 0.8;
+    }
+
+    .duration {
+      background: #e8f3ff;
+      color: #1e88e5;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      margin-left: 0.75rem;
+    }
+
+    .booking-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      color: #4a5568;
+      font-size: 0.938rem;
+    }
+
+    .booking-info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed rgba(203, 213, 225, 0.5);
+    }
+
+    .booking-info-item:last-child {
+      border-bottom: none;
+    }
+
+    .price-section {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      text-align: right;
+    }
+
+    .select-room-btn {
+      background: linear-gradient(135deg, #1e4799 0%, #1e88e5 100%);
+      color: white;
+      padding: 0.875rem 2.5rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(30, 71, 153, 0.2);
+    }
+
+    .select-room-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(30, 71, 153, 0.3);
+    }
+
+    .itinerary-section {
+      background: linear-gradient(to right, #ffffff, #f8faff);
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+      border: 1px solid rgba(230, 235, 245, 0.8);
+    }
+
+    .itinerary-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 0.5rem;
+    }
+
+    .itinerary-subtitle {
+      color: #718096;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .day-box {
+      background: linear-gradient(135deg, #1e4799 0%, #1e88e5 100%);
+      color: white;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(30, 71, 153, 0.2);
+    }
+
+    .day-box span:last-child {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 0.125rem;
+    }
+
+    .day-content {
+      flex: 1;
+      padding-left: 0.5rem;
+    }
+
+    .day-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 0.375rem;
+    }
+
+    .day-subtitle {
+      color: #1e88e5;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+      background: #e8f3ff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .day-description {
+      color: #4a5568;
+      font-size: 0.938rem;
+      line-height: 1.6;
+    }
+
+    .view-more {
+      color: #1e88e5;
+      font-size: 0.938rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      background: #e8f3ff;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .view-more:hover {
+      background: #d1e9ff;
+      transform: translateX(4px);
+    }
+
+    .view-more svg {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .cruise-header {
+        padding: 1.5rem;
+      }
+
+      .price-section {
+        position: static;
+        margin-top: 1.5rem;
+        text-align: left;
+      }
+
+      .select-room-btn {
+        width: 100%;
+      }
+
+      .header-top {
+        flex-wrap: wrap;
+      }
+
+      .destination-text {
+        font-size: 1.25rem;
+      }
+
+      .itinerary-section {
+        padding: 1.5rem;
+      }
+
+      .day-box {
+        width: 56px;
+        height: 56px;
+      }
+    }
+
+    .highlights-section {
+      background: linear-gradient(to right, #ffffff, #f8faff);
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+      margin-top: 1.5rem;
+      border: 1px solid rgba(230, 235, 245, 0.8);
+    }
+
+    .highlights-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a202c;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .highlight-card {
+      border-radius: 12px;
+      overflow: hidden;
+      height: 200px;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+      position: relative;
+    }
+
+    .highlight-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+      pointer-events: none;
+    }
+
+    .highlight-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .highlight-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .reviews-section {
+      background: #D1EFFF;
+      border-radius: 12px;
+      padding: 3.5rem 2.5rem;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+      margin-top: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(230, 235, 245, 0.8);
+    }
+
+    .reviews-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 2rem;
+    }
+
+    .review-quote {
+      font-size: 4rem;
+      background: linear-gradient(135deg, #1e4799 0%, #1e88e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+    }
+
+    .review-text {
+      font-size: 1.125rem;
+      color: #4a5568;
+      line-height: 1.8;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+    }
+
+    .reviewer-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 0.25rem;
+    }
+
+    .reviewer-position {
+      font-size: 0.875rem;
+      color: #718096;
+      margin-bottom: 2rem;
+    }
+
+    .reviewer-images {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .reviewer-image {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(149, 157, 165, 0.1);
+    }
+
+    .reviewer-image.active {
+      border-color: #1e88e5;
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(30, 71, 153, 0.2);
+    }
+
+    .reviewer-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .highlights-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .highlight-card {
+        height: 180px;
+      }
+
+      .reviews-section {
+        padding: 2rem 1rem;
+      }
+
+      .review-text {
+        font-size: 1rem;
+        padding: 0 1rem;
+      }
+    }
+  `}</style>
+);
 
 const Itinerary = () => {
+  const [searchParams] = useSearchParams();
+  const cruiseId = searchParams.get('cruise');
+  const cruiseLine = searchParams.get('cruiseLine');
+  
+  // You could fetch detailed cruise data here based on the cruiseId
+  // For now we'll use static data
+  
   return (
-    <div style={{ padding: '50px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1>Cruise Itinerary</h1>
-        <div>
-          <Link 
-            to="/cruises" 
-            style={{ padding: '8px 15px', marginRight: '10px', background: '#f0f0f0', color: '#333', border: 'none', borderRadius: '4px', textDecoration: 'none' }}
-          >
-            Back to Cruises
-          </Link>
-          <Link 
-            to="/" 
-            style={{ padding: '8px 15px', background: '#0066B2', color: 'white', border: 'none', borderRadius: '4px', textDecoration: 'none' }}
-          >
-            Home
-          </Link>
+    <div className="itinerary-container">
+      <CombinedStyles />
+      
+      {/* Navigation */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+        <Link 
+          to="/cruises" 
+          className="bg-[#0066b2] hover:bg-[#005091] text-white font-medium py-2 px-4 rounded-md transition-colors"
+          style={{ 
+            backgroundColor: '#0066b2',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: '500',
+            display: 'inline-block'
+          }}
+        >
+          Back to Cruises
+        </Link>
+      </div>
+      
+      {/* Cruise Header */}
+      <div className="cruise-header">
+        <div className="header-top">
+          <span className="destination-text">Miami</span>
+          <span className="arrow-icon">≫</span>
+          <span className="destination-text">Florida</span>
+          <span className="duration">2N/3D</span>
+        </div>
+
+        <div className="booking-info">
+          <div className="booking-info-item">
+            <FaShip size={16} color="#1e88e5" />
+            <span>Embarkation:</span>
+            <span style={{ fontWeight: 600 }}>Jan 13th, 4:30 PM</span>
+          </div>
+          <div className="booking-info-item">
+            <FaShip size={16} color="#1e88e5" />
+            <span>Disembarkation:</span>
+            <span style={{ fontWeight: 600 }}>Jan 17th, 7:30 PM</span>
+          </div>
+          <div className="booking-info-item">
+            <span>Cruise Line:</span>
+            <span style={{ fontWeight: 600 }}>{cruiseLine || 'Royal Caribbean'}</span>
+          </div>
+          <div className="booking-info-item">
+            <span>Visiting Ports:</span>
+            <span style={{ fontWeight: 600 }}>Miami | Florida</span>
+          </div>
+        </div>
+
+        <div className="price-section">
+          <div style={{ color: '#4a5568', fontSize: '0.938rem', marginBottom: '0.25rem' }}>Starting from</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1a202c', marginBottom: '0.25rem' }}>$200</div>
+          <div style={{ fontSize: '0.813rem', color: '#718096', marginBottom: '1rem' }}>
+            Excl. Tax Per Person in Double Occupancy
+          </div>
+          <button className="select-room-btn">Select Room</button>
         </div>
       </div>
-      
-      <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', marginBottom: '30px', backgroundColor: '#f9f9f9' }}>
-        <h2>7-Day Caribbean Cruise</h2>
-        <p><strong>Departure:</strong> Miami, FL</p>
-        <p><strong>Duration:</strong> 7 Days</p>
-        <p><strong>Ship:</strong> Royal Caribbean - Symphony of the Seas</p>
+
+      {/* Itinerary Section */}
+      <div className="itinerary-section">
+        <h2 className="itinerary-title">Itinerary</h2>
+        <p className="itinerary-subtitle">Day wise details of your package</p>
+
+        {/* Day 1 */}
+        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
+          <div className="day-box">
+            <span>Day</span>
+            <span>1</span>
+          </div>
+          <div className="day-content">
+            <h3 className="day-title">Miami Port</h3>
+            <p className="day-subtitle">WELCOME ONBOARD</p>
+            <p className="day-description">
+              Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
+            </p>
+          </div>
+        </div>
+
+        {/* Day 2 */}
+        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
+          <div className="day-box">
+            <span>Day</span>
+            <span>2</span>
+          </div>
+          <div className="day-content">
+            <h3 className="day-title">At Sea</h3>
+            <p className="day-subtitle">DAY AT SEA</p>
+            <p className="day-description">
+              Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
+            </p>
+          </div>
+        </div>
+
+        {/* Day 3 */}
+        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem' }}>
+          <div className="day-box">
+            <span>Day</span>
+            <span>3</span>
+          </div>
+          <div className="day-content">
+            <h3 className="day-title">Florida Port</h3>
+            <p className="day-subtitle">ARRIVED IN Florida</p>
+          </div>
+        </div>
+
+        <button className="view-more">
+          View Full Itinerary
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
       </div>
-      
-      <div style={{ marginBottom: '40px' }}>
-        <h3>Daily Schedule</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-          {[1, 2, 3, 4, 5, 6, 7].map(day => (
-            <div key={day} style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '15px' }}>
-              <h4>Day {day}</h4>
-              <p><strong>Location:</strong> {
-                day === 1 ? "Miami, Florida" :
-                day === 2 ? "At Sea" :
-                day === 3 ? "Cozumel, Mexico" :
-                day === 4 ? "George Town, Grand Cayman" :
-                day === 5 ? "Falmouth, Jamaica" :
-                day === 6 ? "At Sea" :
-                "Return to Miami"
-              }</p>
-              <p><strong>Activities:</strong> {
-                day === 1 ? "Embarkation, Welcome Party" :
-                day === 2 ? "Pool Day, Casino Night" :
-                day === 3 ? "Beach Excursion, Shopping" :
-                day === 4 ? "Snorkeling, Island Tour" :
-                day === 5 ? "Dunn's River Falls, Zipline Adventure" :
-                day === 6 ? "Spa Day, Farewell Dinner" :
-                "Disembarkation"
-              }</p>
+
+      {/* Cruise Highlights */}
+      <div className="highlights-section">
+        <h2 className="text-2xl font-bold text-center">Your Cruise Highlight</h2>
+        <div className="highlights-grid">
+          {cruiseHighlights.map((highlight, index) => (
+            <div key={index} className="highlight-card">
+              <img src={highlight.img} alt={highlight.title} />
             </div>
           ))}
         </div>
       </div>
-      
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <button style={{ padding: '10px 20px', background: '#0066B2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}>
-          Book This Cruise
-        </button>
+
+      {/* Customer Reviews */}
+      <div className="reviews-section">
+        <h2>Customer Reviews</h2>
+        <div className="review-quote">"</div>
+        <p className="review-text">
+          The tours in this website are great. I had been really enjoy with my family! The team is very professional and taking care of the customers. Will surely recommend to my freind to join this company!
+        </p>
+        <div className="reviewer-name">Ali Tufan</div>
+        <div className="reviewer-position">Product Manager, Apple Inc.</div>
+        
+        <div className="reviewer-images">
+          {reviewers.map((reviewer) => (
+            <div 
+              key={reviewer.id} 
+              className={`reviewer-image ${reviewer.isActive ? 'active' : ''}`}
+            >
+              <img src={reviewer.image} alt={`Reviewer ${reviewer.id}`} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

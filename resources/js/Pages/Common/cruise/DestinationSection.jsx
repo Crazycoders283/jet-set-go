@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './DestinationSection.css';
 import destinationsData from './data/destinations.json';
 
@@ -21,13 +22,23 @@ const DestinationSection = () => {
             <div className="destination-info">
               <h4>{destination.name}</h4>
               <p>Starts from ${destination.price}/p.p</p>
-              <button className="book-now">BOOK NOW</button>
+              <Link 
+                to={`/cruises?destination=${encodeURIComponent(destination.name)}&country=${encodeURIComponent(destination.country)}`}
+                className="book-now"
+              >
+                BOOK NOW
+              </Link>
             </div>
           </div>
         ))}
       </div>
       
-      <button className="explore-more">Explore more</button>
+      <Link 
+        to="/cruises"
+        className="explore-more"
+      >
+        Explore more
+      </Link>
     </section>
   );
 };

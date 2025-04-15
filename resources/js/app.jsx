@@ -74,7 +74,7 @@ const ItineraryFallback = () => (
 
 // Import cruise-related pages with error handling
 const CruiseCards = React.lazy(() => 
-  import('./Pages/Common/cruise/cruise-cards.tsx')
+  import('./Pages/Common/cruise/cruise-cards')
     .catch(() => ({ default: CruiseCardsFallback }))
 );
 

@@ -26,7 +26,7 @@ const CruiseLineSection = () => {
               <h4>{cruiseLine.name}</h4>
               <p className="price">Starts from {cruiseLine.price}/p.p</p>
               <Link 
-                to={`/cruise-cards?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
+                to={`/cruises?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
                 className="book-now"
               >
                 BOOK NOW
@@ -37,7 +37,7 @@ const CruiseLineSection = () => {
       </div>
       
       <Link 
-        to="/cruise-cards"
+        to="/cruises"
         className="explore-more"
       >
         Explore more
