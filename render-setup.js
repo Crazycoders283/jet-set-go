@@ -18,6 +18,37 @@ try {
   console.log('\n📦 Node.js and npm versions:');
   console.log(execSync('node -v && npm -v').toString());
 
+  // Copy environment file for Render
+  console.log('\n📝 Setting up environment file...');
+  const envRenderPath = path.join(__dirname, '.env.render');
+  const envPath = path.join(__dirname, '.env');
+  
+  if (fs.existsSync(envRenderPath)) {
+    fs.copyFileSync(envRenderPath, envPath);
+    console.log('✅ Copied .env.render to .env');
+  } else {
+    console.log('⚠️ No .env.render file found, creating .env file...');
+    // Create a basic .env file if .env.render doesn't exist
+    const basicEnvContent = `
+# Server Configuration
+NODE_ENV=production
+PORT=10000
+
+# Database Configuration 
+DB_DATABASE=/data/database.sqlite
+
+# JWT Authentication
+JWT_SECRET=e4f8a2b5c9d3f7e1a0b5c8d2e6f3a9b7d1e0f5a2c4b8e3d7f9a1c5b0e2d4f8
+JWT_EXPIRE=30d
+
+# Frontend Configuration
+VITE_APP_NAME="JetSet App"
+VITE_API_URL=/api
+`;
+    fs.writeFileSync(envPath, basicEnvContent);
+    console.log('✅ Created new .env file');
+  }
+
   // Create Pages directory and subdirectories
   const resourcesDir = path.join(__dirname, 'resources', 'js');
   console.log(`\n🔍 Checking resources directory: ${resourcesDir}`);
@@ -112,6 +143,14 @@ try {
   // Then install all packages
   console.log('📦 Installing all dependencies...');
   execSync('npm install', { stdio: 'inherit' });
+  
+  // Ensure database directory exists
+  console.log('\n🗄️ Setting up database directory...');
+  const dataDir = path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+    console.log('✅ Created data directory');
+  }
   
   // Use our simplified Vite config
   console.log('\n🔧 Using simplified vite config...');
