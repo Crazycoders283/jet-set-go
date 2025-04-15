@@ -23,84 +23,17 @@ try {
 
 // Create necessary directories
 const resourcesDir = path.join(__dirname, 'resources', 'js');
-const pagesDir = path.join(resourcesDir, 'Pages');
+const pagesDir = path.join(resourcesDir, 'pages');
 const pagesCommonDir = path.join(pagesDir, 'Common');
 const pagesCruiseDir = path.join(pagesCommonDir, 'cruise');
 const pagesCruisePagesDir = path.join(pagesCruiseDir, 'pages');
-const contextsDir = path.join(resourcesDir, 'contexts');
 
 // Create all necessary directories
-for (const dir of [pagesDir, pagesCommonDir, pagesCruiseDir, pagesCruisePagesDir, contextsDir]) {
+for (const dir of [pagesDir, pagesCommonDir, pagesCruiseDir, pagesCruisePagesDir]) {
   if (!fs.existsSync(dir)) {
     console.log(`📁 Creating directory: ${dir}`);
     fs.mkdirSync(dir, { recursive: true });
   }
-}
-
-// Handle AuthContext.jsx
-const authContextPath = path.join(contextsDir, 'AuthContext.jsx');
-if (!fs.existsSync(authContextPath)) {
-  console.log('📝 Creating AuthContext.jsx...');
-  
-  const authContextContent = `import React, { createContext, useState, useContext } from 'react';
-
-const AuthContext = createContext(null);
-
-export const useAuth = () => useContext(AuthContext);
-
-export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Simple login for development
-  const login = async (credentials) => {
-    setError(null);
-    try {
-      // Simulate successful login
-      localStorage.setItem('isAuthenticated', 'true');
-      setCurrentUser({ name: 'Demo User', email: credentials.email });
-      return { success: true };
-    } catch (err) {
-      setError('Login failed');
-      throw err;
-    }
-  };
-
-  // Simple registration for development
-  const register = async (userData) => {
-    setError(null);
-    try {
-      // Simulate successful registration
-      localStorage.setItem('isAuthenticated', 'true');
-      setCurrentUser({ name: userData.name, email: userData.email });
-      return { success: true };
-    } catch (err) {
-      setError('Registration failed');
-      throw err;
-    }
-  };
-
-  // Simple logout
-  const logout = async () => {
-    localStorage.removeItem('isAuthenticated');
-    setCurrentUser(null);
-  };
-
-  const value = {
-    currentUser,
-    loading,
-    error,
-    register,
-    login,
-    logout
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};`;
-
-  fs.writeFileSync(authContextPath, authContextContent);
-  console.log('✅ Created fallback AuthContext.jsx');
 }
 
 // Handle API.js
@@ -119,17 +52,6 @@ const api = axios.create({
     'Content-Type': 'application/json'
   }
 });
-
-// Auth API endpoints - simplified for deployment
-export const authAPI = {
-  register: (userData) => Promise.resolve({ data: { user: userData, token: 'dummy-token' } }),
-  login: (credentials) => Promise.resolve({ data: { user: { email: credentials.email }, token: 'dummy-token' } }),
-  getCurrentUser: () => Promise.resolve({ data: null }),
-  logout: () => {
-    localStorage.removeItem('token');
-    return Promise.resolve();
-  }
-};
 
 export default api;`;
 
@@ -177,57 +99,40 @@ console.log('📝 Creating required pages...');
 // Create Dashboard.jsx
 const dashboardContent = `import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
-  const { currentUser, logout } = useAuth();
-  
-  const handleLogout = async () => {
-    try {
-      await logout();
-      // Redirect happens automatically through AuthProvider
-    } catch (error) {
-      console.error('Failed to log out:', error);
-    }
-  };
-
   return (
     <div style={{ padding: '30px', maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1>Dashboard</h1>
-        <div>
-          <span style={{ marginRight: '15px' }}>
-            {currentUser?.name || currentUser?.email || 'User'}
-          </span>
-          <button 
-            onClick={handleLogout}
-            style={{ padding: '8px 15px', background: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Log Out
-          </button>
-        </div>
+        <Link 
+          to="/"
+          style={{ padding: '8px 15px', background: '#0066B2', color: 'white', border: 'none', borderRadius: '4px', textDecoration: 'none' }}
+        >
+          Back to Home
+        </Link>
       </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
         <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
-          <h2>My Bookings</h2>
-          <p>View and manage your current bookings</p>
+          <h2>Cruises</h2>
+          <p>Browse available cruise options</p>
           <Link to="/cruises" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
-            Browse Cruises →
+            View Cruises →
           </Link>
         </div>
         
         <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
-          <h2>Account Settings</h2>
-          <p>Update your profile and preferences</p>
-          <Link to="/" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
-            Manage Account →
+          <h2>Packages</h2>
+          <p>Find vacation packages and deals</p>
+          <Link to="/packages" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
+            Browse Packages →
           </Link>
         </div>
         
         <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', backgroundColor: '#f9f9f9' }}>
-          <h2>Saved Itineraries</h2>
-          <p>View your saved travel plans</p>
+          <h2>Itineraries</h2>
+          <p>View detailed travel plans</p>
           <Link to="/itinerary" style={{ display: 'inline-block', marginTop: '10px', color: '#0066B2', textDecoration: 'none' }}>
             View Itinerary →
           </Link>
@@ -241,85 +146,6 @@ export default Dashboard;`;
 
 fs.writeFileSync(path.join(pagesDir, 'Dashboard.jsx'), dashboardContent);
 console.log('✅ Created Dashboard.jsx');
-
-// Create Homepage.jsx instead of Welcome.jsx
-const homepageContent = `import React from 'react';
-import { Link } from 'react-router-dom';
-
-const Homepage = () => {
-  return (
-    <div>
-      <div style={{ 
-        backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1548574505-5e239809ee19?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")', 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        color: 'white',
-        padding: '100px 20px',
-        textAlign: 'center'
-      }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Welcome to JetSet</h1>
-        <p style={{ fontSize: '1.2rem', maxWidth: '800px', margin: '0 auto 30px' }}>
-          Your passport to extraordinary travel experiences. Discover amazing cruise destinations and book your dream vacation.
-        </p>
-        <div>
-          <Link to="/dashboard" style={{ 
-            display: 'inline-block', 
-            margin: '10px', 
-            padding: '12px 30px', 
-            background: '#0066B2', 
-            color: 'white', 
-            textDecoration: 'none', 
-            borderRadius: '4px',
-            fontWeight: 'bold'
-          }}>
-            View Dashboard
-          </Link>
-        </div>
-      </div>
-      
-      <div style={{ padding: '60px 20px', maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '40px' }}>Popular Destinations</h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
-          <div>
-            <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Caribbean" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
-            <h3>Caribbean Cruises</h3>
-            <p>Experience crystal clear waters and beautiful beaches</p>
-            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Caribbean →</Link>
-          </div>
-          
-          <div>
-            <img src="https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Mediterranean" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
-            <h3>Mediterranean Adventures</h3>
-            <p>Discover ancient history and diverse cultures</p>
-            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Mediterranean →</Link>
-          </div>
-          
-          <div>
-            <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="European Rivers" style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }} />
-            <h3>European River Cruises</h3>
-            <p>Journey through picturesque waterways and charming towns</p>
-            <Link to="/cruises" style={{ color: '#0066B2', textDecoration: 'none' }}>Explore Europe →</Link>
-          </div>
-        </div>
-      </div>
-      
-      <footer style={{ backgroundColor: '#f5f5f5', padding: '40px 20px', textAlign: 'center' }}>
-        <p>&copy; {new Date().getFullYear()} JetSet - All rights reserved</p>
-        <div style={{ margin: '20px 0' }}>
-          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Terms of Service</a>
-          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Privacy Policy</a>
-          <a href="#" style={{ margin: '0 10px', color: '#555' }}>Contact Us</a>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Homepage;`;
-
-fs.writeFileSync(path.join(pagesDir, 'Homepage.jsx'), homepageContent);
-console.log('✅ Created Homepage.jsx');
 
 // Create Error.jsx
 const errorContent = `import React from 'react';
@@ -363,30 +189,7 @@ export default Error;`;
 fs.writeFileSync(path.join(pagesDir, 'Error.jsx'), errorContent);
 console.log('✅ Created Error.jsx');
 
-// Special handling for Auth files
-const lowerAuthDir = path.join(lowerPagesDir, 'Auth');
-if (fs.existsSync(lowerAuthDir)) {
-  console.log('📋 Special handling for Auth files...');
-  
-  // Copy Auth files specifically
-  try {
-    const authFiles = fs.readdirSync(lowerAuthDir);
-    
-    for (const file of authFiles) {
-      const srcPath = path.join(lowerAuthDir, file);
-      const destPath = path.join(pagesDir, file);
-      
-      if (fs.statSync(srcPath).isFile()) {
-        fs.copyFileSync(srcPath, destPath);
-        console.log(`  ✅ Copied Auth file ${file} to Pages directory`);
-      }
-    }
-  } catch (err) {
-    console.error('Error copying Auth files:', err);
-  }
-}
-
-// Special handling for cruise-cards.jsx and Itinerary.jsx
+// Special handling for cruise files
 try {
   console.log('📋 Special handling for cruise files...');
   
@@ -478,7 +281,7 @@ if (fs.existsSync(appPath)) {
   let appContent = fs.readFileSync(appPath, 'utf8');
   
   // Replace any import from './pages/ to './Pages/
-  appContent = appContent.replace(/from\s+['"]\.\/pages\//g, 'from \'./Pages/');
+  appContent = appContent.replace(/from\s+['"]\.\/pages\//g, 'from \'./pages/');
   
   fs.writeFileSync(appPath, appContent);
   console.log('✅ Updated app.jsx imports');

@@ -35,26 +35,6 @@ const ErrorFallback = () => (
   </div>
 );
 
-const ProfileFallback = () => (
-  <div style={{ padding: '50px', textAlign: 'center' }}>
-    <h1>User Profile</h1>
-    <p>Your profile is loading...</p>
-    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-      Back to Home
-    </a>
-  </div>
-);
-
-const ProfileEditFallback = () => (
-  <div style={{ padding: '50px', textAlign: 'center' }}>
-    <h1>Edit Profile</h1>
-    <p>Profile editor is loading...</p>
-    <a href="/profile" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-      Back to Profile
-    </a>
-  </div>
-);
-
 // Dynamic imports with fallbacks
 const Dashboard = React.lazy(() => 
   import('./pages/Dashboard')
@@ -69,16 +49,6 @@ const Welcome = React.lazy(() =>
 const Error = React.lazy(() => 
   import('./pages/Error')
     .catch(() => ({ default: ErrorFallback }))
-);
-
-const Profile = React.lazy(() => 
-  import('./pages/Profile')
-    .catch(() => ({ default: ProfileFallback }))
-);
-
-const ProfileEdit = React.lazy(() => 
-  import('./pages/Profile/Edit')
-    .catch(() => ({ default: ProfileEditFallback }))
 );
 
 // Cruise fallback components
@@ -113,16 +83,64 @@ const Itinerary = React.lazy(() =>
     .catch(() => ({ default: ItineraryFallback }))
 );
 
+// Additional placeholder components for nav links
+const FlightsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Flights</h1>
+    <p>Flight booking options will appear here.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const PackagesFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Vacation Packages</h1>
+    <p>Package options will appear here.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const RentalsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Rentals</h1>
+    <p>Car and property rental options will appear here.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const MyTripsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>My Trips</h1>
+    <p>Your trips will be displayed here.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const Flights = React.lazy(() => Promise.resolve({ default: FlightsFallback }));
+const Packages = React.lazy(() => Promise.resolve({ default: PackagesFallback }));
+const Rentals = React.lazy(() => Promise.resolve({ default: RentalsFallback }));
+const MyTrips = React.lazy(() => Promise.resolve({ default: MyTripsFallback }));
+
 const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
+        <Route path="/flight" element={<Flights />} />
+        <Route path="/packages" element={<Packages />} />
+        <Route path="/rental" element={<Rentals />} />
+        <Route path="/my-trips" element={<MyTrips />} />
         <Route path="/404" element={<Error />} />
         <Route path="*" element={<Navigate to="/404" />} />
       </Routes>
