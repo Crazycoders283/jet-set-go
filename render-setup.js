@@ -105,10 +105,19 @@ try {
   }
   
   console.log('\n🔨 Installing dependencies...');
+  // First try to install the required packages directly (most reliable)
+  console.log('📦 Explicitly installing vite and plugin-react first...');
+  execSync('npm install @vitejs/plugin-react vite --no-save', { stdio: 'inherit' });
+  
+  // Then install all packages
+  console.log('📦 Installing all dependencies...');
   execSync('npm install', { stdio: 'inherit' });
   
+  // Use our simplified Vite config
+  console.log('\n🔧 Using simplified vite config...');
+  
   console.log('\n🏗️ Building application...');
-  execSync('npx vite build', { stdio: 'inherit' });
+  execSync('npx vite build --config simple-vite.config.js', { stdio: 'inherit' });
   
   console.log('\n✅ Build completed successfully!');
 } catch (error) {
