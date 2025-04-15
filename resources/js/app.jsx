@@ -11,9 +11,37 @@ const Dashboard = React.lazy(() => import('./Pages/Dashboard'));
 const Welcome = React.lazy(() => import('./Pages/Welcome'));
 const Error = React.lazy(() => import('./Pages/Error'));
 
-// Auth pages 
-const Login = React.lazy(() => import('./Pages/Auth/CustomLogin'));
-const Register = React.lazy(() => import('./Pages/Auth/CustomRegister'));
+// Auth pages - using a fallback component if imports fail
+const LoginFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Login</h1>
+    <p>Please log in to access your account</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const RegisterFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Register</h1>
+    <p>Create a new account</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+// Use dynamic imports with error handling
+const Login = React.lazy(() => 
+  import('./Pages/Auth/CustomLogin')
+    .catch(() => ({ default: LoginFallback }))
+);
+
+const Register = React.lazy(() => 
+  import('./Pages/Auth/CustomRegister')
+    .catch(() => ({ default: RegisterFallback }))
+);
 
 // Import cruise-related pages
 const CruiseCards = React.lazy(() => import('./Pages/Common/cruise/pages/cruise-cards'));

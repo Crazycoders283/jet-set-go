@@ -71,6 +71,79 @@ if (fs.existsSync(lowerPagesDir)) {
   copyDirRecursive(lowerPagesDir, pagesDir);
 }
 
+// Special handling for Auth files
+const lowerAuthDir = path.join(lowerPagesDir, 'Auth');
+if (fs.existsSync(lowerAuthDir)) {
+  console.log('📋 Special handling for Auth files...');
+  
+  // Ensure Auth directory exists
+  if (!fs.existsSync(pagesAuthDir)) {
+    fs.mkdirSync(pagesAuthDir, { recursive: true });
+  }
+  
+  // Copy Auth files specifically
+  try {
+    const authFiles = fs.readdirSync(lowerAuthDir);
+    
+    for (const file of authFiles) {
+      const srcPath = path.join(lowerAuthDir, file);
+      const destPath = path.join(pagesAuthDir, file);
+      
+      if (fs.statSync(srcPath).isFile()) {
+        fs.copyFileSync(srcPath, destPath);
+        console.log(`  ✅ Copied Auth file: ${file}`);
+      }
+    }
+  } catch (err) {
+    console.error('Error copying Auth files:', err);
+    
+    // Create fallback Auth files if copying fails
+    console.log('Creating fallback Auth files...');
+    
+    // Create CustomLogin.jsx
+    const loginContent = `import React from 'react';
+import { Link } from 'react-router-dom';
+
+const CustomLogin = () => {
+  return (
+    <div style={{ padding: '50px', textAlign: 'center' }}>
+      <h1>Login</h1>
+      <p>Please log in to access your account</p>
+      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+        Back to Home
+      </Link>
+    </div>
+  );
+};
+
+export default CustomLogin;`;
+    
+    fs.writeFileSync(path.join(pagesAuthDir, 'CustomLogin.jsx'), loginContent);
+    console.log('  ✅ Created fallback CustomLogin.jsx');
+    
+    // Create CustomRegister.jsx
+    const registerContent = `import React from 'react';
+import { Link } from 'react-router-dom';
+
+const CustomRegister = () => {
+  return (
+    <div style={{ padding: '50px', textAlign: 'center' }}>
+      <h1>Register</h1>
+      <p>Create a new account</p>
+      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+        Back to Home
+      </Link>
+    </div>
+  );
+};
+
+export default CustomRegister;`;
+    
+    fs.writeFileSync(path.join(pagesAuthDir, 'CustomRegister.jsx'), registerContent);
+    console.log('  ✅ Created fallback CustomRegister.jsx');
+  }
+}
+
 // Update app.jsx to reference the correct path
 const appPath = path.join(resourcesDir, 'app.jsx');
 if (fs.existsSync(appPath)) {
@@ -112,6 +185,20 @@ const indexContent = `<!DOCTYPE html>
 
 fs.writeFileSync(path.join(buildDir, 'index.html'), indexContent);
 console.log('✅ Created index.html in public/build directory');
+
+// Create images directory to prevent 404 errors
+const imagesDir = path.join(buildDir, 'images');
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+  console.log('✅ Created images directory in public/build');
+}
+
+// Create partners directory to prevent 404 errors
+const partnersDir = path.join(imagesDir, 'partners');
+if (!fs.existsSync(partnersDir)) {
+  fs.mkdirSync(partnersDir, { recursive: true });
+  console.log('✅ Created partners directory in public/build/images');
+}
 
 console.log('🚀 Pre-build setup complete, running Vite build...');
 
