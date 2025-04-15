@@ -9,8 +9,12 @@ const CruiseLineSection = () => {
     <section className="cruise-line-section">
       <div className="cruise-line-header">
         <img src="/images/cruise-icon.svg" alt="Cruise Icon" className="cruise-icon" />
-        <h2 className="section-title">EXPLORE BY CRUISE LINE</h2>
+        <h2 className="section-title">EXPLORE BY DESTINATION</h2>
       </div>
+      
+      <p className="section-subtitle">
+        Discover breathtaking destinations and unforgettable experiences
+      </p>
       
       <div className="cruise-lines-grid">
         {cruiseLineData.cruiseLines.map((cruiseLine) => (
@@ -40,10 +44,10 @@ const CruiseLineSection = () => {
         to="/cruises"
         className="explore-more"
       >
-        Explore more
+        Explore more destinations
       </Link>
     </section>
   );
 };
 
-export default CruiseLineSection; 
+export default CruiseLineSection;

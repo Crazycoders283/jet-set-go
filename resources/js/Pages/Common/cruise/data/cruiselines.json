@@ -3,7 +3,7 @@
       {
         "id": 1,
         "name": "Royal Caribbean",
-        "image": "/images/royal-caribbean.jpg",
+        "image": "/images/Rectangle 1434 (1).png",
         "price": "From $699",
         "duration": "7 Nights",
         "description": "Caribbean & Bahamas Cruises",
@@ -12,7 +12,7 @@
       {
         "id": 2,
         "name": "Norwegian Cruise Line",
-        "image": "/images/norwegian.jpg",
+        "image": "/images/Rectangle 1434 (2).png",
         "price": "From $599",
         "duration": "5 Nights",
         "description": "Mediterranean & European Cruises",
@@ -21,7 +21,7 @@
       {
         "id": 3,
         "name": "Celebrity Cruises",
-        "image": "/images/celebrity.jpg",
+        "image": "/images/Rectangle 1434 (3).png",
         "price": "From $899",
         "duration": "10 Nights",
         "description": "Luxury Worldwide Cruises",
@@ -30,7 +30,7 @@
       {
         "id": 4,
         "name": "Disney Cruise Line",
-        "image": "/images/disney.jpg",
+        "image": "/images/Rectangle 1434 (4).png",
         "price": "From $1,299",
         "duration": "4 Nights",
         "description": "Family-Friendly Magic at Sea",
@@ -39,7 +39,7 @@
       {
         "id": 5,
         "name": "Princess Cruises",
-        "image": "/images/princess.jpg",
+        "image": "/images/Rectangle 1434 (5).png",
         "price": "From $799",
         "duration": "7 Nights",
         "description": "Worldwide Destination Cruises",
@@ -48,11 +48,38 @@
       {
         "id": 6,
         "name": "MSC Cruises",
-        "image": "/images/msc.jpg",
+        "image": "/images/Rectangle 1434.png",
         "price": "From $549",
         "duration": "7 Nights",
         "description": "European Style Cruising",
         "destinations": ["Mediterranean", "Caribbean", "Northern Europe"]
+      },
+      {
+        "id": 7,
+        "name": "Carnival Cruise Line",
+        "image": "/images/Rectangle 1434 (1).png",
+        "price": "From $499",
+        "duration": "5 Nights",
+        "description": "Fun for All Ages",
+        "destinations": ["Caribbean", "Mexico", "Bahamas"]
+      },
+      {
+        "id": 8,
+        "name": "Holland America Line",
+        "image": "/images/Rectangle 1434 (2).png",
+        "price": "From $749",
+        "duration": "10 Nights",
+        "description": "Premium Cruise Experience",
+        "destinations": ["Alaska", "Europe", "South America"]
+      },
+      {
+        "id": 9,
+        "name": "Azamara Club Cruises",
+        "image": "/images/Rectangle 1434 (3).png",
+        "price": "From $1,099",
+        "duration": "12 Nights",
+        "description": "Boutique Luxury Cruising",
+        "destinations": ["Mediterranean", "Asia", "South America"]
       }
     ]
-  } 
+  }

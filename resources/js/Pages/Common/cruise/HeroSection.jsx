@@ -1,27 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeroSection.css';
+import { FaMapMarkerAlt, FaCalendarAlt, FaShip, FaAnchor, FaDollarSign, FaSearch } from 'react-icons/fa';
 
 const HeroSection = () => {
   return (
     <section 
       className="hero-section"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(/cruise/2.png)`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url(/cruise/2.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'
       }}
     >
-      <div className="hero-content" style={{ textAlign: 'left', maxWidth: '900px', marginLeft: '8%' }}>
+      <div className="hero-content" style={{ textAlign: 'left', maxWidth: '1000px', marginLeft: '8%' }}>
         <h2 className="subtitle">Discover Luxury at Sea</h2>
         <h1 className="title">Your Dream Cruise<br />Adventure Awaits</h1>
         
-        <div className="search-bar" style={{ padding: 0 }}>
+        <div className="search-bar">
           <div className="search-items">
             <div className="search-item">
               <div className="icon-label">
-                <i className="fas fa-map-marker-alt"></i>
+                <FaMapMarkerAlt />
                 <span>Location</span>
               </div>
               <input type="text" defaultValue="USA" />
@@ -31,7 +32,7 @@ const HeroSection = () => {
 
             <div className="search-item">
               <div className="icon-label">
-                <i className="far fa-calendar"></i>
+                <FaCalendarAlt />
                 <span>Date</span>
               </div>
               <input type="text" defaultValue="13 May, 2023" />
@@ -41,7 +42,7 @@ const HeroSection = () => {
 
             <div className="search-item">
               <div className="icon-label">
-                <i className="fas fa-ship"></i>
+                <FaShip />
                 <span>Cruiseline</span>
               </div>
               <input type="text" defaultValue="Cunard" />
@@ -51,7 +52,7 @@ const HeroSection = () => {
 
             <div className="search-item">
               <div className="icon-label">
-                <i className="fas fa-anchor"></i>
+                <FaAnchor />
                 <span>Departure</span>
               </div>
               <input type="text" defaultValue="Vancouver" />
@@ -61,7 +62,7 @@ const HeroSection = () => {
 
             <div className="search-item">
               <div className="icon-label">
-                <i className="fas fa-dollar-sign"></i>
+                <FaDollarSign />
                 <span>Price</span>
               </div>
               <input type="text" defaultValue="$200-$500" />
@@ -69,8 +70,8 @@ const HeroSection = () => {
           </div>
 
           <Link to="/cruises" className="search-button">
-            <i className="fas fa-search" style={{ fontSize: '16px' }}></i>
-            <span style={{ marginLeft: '8px', display: 'inline-block' }}>Book Now</span>
+            <FaSearch style={{ fontSize: '18px' }} />
+            <span style={{ marginLeft: '10px', display: 'inline-block' }}>Book Now</span>
           </Link>
         </div>
 
@@ -92,4 +93,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection; 
+export default HeroSection;

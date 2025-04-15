@@ -2,22 +2,28 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './DestinationSection.css';
 import destinationsData from './data/destinations.json';
+import { FaStar } from 'react-icons/fa';
 
 const DestinationSection = () => {
   return (
     <section className="destination-section">
-      <h2 className="section-title">CHOOSE YOUR NEXT DESTINATION</h2>
-      <h3 className="section-subtitle">EXPLORE BY DESTINATION</h3>
+      <div className="section-header">
+        <h2 className="section-title">EXPLORE BY DESTINATION</h2>
+      </div>
+      
+      <p className="section-subtitle">
+        Discover breathtaking destinations and unforgettable experiences
+      </p>
       
       <div className="destinations-grid">
         {destinationsData.destinations.map((destination) => (
           <div key={destination.id} className="destination-card">
+            <div className="destination-rating">
+              <FaStar className="star" />
+              <span>{destination.rating}</span>
+            </div>
             <div className="destination-image">
               <img src={destination.image} alt={destination.name} />
-              <div className="destination-rating">
-                <span className="star">★</span>
-                <span>{destination.rating}</span>
-              </div>
             </div>
             <div className="destination-info">
               <h4>{destination.name}</h4>
@@ -37,10 +43,10 @@ const DestinationSection = () => {
         to="/cruises"
         className="explore-more"
       >
-        Explore more
+        Explore more destinations
       </Link>
     </section>
   );
 };
 
-export default DestinationSection; 
+export default DestinationSection;
