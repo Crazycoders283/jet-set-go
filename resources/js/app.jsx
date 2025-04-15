@@ -6,14 +6,36 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
-// Import your pages
-const Dashboard = React.lazy(() => import('./Pages/Dashboard'));
-const Welcome = React.lazy(() => import('./Pages/Welcome'));
-const Error = React.lazy(() => import('./Pages/Error'));
-const Login = React.lazy(() => import('./Pages/Login'));
-const Register = React.lazy(() => import('./Pages/Register'));
+// Fallback components
+const LoadingComponent = () => <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
 
-// Auth pages - using a fallback component if imports fail
+const DashboardFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Dashboard</h1>
+    <p>Your dashboard is loading...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const WelcomeFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Welcome to JetSet</h1>
+    <p>Loading homepage content...</p>
+  </div>
+);
+
+const ErrorFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>404 - Page Not Found</h1>
+    <p>The page you are looking for does not exist.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
 const LoginFallback = () => (
   <div style={{ padding: '50px', textAlign: 'center' }}>
     <h1>Login</h1>
@@ -34,15 +56,28 @@ const RegisterFallback = () => (
   </div>
 );
 
-// Use dynamic imports with error handling
-const LoginComponent = React.lazy(() => 
-  import('./Pages/Login')
-    .catch(() => ({ default: LoginFallback }))
+// Dynamic imports with fallbacks
+const Dashboard = React.lazy(() => 
+  import('./Pages/Dashboard')
+    .catch(() => ({ default: DashboardFallback }))
 );
 
-const RegisterComponent = React.lazy(() => 
-  import('./Pages/Register')
-    .catch(() => ({ default: RegisterFallback }))
+const Welcome = React.lazy(() => 
+  import('./Pages/Welcome')
+    .catch(() => ({ default: WelcomeFallback }))
+);
+
+const Error = React.lazy(() => 
+  import('./Pages/Error')
+    .catch(() => ({ default: ErrorFallback }))
+);
+
+const Login = React.lazy(() => 
+  Promise.resolve({ default: LoginFallback })
+);
+
+const Register = React.lazy(() => 
+  Promise.resolve({ default: RegisterFallback })
 );
 
 // Cruise fallback components
@@ -79,12 +114,12 @@ const Itinerary = React.lazy(() =>
 
 const App = () => {
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
+    <React.Suspense fallback={<LoadingComponent />}>
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<LoginComponent />} />
-        <Route path="/register" element={<RegisterComponent />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/404" element={<Error />} />

@@ -171,53 +171,8 @@ if (fs.existsSync(lowerPagesDir)) {
   copyDirRecursive(lowerPagesDir, pagesDir);
 }
 
-// Create Auth files regardless of copying success
-console.log('📝 Creating Auth files in Pages/Auth directory...');
-
-// Create simplified Login.jsx in Pages directory (not in Auth)
-const loginContent = `import React from 'react';
-import { Link } from 'react-router-dom';
-
-const Login = () => {
-  return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <h1>Login</h1>
-      <p>Please log in to access your account</p>
-      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-        Back to Home
-      </Link>
-    </div>
-  );
-};
-
-export default Login;`;
-
-fs.writeFileSync(path.join(pagesDir, 'Login.jsx'), loginContent);
-console.log('✅ Created Login.jsx in Pages directory');
-
-// Create simplified Register.jsx in Pages directory (not in Auth)
-const registerContent = `import React from 'react';
-import { Link } from 'react-router-dom';
-
-const Register = () => {
-  return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <h1>Register</h1>
-      <p>Create a new account</p>
-      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-        Back to Home
-      </Link>
-    </div>
-  );
-};
-
-export default Register;`;
-
-fs.writeFileSync(path.join(pagesDir, 'Register.jsx'), registerContent);
-console.log('✅ Created Register.jsx in Pages directory');
-
 // Create pages
-console.log('📝 Creating Dashboard, Welcome, and Auth pages...');
+console.log('📝 Creating required pages...');
 
 // Create Dashboard.jsx
 const dashboardContent = `import React from 'react';
