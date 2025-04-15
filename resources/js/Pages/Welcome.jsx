@@ -1,8 +1,8 @@
 import React from 'react';
 // Removed Inertia.js imports
 import Navbar from './Common/Navbar';
-import Footer from './Common/Footer';
 import Homepage from './Common/cruise/Homepage';
+import Footer from './Common/Footer';
 
 export default function Welcome() {
     React.useEffect(() => {
@@ -24,11 +24,10 @@ export default function Welcome() {
         <>
             <Navbar/>
             <Homepage/>
+            <Footer/>
 {/*         
             <h1>Hello I'm Manindar Reddy Lakkireddy </h1>
             <p>I have  3 years of exp</p> */}
-            
-            <Footer/>
         </>
     );
 }

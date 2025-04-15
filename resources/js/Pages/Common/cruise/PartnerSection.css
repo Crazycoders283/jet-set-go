@@ -1,89 +1,68 @@
 .partner-section {
-    padding: 5rem 2rem;
-    background-color: #f8fafc;
-  }
-  
-  .partner-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1a202c;
-    margin-bottom: 1rem;
-  }
-  
-  .section-subtitle {
-    font-size: 1.125rem;
-    color: #4a5568;
-    margin-bottom: 3rem;
-  }
-  
-  .partners-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
-  }
-  
-  .partner-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
-  }
-  
-  .partner-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .partner-logo {
-    width: 100%;
-    max-width: 150px;
-    height: auto;
-    object-fit: contain;
-  }
-  
-  .trust-badges {
-    display: flex;
+  padding: 2rem 0 3rem;
+  background-color: #ffffff;
+  border-top: 0;
+  border-bottom: 1px solid #eaeaea;
+  margin-top: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.partner-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.partner-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.partner-logo {
+  max-height: 45px;
+  max-width: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+
+.partner-logo:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .partner-logos {
     justify-content: center;
-    gap: 3rem;
-    flex-wrap: wrap;
+    gap: 30px;
   }
   
-  .badge {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: #1e4799;
+  .partner-logo-container {
+    flex: 0 0 calc(33.333% - 30px);
   }
-  
-  .badge i {
+}
+
+@media (max-width: 480px) {
+  .section-title {
     font-size: 1.5rem;
   }
   
-  .badge span {
-    font-weight: 500;
+  .partner-logo-container {
+    flex: 0 0 calc(50% - 30px);
   }
-  
-  @media (max-width: 768px) {
-    .partner-section {
-      padding: 3rem 1rem;
-    }
-  
-    .section-title {
-      font-size: 2rem;
-    }
-  
-    .partners-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  
-    .trust-badges {
-      gap: 2rem;
-    }
-  } 
+}

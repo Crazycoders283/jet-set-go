@@ -1,4 +1,5 @@
 import '../css/app.css';
+import '../css/fonts.css';
 // No need for bootstrap.js as we're not using Laravel's features
 
 import React from 'react';
@@ -79,7 +80,7 @@ const CruiseCards = React.lazy(() =>
 );
 
 const Itinerary = React.lazy(() => 
-  import('./Pages/Common/cruise/Itinerary')
+  import('./pages/Common/cruise/Itinerary')
     .catch(() => ({ default: ItineraryFallback }))
 );
 
