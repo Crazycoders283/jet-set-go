@@ -242,11 +242,11 @@ export default Dashboard;`;
 fs.writeFileSync(path.join(pagesDir, 'Dashboard.jsx'), dashboardContent);
 console.log('✅ Created Dashboard.jsx');
 
-// Create Welcome.jsx
-const welcomeContent = `import React from 'react';
+// Create Homepage.jsx instead of Welcome.jsx
+const homepageContent = `import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Welcome = () => {
+const Homepage = () => {
   return (
     <div>
       <div style={{ 
@@ -262,7 +262,7 @@ const Welcome = () => {
           Your passport to extraordinary travel experiences. Discover amazing cruise destinations and book your dream vacation.
         </p>
         <div>
-          <Link to="/login" style={{ 
+          <Link to="/dashboard" style={{ 
             display: 'inline-block', 
             margin: '10px', 
             padding: '12px 30px', 
@@ -272,19 +272,7 @@ const Welcome = () => {
             borderRadius: '4px',
             fontWeight: 'bold'
           }}>
-            Login
-          </Link>
-          <Link to="/register" style={{ 
-            display: 'inline-block', 
-            margin: '10px', 
-            padding: '12px 30px', 
-            background: 'white', 
-            color: '#0066B2', 
-            textDecoration: 'none', 
-            borderRadius: '4px',
-            fontWeight: 'bold'
-          }}>
-            Register
+            View Dashboard
           </Link>
         </div>
       </div>
@@ -328,10 +316,10 @@ const Welcome = () => {
   );
 };
 
-export default Welcome;`;
+export default Homepage;`;
 
-fs.writeFileSync(path.join(pagesDir, 'Welcome.jsx'), welcomeContent);
-console.log('✅ Created Welcome.jsx');
+fs.writeFileSync(path.join(pagesDir, 'Homepage.jsx'), homepageContent);
+console.log('✅ Created Homepage.jsx');
 
 // Create Error.jsx
 const errorContent = `import React from 'react';

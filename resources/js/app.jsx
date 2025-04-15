@@ -19,7 +19,7 @@ const DashboardFallback = () => (
   </div>
 );
 
-const WelcomeFallback = () => (
+const HomepageFallback = () => (
   <div style={{ padding: '50px', textAlign: 'center' }}>
     <h1>Welcome to JetSet</h1>
     <p>Loading homepage content...</p>
@@ -36,48 +36,20 @@ const ErrorFallback = () => (
   </div>
 );
 
-const LoginFallback = () => (
-  <div style={{ padding: '50px', textAlign: 'center' }}>
-    <h1>Login</h1>
-    <p>Please log in to access your account</p>
-    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-      Back to Home
-    </a>
-  </div>
-);
-
-const RegisterFallback = () => (
-  <div style={{ padding: '50px', textAlign: 'center' }}>
-    <h1>Register</h1>
-    <p>Create a new account</p>
-    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-      Back to Home
-    </a>
-  </div>
-);
-
 // Dynamic imports with fallbacks
 const Dashboard = React.lazy(() => 
   import('./Pages/Dashboard')
     .catch(() => ({ default: DashboardFallback }))
 );
 
-const Welcome = React.lazy(() => 
-  import('./Pages/Welcome')
-    .catch(() => ({ default: WelcomeFallback }))
+const Homepage = React.lazy(() => 
+  import('./Pages/Homepage')
+    .catch(() => ({ default: HomepageFallback }))
 );
 
 const Error = React.lazy(() => 
   import('./Pages/Error')
     .catch(() => ({ default: ErrorFallback }))
-);
-
-const Login = React.lazy(() => 
-  Promise.resolve({ default: LoginFallback })
-);
-
-const Register = React.lazy(() => 
-  Promise.resolve({ default: RegisterFallback })
 );
 
 // Cruise fallback components
@@ -116,10 +88,8 @@ const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
       <Routes>
-        <Route path="/" element={<Welcome />} />
+        <Route path="/" element={<Homepage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/404" element={<Error />} />
