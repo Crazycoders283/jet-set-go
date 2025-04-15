@@ -2,18 +2,7 @@ services:
   - type: web
     name: jetset-app
     env: node
-    buildCommand: |
-      # Print debug info
-      echo "Current directory: $(pwd)"
-      ls -la resources/js
-      # Create Pages directory and copy files
-      mkdir -p resources/js/Pages resources/js/Pages/Auth
-      cp -r resources/js/pages/* resources/js/Pages/
-      # Replace import statements in app.jsx
-      sed -i 's/from ".\/pages\//from ".\/Pages\//g' resources/js/app.jsx
-      # Install dependencies and build
-      npm install
-      npm run build
+    buildCommand: npm run render-build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
