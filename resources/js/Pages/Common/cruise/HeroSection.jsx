@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './HeroSection.css';
-import { FaMapMarkerAlt, FaCalendarAlt, FaShip, FaAnchor, FaDollarSign, FaSearch, FaStar, FaArrowRight } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaCalendarAlt, FaShip, FaAnchor, FaDollarSign, FaSearch, FaStar, FaArrowRight, FaChevronRight } from 'react-icons/fa';
 
 const HeroSection = () => {
   const [activeField, setActiveField] = useState(null);
@@ -252,7 +252,7 @@ const HeroSection = () => {
                   <span>Find Cruises</span>
                 </div>
                 <div className="search-button-hover">
-                  <FaArrowRight className="arrow-icon" />
+                  <FaChevronRight className="arrow-icon" />
                 </div>
               </Link>
             </div>

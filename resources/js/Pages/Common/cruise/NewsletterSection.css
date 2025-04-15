@@ -3,8 +3,6 @@
   background-color: #f8f9fa;
   position: relative;
   overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .newsletter-section::before {
@@ -19,8 +17,6 @@
   background-position: center;
   opacity: 0.1;
   z-index: 0;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
 }
 
 .newsletter-container {
@@ -41,13 +37,6 @@
   background-position: center;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  transition: transform 0.3s ease;
-}
-
-.newsletter-image:hover {
-  transform: scale(1.02);
 }
 
 .newsletter-content {
@@ -56,11 +45,6 @@
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.newsletter-content:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .newsletter-text h2 {
@@ -93,8 +77,6 @@
   border-radius: 4px 0 0 4px;
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
-  -webkit-appearance: none; /* Fix for iOS input styling */
-  appearance: none;
 }
 
 .email-input:focus {
@@ -116,22 +98,20 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 140px;
-  -webkit-appearance: none; /* Fix for iOS button styling */
-  appearance: none;
 }
 
 .subscribe-button:hover {
   background-color: #051a47;
-  transform: translateY(-1px);
 }
 
-.subscribe-button:active {
-  transform: translateY(0);
+.subscribe-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .loading-spinner {
@@ -247,22 +227,6 @@
   
   .newsletter-text h2 {
     font-size: 1.25rem;
-  }
-}
-
-/* Safari-specific fixes */
-@supports (-webkit-touch-callout: none) {
-  .newsletter-section {
-    /* Fix for Safari iOS */
-    transform: translateZ(0);
-  }
-  
-  .email-input,
-  .subscribe-button {
-    /* Fix for Safari iOS input styling */
-    -webkit-appearance: none;
-    appearance: none;
-    border-radius: 4px;
   }
 }
 
