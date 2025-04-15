@@ -6,6 +6,7 @@
   justify-content: center;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+  padding-top: 71px; /* Match the navbar height to ensure content isn't hidden */
 }
 
 .hero-section.scrolled {

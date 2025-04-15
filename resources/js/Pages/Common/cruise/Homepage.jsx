@@ -9,6 +9,29 @@ import { Link } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 
+// CSS for page and section styling
+const styles = {
+  homePageWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+  },
+  main: {
+    flex: '1 0 auto',
+  },
+  section: {
+    marginTop: '3rem',
+    marginBottom: '3rem',
+    scrollMarginTop: '80px', // For smooth scrolling with fixed header
+  },
+  firstSection: {
+    marginTop: '0',
+  },
+  lastSection: {
+    marginBottom: '0',
+  }
+};
+
 const TrustIndicators = () => {
   return (
     <div className="py-12 bg-white">
@@ -473,24 +496,62 @@ const HomePage = () => {
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
+    
+    // Add smooth scrolling for better UX
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
   }, []);
 
   return (
-    <>
+    <div className="home-page-wrapper" style={styles.homePageWrapper}>
       <Navbar />
-      <div className="home-page">
-        <HeroSection />
-        <DestinationSection />
-        <TrustIndicators />
-        <CruiseLineSection />
-        <TestimonialBanner />
-        <PromoSection />
-        <PartnerSection />
-        <NewsletterSection />
-      </div>
       
-    </>
+      {/* Main content */}
+      <main style={styles.main}>
+        {/* Hero Section - immediately below navbar */}
+        <section id="hero" style={{...styles.section, ...styles.firstSection}}>
+          <HeroSection />
+        </section>
+        
+        {/* Primary Content Sections */}
+        <section id="destinations" style={styles.section}>
+          <DestinationSection />
+        </section>
+        
+        <section id="cruise-lines" style={styles.section}>
+          <CruiseLineSection />
+        </section>
+        
+        {/* Trust & Testimonials */}
+        <section id="trust-indicators" style={styles.section}>
+          <TrustIndicators />
+        </section>
+        
+        <section id="testimonials" style={styles.section}>
+          <TestimonialBanner />
+        </section>
+        
+        {/* Promotional and Partners */}
+        <section id="promo" style={styles.section}>
+          <PromoSection />
+        </section>
+        
+        <section id="partners" style={styles.section}>
+          <PartnerSection />
+        </section>
+        
+        {/* Newsletter - Final CTA */}
+        <section id="newsletter" style={{...styles.section, ...styles.lastSection}}>
+          <NewsletterSection />
+        </section>
+      </main>
+      
+      
+    </div>
   );
 };
 
-export default HomePage; 
+export default HomePage;
