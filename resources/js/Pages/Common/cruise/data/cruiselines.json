@@ -3,7 +3,7 @@
       {
         "id": 1,
         "name": "Royal Caribbean",
-        "image": "/images/royal-caribbean.jpg",
+        "image": "/build/images/royal-caribbean.jpg",
         "price": "From $699",
         "duration": "7 Nights",
         "description": "Caribbean & Bahamas Cruises",
@@ -12,7 +12,7 @@
       {
         "id": 2,
         "name": "Norwegian Cruise Line",
-        "image": "/images/norwegian.jpg",
+        "image": "/build/images/norwegian.jpg",
         "price": "From $599",
         "duration": "5 Nights",
         "description": "Mediterranean & European Cruises",
@@ -21,7 +21,7 @@
       {
         "id": 3,
         "name": "Celebrity Cruises",
-        "image": "/images/celebrity.jpg",
+        "image": "/build/images/celebrity.jpg",
         "price": "From $899",
         "duration": "10 Nights",
         "description": "Luxury Worldwide Cruises",
@@ -30,7 +30,7 @@
       {
         "id": 4,
         "name": "Disney Cruise Line",
-        "image": "/images/disney.jpg",
+        "image": "/build/images/disney.jpg",
         "price": "From $1,299",
         "duration": "4 Nights",
         "description": "Family-Friendly Magic at Sea",
@@ -39,7 +39,7 @@
       {
         "id": 5,
         "name": "Princess Cruises",
-        "image": "/images/princess.jpg",
+        "image": "/build/images/princess.jpg",
         "price": "From $799",
         "duration": "7 Nights",
         "description": "Worldwide Destination Cruises",
@@ -48,7 +48,7 @@
       {
         "id": 6,
         "name": "MSC Cruises",
-        "image": "/images/msc.jpg",
+        "image": "/build/images/msc.jpg",
         "price": "From $549",
         "duration": "7 Nights",
         "description": "European Style Cruising",

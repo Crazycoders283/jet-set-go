@@ -8,7 +8,7 @@ const CruiseLineSection = () => {
   return (
     <section className="cruise-line-section">
       <div className="cruise-line-header">
-        <img src="/images/cruise-icon.svg" alt="Cruise Icon" className="cruise-icon" />
+        <img src="/build/images/cruise-icon.svg" alt="Cruise Icon" className="cruise-icon" />
         <h2 className="section-title">EXPLORE BY CRUISE LINE</h2>
       </div>
       
