@@ -488,7 +488,7 @@ const HomePage = () => {
         <PartnerSection />
         <NewsletterSection />
       </div>
-      <Footer />
+      
     </>
   );
 };

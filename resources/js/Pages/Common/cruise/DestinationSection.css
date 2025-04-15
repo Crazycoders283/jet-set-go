@@ -221,6 +221,23 @@
     box-shadow: 0 8px 20px rgba(43, 79, 129, 0.4);
   }
   
+  /* Mobile Responsiveness */
+  @media (max-width: 1200px) {
+    .destinations-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .section-title {
+      font-size: 2.2rem;
+    }
+    
+    .section-subtitle {
+      font-size: 1rem;
+      max-width: 90%;
+    }
+  }
+
   @media (max-width: 1024px) {
     .destinations-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -230,17 +247,108 @@
   @media (max-width: 768px) {
     .destinations-grid {
       grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 0 10px;
+    }
+    
+    .destination-card {
+      max-width: 100%;
+      margin: 0 auto;
     }
     
     .section-title {
-      font-size: 2rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+      text-align: center;
     }
     
     .section-subtitle {
-      font-size: 1rem;
+      font-size: 0.95rem;
+      max-width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .destination-section {
+      padding: 3rem 1rem;
+    }
+    
+    .destination-content {
+      padding: 1.2rem;
+    }
+    
+    .destination-title {
+      font-size: 1.3rem;
+    }
+    
+    .destination-price {
+      font-size: 0.9rem;
     }
     
     .destination-image {
-      height: 200px;
+      height: 180px;
+    }
+    
+    .destination-rating {
+      margin-bottom: 0.8rem;
+    }
+    
+    .card-book-now {
+      width: 100%;
+      text-align: center;
+      padding: 0.6rem 0;
+      margin-top: 0.5rem;
+    }
+    
+    .explore-more {
+      width: 100%;
+      max-width: 280px;
+      margin: 2rem auto 0;
+      padding: 1rem 0;
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .destination-section {
+      padding: 2.5rem 0.8rem;
+    }
+    
+    .section-title {
+      font-size: 1.6rem;
+    }
+    
+    .section-subtitle {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .destination-card {
+      border-radius: 16px;
+    }
+    
+    .destination-card-inner {
+      border-radius: 14px;
+    }
+    
+    .destination-image {
+      height: 160px;
+    }
+    
+    .destination-title {
+      font-size: 1.2rem;
+    }
+    
+    .destination-price {
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .destination-rating i {
+      font-size: 0.8rem;
+    }
+    
+    .destination-rating span {
+      font-size: 0.8rem;
     }
   }

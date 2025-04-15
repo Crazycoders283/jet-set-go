@@ -6,11 +6,30 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const authStatus = localStorage.getItem('isAuthenticated');
     setIsAuthenticated(authStatus === 'true');
-  }, []);
+    
+    // Add scroll event listener
+    const handleScroll = () => {
+      // When scrolled below hero section (using 100px as threshold)
+      const scrolled = window.scrollY > 100;
+      if (scrolled !== isScrolled) {
+        setIsScrolled(scrolled);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Call once to set initial state
+    handleScroll();
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isScrolled]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -32,7 +51,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isScrolled ? 'scrolled' : 'transparent'}`}>
       <div className="navbar-left">
         <div className="logo">
           <svg 
@@ -131,7 +150,7 @@ const Navbar = () => {
           </div>
         ) : (
           <button className="login-button" onClick={handleLogin}>
-            Login
+            Login/Signup
           </button>
         )}
 

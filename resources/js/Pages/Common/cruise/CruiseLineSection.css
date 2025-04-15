@@ -226,6 +226,22 @@
     box-shadow: 0 8px 20px rgba(43, 79, 129, 0.4);
   }
   
+  @media (max-width: 1200px) {
+    .cruise-lines-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .section-title {
+      font-size: 2.2rem;
+    }
+    
+    .section-subtitle {
+      font-size: 1rem;
+      max-width: 90%;
+    }
+  }
+  
   @media (max-width: 1024px) {
     .cruise-lines-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -235,17 +251,108 @@
   @media (max-width: 768px) {
     .cruise-lines-grid {
       grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 0 10px;
+    }
+    
+    .cruise-line-card {
+      max-width: 100%;
+      margin: 0 auto;
     }
     
     .section-title {
-      font-size: 2rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+      text-align: center;
     }
     
     .section-subtitle {
-      font-size: 1rem;
+      font-size: 0.95rem;
+      max-width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .cruise-line-section {
+      padding: 3rem 1rem;
+    }
+    
+    .cruise-line-content {
+      padding: 1.2rem;
+    }
+    
+    .cruise-line-title {
+      font-size: 1.3rem;
+    }
+    
+    .cruise-line-subtitle {
+      font-size: 0.9rem;
     }
     
     .cruise-line-image {
-      height: 200px;
+      height: 180px;
+    }
+    
+    .cruise-line-details {
+      margin-top: 0.8rem;
+    }
+    
+    .cruise-line-detail {
+      font-size: 0.85rem;
+    }
+    
+    .card-book-now {
+      width: 100%;
+      text-align: center;
+      padding: 0.6rem 0;
+      margin-top: 1rem;
+    }
+    
+    .explore-more {
+      width: 100%;
+      max-width: 280px;
+      margin: 2rem auto 0;
+      padding: 1rem 0;
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cruise-line-section {
+      padding: 2.5rem 0.8rem;
+    }
+    
+    .section-title {
+      font-size: 1.6rem;
+    }
+    
+    .section-subtitle {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .cruise-line-card {
+      border-radius: 16px;
+    }
+    
+    .cruise-line-card-inner {
+      border-radius: 14px;
+    }
+    
+    .cruise-line-image {
+      height: 160px;
+    }
+    
+    .cruise-line-title {
+      font-size: 1.2rem;
+    }
+    
+    .cruise-line-subtitle {
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .cruise-line-detail {
+      padding: 0.3rem 0;
     }
   }
