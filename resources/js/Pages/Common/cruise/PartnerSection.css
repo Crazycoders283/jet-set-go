@@ -4,6 +4,8 @@
   border-top: 0;
   border-bottom: 1px solid #eaeaea;
   margin-top: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -22,38 +24,62 @@
 
 .partner-logos {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 30px;
 }
 
 .partner-logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  min-width: 160px;
+  min-height: 80px;
+}
+
+.partner-logo-container:hover {
+  background-color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  border-color: rgba(0, 102, 178, 0.2);
 }
 
 .partner-logo {
   max-height: 45px;
   max-width: 100%;
   object-fit: contain;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  filter: grayscale(20%);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
-.partner-logo:hover {
-  opacity: 0.8;
+.partner-logo-container:hover .partner-logo {
+  filter: grayscale(0%);
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
   .partner-logos {
     justify-content: center;
-    gap: 30px;
+    gap: 15px;
   }
   
   .partner-logo-container {
-    flex: 0 0 calc(33.333% - 30px);
+    min-width: 130px;
+    min-height: 65px;
+    padding: 10px;
+  }
+  
+  .partner-logo {
+    max-height: 40px;
   }
 }
 
@@ -63,6 +89,20 @@
   }
   
   .partner-logo-container {
-    flex: 0 0 calc(50% - 30px);
+    min-width: 120px;
+    min-height: 60px;
+  }
+  
+  .partner-logo {
+    max-height: 35px;
+  }
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .partner-logo {
+    /* Fix for Safari image rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 }
