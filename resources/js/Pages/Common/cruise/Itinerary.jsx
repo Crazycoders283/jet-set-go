@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { FaShip } from 'react-icons/fa';
+import { FaShip, FaPhone, FaTimes, FaUser, FaEnvelope, FaCalendarAlt, FaCommentAlt, FaCheckCircle } from 'react-icons/fa';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 
@@ -404,9 +404,49 @@ const Itinerary = () => {
   const [searchParams] = useSearchParams();
   const cruiseId = searchParams.get('cruise');
   const cruiseLine = searchParams.get('cruiseLine');
+  const [showCallbackPopup, setShowCallbackPopup] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    preferredDate: '',
+    message: ''
+  });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [activeField, setActiveField] = useState(null);
   
-  // You could fetch detailed cruise data here based on the cruiseId
-  // For now we'll use static data
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // In a real app, you would send this data to your backend
+    console.log("Form submitted:", formData);
+    setFormSubmitted(true);
+    
+    // Reset form after 3 seconds and close popup
+    setTimeout(() => {
+      setFormSubmitted(false);
+      setShowCallbackPopup(false);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        preferredDate: '',
+        message: ''
+      });
+    }, 3000);
+  };
+  
+  const handleFocus = (field) => {
+    setActiveField(field);
+  };
+  
+  const handleBlur = () => {
+    setActiveField(null);
+  };
   
   return (
     <>
@@ -487,7 +527,13 @@ const Itinerary = () => {
             <div style={{ fontSize: '0.813rem', color: '#718096', marginBottom: '1rem' }}>
               Excl. Tax Per Person in Double Occupancy
             </div>
-            <button className="select-room-btn">Select Room</button>
+            <button 
+              className="select-room-btn"
+              onClick={() => setShowCallbackPopup(true)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            >
+              <FaPhone size={16} /> Request Call Back
+            </button>
           </div>
         </div>
 
@@ -580,6 +626,197 @@ const Itinerary = () => {
           </div>
         </div>
       </div>
+      
+      {/* Callback Request Popup */}
+      {showCallbackPopup && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowCallbackPopup(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-0 relative overflow-hidden animate-fadeIn"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+            style={{
+              animation: 'fadeIn 0.3s ease-out',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.2)',
+            }}
+          >
+            <div className="bg-gradient-to-r from-[#0066b2] to-[#1e88e5] pt-8 pb-12 px-6 text-white relative">
+              <button 
+                className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors"
+                onClick={() => setShowCallbackPopup(false)}
+                aria-label="Close popup"
+              >
+                <FaTimes size={20} />
+              </button>
+              
+              <div className="flex items-center mb-2">
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-4">
+                  <FaPhone className="text-[#0066b2]" size={18} />
+                </div>
+                <h2 className="text-2xl font-bold">Request a Call Back</h2>
+              </div>
+              
+              <p className="opacity-90 text-sm">
+                Our cruise expert will contact you to discuss {cruiseLine || 'Royal Caribbean'} options
+              </p>
+              
+              <div className="absolute -bottom-6 left-0 right-0 h-12 bg-white rounded-t-[50%]"></div>
+            </div>
+            
+            <div className="px-6 pb-6 pt-4">
+              {formSubmitted ? (
+                <div className="text-center py-10 px-4 animate-fadeIn" style={{ animation: 'fadeIn 0.5s ease-out' }}>
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <FaCheckCircle className="text-green-500" size={40} />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-3">Thank You!</h2>
+                  <p className="text-gray-600 mb-6">
+                    Your call back request has been received. Our travel expert will contact you shortly.
+                  </p>
+                  <div className="w-16 h-1 bg-green-500 mx-auto"></div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5 pt-3">
+                  <div className={`transition-all duration-200 ${activeField === 'name' ? 'transform -translate-y-1' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="name">
+                      Full Name*
+                    </label>
+                    <div className={`relative rounded-lg transition-all duration-300 ${activeField === 'name' ? 'ring-2 ring-[#0066b2]' : 'ring-1 ring-gray-200'}`}>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <FaUser className={`transition-colors ${activeField === 'name' ? 'text-[#0066b2]' : 'text-gray-400'}`} />
+                      </div>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        onFocus={() => handleFocus('name')}
+                        onBlur={handleBlur}
+                        required
+                        className="w-full bg-gray-50 pl-12 pr-4 py-3 border-none rounded-lg focus:outline-none"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={`transition-all duration-200 ${activeField === 'email' ? 'transform -translate-y-1' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
+                      Email Address*
+                    </label>
+                    <div className={`relative rounded-lg transition-all duration-300 ${activeField === 'email' ? 'ring-2 ring-[#0066b2]' : 'ring-1 ring-gray-200'}`}>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <FaEnvelope className={`transition-colors ${activeField === 'email' ? 'text-[#0066b2]' : 'text-gray-400'}`} />
+                      </div>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        onFocus={() => handleFocus('email')}
+                        onBlur={handleBlur}
+                        required
+                        className="w-full bg-gray-50 pl-12 pr-4 py-3 border-none rounded-lg focus:outline-none"
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={`transition-all duration-200 ${activeField === 'phone' ? 'transform -translate-y-1' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="phone">
+                      Phone Number*
+                    </label>
+                    <div className={`relative rounded-lg transition-all duration-300 ${activeField === 'phone' ? 'ring-2 ring-[#0066b2]' : 'ring-1 ring-gray-200'}`}>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <FaPhone className={`transition-colors ${activeField === 'phone' ? 'text-[#0066b2]' : 'text-gray-400'}`} />
+                      </div>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        onFocus={() => handleFocus('phone')}
+                        onBlur={handleBlur}
+                        required
+                        className="w-full bg-gray-50 pl-12 pr-4 py-3 border-none rounded-lg focus:outline-none"
+                        placeholder="+1 (123) 456-7890"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={`transition-all duration-200 ${activeField === 'preferredDate' ? 'transform -translate-y-1' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="preferredDate">
+                      Preferred Call Time
+                    </label>
+                    <div className={`relative rounded-lg transition-all duration-300 ${activeField === 'preferredDate' ? 'ring-2 ring-[#0066b2]' : 'ring-1 ring-gray-200'}`}>
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <FaCalendarAlt className={`transition-colors ${activeField === 'preferredDate' ? 'text-[#0066b2]' : 'text-gray-400'}`} />
+                      </div>
+                      <input
+                        type="text"
+                        id="preferredDate"
+                        name="preferredDate"
+                        value={formData.preferredDate}
+                        onChange={handleInputChange}
+                        onFocus={() => handleFocus('preferredDate')}
+                        onBlur={handleBlur}
+                        className="w-full bg-gray-50 pl-12 pr-4 py-3 border-none rounded-lg focus:outline-none"
+                        placeholder="E.g. Weekdays after 2 PM"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className={`transition-all duration-200 ${activeField === 'message' ? 'transform -translate-y-1' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="message">
+                      Additional Information
+                    </label>
+                    <div className={`relative rounded-lg transition-all duration-300 ${activeField === 'message' ? 'ring-2 ring-[#0066b2]' : 'ring-1 ring-gray-200'}`}>
+                      <div className="absolute top-3 left-0 pl-4 flex items-start pointer-events-none">
+                        <FaCommentAlt className={`transition-colors ${activeField === 'message' ? 'text-[#0066b2]' : 'text-gray-400'}`} />
+                      </div>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        onFocus={() => handleFocus('message')}
+                        onBlur={handleBlur}
+                        rows="3"
+                        className="w-full bg-gray-50 pl-12 pr-4 py-3 border-none rounded-lg focus:outline-none resize-none"
+                        placeholder="Any specific questions or requirements?"
+                      ></textarea>
+                    </div>
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-[#0066b2] to-[#1e88e5] text-white font-bold py-4 px-4 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 mt-6"
+                  >
+                    <FaPhone size={16} /> Request Call Back
+                  </button>
+                  
+                  <p className="text-xs text-center text-gray-500 mt-4">
+                    By submitting this form, you agree to our <a href="#" className="text-[#0066b2]">Terms & Conditions</a> and <a href="#" className="text-[#0066b2]">Privacy Policy</a>
+                  </p>
+                </form>
+              )}
+            </div>
+          </div>
+          
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.3s ease-out forwards;
+            }
+          `}</style>
+        </div>
+      )}
       
       <Footer />
     </>
