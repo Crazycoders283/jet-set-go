@@ -1,33 +1,36 @@
 {
     "version": 2,
-    "buildCommand": "npm run vercel-build",
-    "outputDirectory": "public",
-    "framework": null,
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.6.0"
+    "builds": [
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "public/build"
+            }
         }
-    },
+    ],
     "routes": [
-        { "src": "/build/(.*)", "dest": "/build/$1" },
-        { "src": "/favicon/(.*)", "dest": "/favicon/$1" },
-        { "src": "/assets/(.*)", "dest": "/assets/$1" },
-        { "src": "/images/(.*)", "dest": "/images/$1" },
-        { "src": "/js/(.*)", "dest": "/js/$1" },
-        { "src": "/css/(.*)", "dest": "/css/$1" },
-        { "src": "/(.*)", "dest": "/api/index.php" }
+        {
+            "src": "/api/(.*)",
+            "dest": "server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/public/build/$1"
+        }
     ],
     "env": {
-        "APP_ENV": "production",
-        "APP_DEBUG": "false",
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "APP_SERVICES_CACHE": "/tmp/services.php",
-        "VIEW_COMPILED_PATH": "/tmp",
-        "CACHE_DRIVER": "array",
-        "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie"
+        "NODE_ENV": "production",
+        "JWT_EXPIRE": "30d"
+    },
+    "build": {
+        "env": {
+            "VITE_APP_NAME": "JetSet App",
+            "VITE_API_URL": "/api"
+        }
     }
 }

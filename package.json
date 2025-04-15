@@ -8,7 +8,7 @@
         "dev": "concurrently \"npm run server\" \"npm run client\"",
         "fix-imports": "node fix-import-paths.js",
         "build": "node fix-import-paths.js && vite build",
-        "vercel-build": "npm run build",
+        "vercel-build": "node fix-import-paths.js && vite build",
         "render-build": "npm install && npm run build"
     },
     "devDependencies": {

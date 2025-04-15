@@ -18,8 +18,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Initialize database
-const initializeDatabase = async () => {
+// Database connection helper
+const connectDatabase = async () => {
   try {
     // Test database connection
     await sequelize.authenticate();
@@ -28,17 +28,21 @@ const initializeDatabase = async () => {
     // Sync database models - using force:false to prevent dropping tables
     await sequelize.sync({ alter: false });
     console.log('Database models synchronized');
+    return true;
   } catch (err) {
     console.error('Database initialization error:', err);
-    process.exit(1); // Exit with error if database connection fails
+    return false;
   }
 };
+
+// Initialize database connection on startup
+connectDatabase();
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
-// Health check endpoint for Render
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
@@ -48,10 +52,18 @@ if (process.env.NODE_ENV === 'production') {
   // Set static folder
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  app.use(express.static(path.join(__dirname, 'public')));
+  
+  const buildPath = path.join(__dirname, 'public', 'build');
+  app.use(express.static(buildPath));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+  // Handle SPA routing - send all non-API routes to index.html
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    
+    res.sendFile(path.join(buildPath, 'index.html'));
   });
 }
 
@@ -65,9 +77,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Initialize database before starting the server
-initializeDatabase().then(() => {
+// For local development
+if (process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === undefined) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-});
+}
+
+// For Vercel serverless deployment
+export default app;

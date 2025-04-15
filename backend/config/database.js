@@ -10,13 +10,23 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Set the database path relative to project root
-const dbPath = path.resolve(__dirname, '../../database/database.sqlite');
+// Determine database path based on environment
+let dbPath;
+
+// For Vercel deployment, use in-memory SQLite
+if (process.env.VERCEL_ENV) {
+  dbPath = ':memory:';
+  console.log('Using in-memory SQLite database for Vercel deployment');
+} else {
+  // For local development or other hosting, use file-based SQLite
+  dbPath = process.env.DB_DATABASE || path.resolve(__dirname, '../../database/database.sqlite');
+  console.log(`Using file-based SQLite database at: ${dbPath}`);
+}
 
 // Create Sequelize instance with SQLite
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: process.env.DB_DATABASE || dbPath,
+  storage: dbPath,
   logging: process.env.NODE_ENV !== 'production' ? console.log : false
 });
 
