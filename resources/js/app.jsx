@@ -6,14 +6,47 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
-// Import your pages
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const Welcome = React.lazy(() => import('./pages/Welcome'));
-const Error = React.lazy(() => import('./pages/Error'));
+// Import your pages using dynamic imports that will work regardless of case
+const Dashboard = React.lazy(() => {
+  try {
+    return import('./Pages/Dashboard').catch(() => import('./pages/Dashboard'));
+  } catch (e) {
+    return import('./pages/Dashboard');
+  }
+});
 
-// Auth pages - adjust imports based on your actual file structure
-const Login = React.lazy(() => import('./pages/Auth/Login'));
-const Register = React.lazy(() => import('./pages/Auth/Register'));
+const Welcome = React.lazy(() => {
+  try {
+    return import('./Pages/Welcome').catch(() => import('./pages/Welcome'));
+  } catch (e) {
+    return import('./pages/Welcome');
+  }
+});
+
+const Error = React.lazy(() => {
+  try {
+    return import('./Pages/Error').catch(() => import('./pages/Error'));
+  } catch (e) {
+    return import('./pages/Error');
+  }
+});
+
+// Auth pages with dynamic imports
+const Login = React.lazy(() => {
+  try {
+    return import('./Pages/Auth/Login').catch(() => import('./pages/Auth/Login'));
+  } catch (e) {
+    return import('./pages/Auth/Login');
+  }
+});
+
+const Register = React.lazy(() => {
+  try {
+    return import('./Pages/Auth/Register').catch(() => import('./pages/Auth/Register'));
+  } catch (e) {
+    return import('./pages/Auth/Register');
+  }
+});
 
 const App = () => {
   return (
