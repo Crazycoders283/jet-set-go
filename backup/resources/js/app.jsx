@@ -7,13 +7,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
 // Import your pages
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const Welcome = React.lazy(() => import('./pages/Welcome'));
-const Error = React.lazy(() => import('./pages/Error'));
+const Dashboard = React.lazy(() => import('./Pages/Dashboard'));
+const Welcome = React.lazy(() => import('./Pages/Welcome'));
+const Error = React.lazy(() => import('./Pages/Error'));
 
 // Auth pages - adjust imports based on your actual file structure
-const Login = React.lazy(() => import('./pages/Auth/Login'));
-const Register = React.lazy(() => import('./pages/Auth/Register'));
+const Login = React.lazy(() => import('./Pages/Auth/Login'));
+const Register = React.lazy(() => import('./Pages/Auth/Register'));
 
 const App = () => {
   return (

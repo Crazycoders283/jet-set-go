@@ -177,3 +177,60 @@ If you're experiencing mixed content errors (HTTP resources loaded over HTTPS):
 ## Production Deployment
 
 For production deployment, the build process should be used instead of the development server. Modify the Dockerfile to use `npm run build` instead of `npm run dev` for production deployments.
+
+# JetSet App
+
+A modern full-stack application built with React, Node.js, and SQLite.
+
+## Features
+
+- User authentication with JWT
+- User profile management
+- RESTful API with Express
+- SQLite database with Sequelize ORM
+- React frontend with Vite
+
+## Project Structure
+
+```
+├── backend/             # Backend Node.js code
+│   ├── config/          # Database configuration
+│   ├── controllers/     # API controllers
+│   ├── middleware/      # Authentication middleware
+│   ├── models/          # Sequelize models
+│   └── routes/          # API routes
+├── database/            # SQLite database files
+├── public/              # Static assets
+├── resources/           # Frontend React code
+│   ├── css/             # Stylesheets
+│   └── js/              # React components
+└── server.js            # Express server entry point
+```
+
+## Setup
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file based on `.env.example`
+4. Start development server: `npm run dev`
+
+## Scripts
+
+- `npm run dev`: Starts both the backend and frontend in development mode
+- `npm run server`: Runs just the Node.js backend
+- `npm run client`: Runs just the React frontend
+- `npm run build`: Builds the frontend for production
+- `npm start`: Starts the production server
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register`: Register a new user
+- `POST /api/auth/login`: Login a user
+- `GET /api/auth/me`: Get current user profile
+
+### Users
+- `GET /api/users`: Get all users (admin only)
+- `GET /api/users/:id`: Get user by ID
+- `PUT /api/users/:id`: Update user
+- `DELETE /api/users/:id`: Delete user

@@ -1,14 +1,14 @@
 services:
   - type: web
-    name: new-app
-    env: php
+    name: jetset
+    env: node
     region: singapore
     plan: free
-    runtime: php
-    buildCommand: "./build.sh"
-    startCommand: "./start.sh && vendor/bin/heroku-php-apache2 -p ${PORT:-8000} public/"
+    runtime: node
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
     autoDeploy: true
-    healthCheckPath: /
+    healthCheckPath: /api/health
     envVars:
       - key: APP_ENV
         value: production

@@ -1,13 +1,16 @@
-import { defineConfig, loadEnv } from 'vite';
-import laravel from 'laravel-vite-plugin';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Polyfill for __dirname in ES module scope
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => {
-    // Load env file based on mode
-    const env = loadEnv(mode, process.cwd(), '');
-    const isSecure = env.VITE_SECURE === 'true';
+    // Default to secure=false if VITE_SECURE is not set
+    const isSecure = process.env.VITE_SECURE === 'true';
     
     let httpsConfig = {};
     
@@ -27,13 +30,13 @@ export default defineConfig(({ mode }) => {
     
     return {
         plugins: [
-            laravel({
-                input: 'resources/js/app.jsx',
-                refresh: true,
-                buildDirectory: 'build'
-            }),
             react(),
         ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, './resources/js')
+            }
+        },
         build: {
             outDir: 'public/build',
             emptyOutDir: true,
