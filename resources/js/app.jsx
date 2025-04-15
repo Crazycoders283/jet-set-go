@@ -10,6 +10,8 @@ import { AuthProvider } from './contexts/AuthContext';
 const Dashboard = React.lazy(() => import('./Pages/Dashboard'));
 const Welcome = React.lazy(() => import('./Pages/Welcome'));
 const Error = React.lazy(() => import('./Pages/Error'));
+const Login = React.lazy(() => import('./Pages/Login'));
+const Register = React.lazy(() => import('./Pages/Register'));
 
 // Auth pages - using a fallback component if imports fail
 const LoginFallback = () => (
@@ -33,29 +35,47 @@ const RegisterFallback = () => (
 );
 
 // Use dynamic imports with error handling
-const Login = React.lazy(() => 
-  import('./Pages/Auth/CustomLogin')
+const LoginComponent = React.lazy(() => 
+  import('./Pages/Login')
     .catch(() => ({ default: LoginFallback }))
 );
 
-const Register = React.lazy(() => 
-  import('./Pages/Auth/CustomRegister')
+const RegisterComponent = React.lazy(() => 
+  import('./Pages/Register')
     .catch(() => ({ default: RegisterFallback }))
 );
 
-// Import cruise-related pages
-const CruiseCards = React.lazy(() => import('./Pages/Common/cruise/pages/cruise-cards'));
-const Itinerary = React.lazy(() => import('./Pages/Common/cruise/pages/Itinerary'));
-// We'll create a placeholder for the itinerary until it's implemented
-// const ItineraryPlaceholder = () => (
-//   <div style={{ padding: '50px', textAlign: 'center' }}>
-//     <h1>Cruise Itinerary</h1>
-//     <p>This page is under construction. Check back soon for detailed cruise itineraries!</p>
-//     <button onClick={() => window.history.back()} style={{ padding: '10px 20px', marginTop: '20px' }}>
-//       Back to Cruises
-//     </button>
-//   </div>
-// );
+// Cruise fallback components
+const CruiseCardsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Cruise Options</h1>
+    <p>Available cruise options will appear here.</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const ItineraryFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Cruise Itinerary</h1>
+    <p>Detailed itinerary will appear here.</p>
+    <a href="/cruises" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Cruises
+    </a>
+  </div>
+);
+
+// Import cruise-related pages with error handling
+const CruiseCards = React.lazy(() => 
+  import('./Pages/Common/cruise/pages/cruise-cards')
+    .catch(() => ({ default: CruiseCardsFallback }))
+);
+
+const Itinerary = React.lazy(() => 
+  import('./Pages/Common/cruise/pages/Itinerary')
+    .catch(() => ({ default: ItineraryFallback }))
+);
 
 const App = () => {
   return (
@@ -63,8 +83,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginComponent />} />
+        <Route path="/register" element={<RegisterComponent />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/404" element={<Error />} />
