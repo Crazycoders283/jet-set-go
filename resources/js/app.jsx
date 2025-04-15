@@ -37,17 +37,17 @@ const ErrorFallback = () => (
 
 // Dynamic imports with fallbacks
 const Dashboard = React.lazy(() => 
-  import('./pages/Dashboard')
+  import('./Pages/Dashboard')
     .catch(() => ({ default: DashboardFallback }))
 );
 
 const Welcome = React.lazy(() => 
-  import('./pages/Welcome')
+  import('./Pages/Welcome')
     .catch(() => ({ default: WelcomeFallback }))
 );
 
 const Error = React.lazy(() => 
-  import('./pages/Error')
+  import('./Pages/Error')
     .catch(() => ({ default: ErrorFallback }))
 );
 
@@ -74,12 +74,12 @@ const ItineraryFallback = () => (
 
 // Import cruise-related pages with error handling
 const CruiseCards = React.lazy(() => 
-  import('./pages/Common/cruise/pages/cruise-cards')
+  import('./Pages/Common/cruise/cruise-cards.tsx')
     .catch(() => ({ default: CruiseCardsFallback }))
 );
 
 const Itinerary = React.lazy(() => 
-  import('./pages/Common/cruise/pages/Itinerary')
+  import('./Pages/Common/cruise/Itinerary')
     .catch(() => ({ default: ItineraryFallback }))
 );
 

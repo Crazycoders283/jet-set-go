@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -9,19 +9,11 @@ const Navbar = () => {
   useEffect(() => {
     const authStatus = localStorage.getItem('isAuthenticated');
     setIsAuthenticated(authStatus === 'true');
-    
-    // Add event listener to update auth status if changed elsewhere
-    const handleStorageChange = () => {
-      const authStatus = localStorage.getItem('isAuthenticated');
-      setIsAuthenticated(authStatus === 'true');
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, []);
+
+  const handleLogin = () => {
+    window.location.href = '/login';
+  };
 
   const handleProfile = () => {
     window.location.href = '/profile';
@@ -31,12 +23,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     setIsAuthenticated(false);
-    window.location.href = '/';
-  };
-
-  const handleDashboard = () => {
-    window.location.href = '/dashboard';
-    setIsDropdownOpen(false);
+    window.location.href = '/login';
   };
 
   return (
@@ -60,21 +47,21 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <NavLink to="/" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+        <Link to="/" className="nav-link">
           Cruise
-        </NavLink>
-        <NavLink to="/flight" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+        </Link>
+        <Link to="/flight" className="nav-link">
           Flight
-        </NavLink>
-        <NavLink to="/packages" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+        </Link>
+        <Link to="/packages" className="nav-link">
           Packages
-        </NavLink>
-        <NavLink to="/rental" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+        </Link>
+        <Link to="/rental" className="nav-link">
           Rental
-        </NavLink>
-        <NavLink to="/my-trips" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+        </Link>
+        <Link to="/my-trips" className="nav-link">
           My Trips
-        </NavLink>
+        </Link>
       </div>
       <div className="navbar-right">
         {isAuthenticated ? (
@@ -100,23 +87,6 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="profile-dropdown">
-                <button onClick={handleDashboard}>
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                  </svg>
-                  Dashboard
-                </button>
                 <button onClick={handleProfile}>
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -152,11 +122,9 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <div className="auth-buttons">
-            <Link to="/dashboard" className="button primary-button">
-              Dashboard
-            </Link>
-          </div>
+          <button className="login-button" onClick={handleLogin}>
+            Login
+          </button>
         )}
       </div>
     </nav>

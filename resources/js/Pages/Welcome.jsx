@@ -1,9 +1,14 @@
-import { Head, Link } from '@inertiajs/react';
-// Removed direct import of Mani to avoid duplicate import issues
+import React from 'react';
+// Removed Inertia.js imports
 import Navbar from './Common/Navbar';
 import Footer from './Common/Footer';
 import Homepage from './Common/cruise/Homepage';
-export default function Welcome({ auth, laravelVersion, phpVersion,IternaryList }) {
+
+export default function Welcome() {
+    React.useEffect(() => {
+        document.title = 'Welcome - JetSetters';
+    }, []);
+
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -16,15 +21,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion,IternaryList 
     };
 
     return (
-        
         <>
-        <Navbar/>
-        <Homepage/>
+            <Navbar/>
+            <Homepage/>
 {/*         
-        <h1>Hello I'm Manindar Reddy Lakkireddy </h1>
-        <p>I have  3 years of exp</p> */}
-        
-        <Footer/>
+            <h1>Hello I'm Manindar Reddy Lakkireddy </h1>
+            <p>I have  3 years of exp</p> */}
+            
+            <Footer/>
         </>
     );
 }

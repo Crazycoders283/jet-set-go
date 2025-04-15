@@ -3,12 +3,12 @@ import './PartnerSection.css';
 
 const PartnerSection = () => {
   const partners = [
-    { id: 1, name: 'Royal Caribbean', logo: '/build/images/partners/royal-caribbean.png' },
-    { id: 2, name: 'Norwegian Cruise Line', logo: '/build/images/partners/norwegian.png' },
-    { id: 3, name: 'Carnival Cruise Line', logo: '/build/images/partners/carnival.png' },
-    { id: 4, name: 'MSC Cruises', logo: '/build/images/partners/msc.png' },
-    { id: 5, name: 'Princess Cruises', logo: '/build/images/partners/princess.png' },
-    { id: 6, name: 'Celebrity Cruises', logo: '/build/images/partners/celebrity.png' }
+    { id: 1, name: 'Royal Caribbean', logo: '/images/partners/royal-caribbean.png' },
+    { id: 2, name: 'Norwegian Cruise Line', logo: '/images/partners/norwegian.png' },
+    { id: 3, name: 'Carnival Cruise Line', logo: '/images/partners/carnival.png' },
+    { id: 4, name: 'MSC Cruises', logo: '/images/partners/msc.png' },
+    { id: 5, name: 'Princess Cruises', logo: '/images/partners/princess.png' },
+    { id: 6, name: 'Celebrity Cruises', logo: '/images/partners/celebrity.png' }
   ];
 
   return (

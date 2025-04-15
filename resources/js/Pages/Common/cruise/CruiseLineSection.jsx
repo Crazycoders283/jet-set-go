@@ -8,7 +8,7 @@ const CruiseLineSection = () => {
   return (
     <section className="cruise-line-section">
       <div className="cruise-line-header">
-        <img src="/build/images/cruise-icon.svg" alt="Cruise Icon" className="cruise-icon" />
+        <img src="/images/cruise-icon.svg" alt="Cruise Icon" className="cruise-icon" />
         <h2 className="section-title">EXPLORE BY CRUISE LINE</h2>
       </div>
       
@@ -26,7 +26,7 @@ const CruiseLineSection = () => {
               <h4>{cruiseLine.name}</h4>
               <p className="price">Starts from {cruiseLine.price}/p.p</p>
               <Link 
-                to={`/cruises?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
+                to={`/cruise-cards?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
                 className="book-now"
               >
                 BOOK NOW
@@ -37,7 +37,7 @@ const CruiseLineSection = () => {
       </div>
       
       <Link 
-        to="/cruises"
+        to="/cruise-cards"
         className="explore-more"
       >
         Explore more

@@ -75,7 +75,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <Link to="/cruises" className="search-button">
+          <Link to="/booking" className="search-button">
             <i className="fas fa-search"></i>
             Book Now
           </Link>
@@ -91,9 +91,9 @@ const HeroSection = () => {
         </div>
 
         <div className="hero-book-now-wrapper">
-          <Link to="/cruises" className="hero-book-now">
+          <button className="hero-book-now">
             BOOK NOW
-          </Link>
+          </button>
           <div className="hero-book-now-shadow"></div>
         </div>
       </div>

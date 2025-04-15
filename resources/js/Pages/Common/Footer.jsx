@@ -8,11 +8,11 @@ const Footer = () => {
         <div className="footer-section">
           <div className="footer-logo">JET SETTERS</div>
           <div className="social-links">
-            <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
-            <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-            <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin"></i></a>
-            <a href="#" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
+            <a to="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
+            <a to="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+            <a to="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+            <a to="#" aria-label="LinkedIn"><i className="fab fa-linkedin"></i></a>
+            <a to="#" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
           </div>
         </div>
 
@@ -20,27 +20,27 @@ const Footer = () => {
           <div className="footer-column">
             <h3>Service</h3>
             <ul>
-              <li><a href="#">Terms & Conditions</a></li>
-              <li><a href="#">Coronavirus (COVID-19)</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Flight</a></li>
+              <li><a to="#">Terms & Conditions</a></li>
+              <li><a to="#">Coronavirus (COVID-19)</a></li>
+              <li><a to="#">About</a></li>
+              <li><a to="#">Flight</a></li>
             </ul>
           </div>
 
           <div className="footer-column">
             <h3>Our Work</h3>
             <ul>
-              <li><a href="#">Packages</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Contact us</a></li>
+              <li><a to="#">Packages</a></li>
+              <li><a to="#">About</a></li>
+              <li><a to="#">Contact us</a></li>
             </ul>
           </div>
 
           <div className="footer-column">
             <h3>Packages</h3>
             <ul>
-              <li><a href="#">Europe</a></li>
-              <li><a href="#">America</a></li>
+              <li><a to="#">Europe</a></li>
+              <li><a to="#">America</a></li>
             </ul>
           </div>
 
