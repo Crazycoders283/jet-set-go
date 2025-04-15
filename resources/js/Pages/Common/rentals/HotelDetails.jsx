@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
   Star, MapPin, Check, ChevronLeft, Heart, Share, Calendar, 
   Users, X, ChevronRight, ChevronDown, ThumbsUp, MessageCircle, 
-  Award, Camera, Coffee, ArrowRight, Bookmark, Phone, Mail, Facebook, Twitter, Instagram
+  Award, Camera, Coffee, ArrowRight, Bookmark, Phone, Mail, Facebook, Twitter, Instagram,
+  Clock, Wifi, Tv, Shield, Utensils, Car, Sunset, Sparkles, Info
 } from "lucide-react";
 import { hotels, hotelDetails } from "./hotel";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
+import "./styles.css";
 
 export default function HotelDetails() {
   const navigate = useNavigate();
@@ -28,6 +30,19 @@ export default function HotelDetails() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showGuestDropdown, setShowGuestDropdown] = useState(false);
   const [showBookingConfirmation, setShowBookingConfirmation] = useState(false);
+  const [showCallbackRequest, setShowCallbackRequest] = useState(false);
+  const [callbackForm, setCallbackForm] = useState({
+    name: "",
+    phone: "",
+    preferredTime: "morning",
+    message: ""
+  });
+  const [callbackSubmitted, setCallbackSubmitted] = useState(false);
+  const [showVirtualTour, setShowVirtualTour] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [showAmenityDetails, setShowAmenityDetails] = useState(null);
+  const [isPromoActive, setIsPromoActive] = useState(false);
 
   // Mock room types
   const roomTypes = [
@@ -73,6 +88,75 @@ export default function HotelDetails() {
       setIsLoading(false);
     }, 500);
   }, [hotelId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+      
+      // Determine which section is currently in view
+      const scrollPos = window.scrollY + 100;
+      
+      if (overviewRef.current && scrollPos >= overviewRef.current.offsetTop && 
+          scrollPos < (roomsRef.current?.offsetTop || Infinity)) {
+        setActiveTab('overview');
+      } else if (roomsRef.current && scrollPos >= roomsRef.current.offsetTop && 
+                scrollPos < (amenitiesRef.current?.offsetTop || Infinity)) {
+        setActiveTab('rooms');
+      } else if (amenitiesRef.current && scrollPos >= amenitiesRef.current.offsetTop && 
+                scrollPos < (locationRef.current?.offsetTop || Infinity)) {
+        setActiveTab('amenities');
+      } else if (locationRef.current && scrollPos >= locationRef.current.offsetTop && 
+                scrollPos < (reviewsRef.current?.offsetTop || Infinity)) {
+        setActiveTab('location');
+      } else if (reviewsRef.current && scrollPos >= reviewsRef.current.offsetTop) {
+        setActiveTab('reviews');
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // 50% chance to show a special promo
+    setIsPromoActive(Math.random() > 0.5);
+    
+    // Add animation classes to elements when they come into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fadeIn');
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      observer.observe(el);
+    });
+    
+    return () => {
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.unobserve(el);
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showGuestDropdown && !event.target.closest('.guest-dropdown')) {
+        setShowGuestDropdown(false);
+      }
+      if (showDatePicker && !event.target.closest('.date-picker')) {
+        setShowDatePicker(false);
+      }
+      if (showAmenityDetails && !event.target.closest('.amenity-details')) {
+        setShowAmenityDetails(null);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showGuestDropdown, showDatePicker, showAmenityDetails]);
 
   const handleBack = () => {
     navigate("/rental");
@@ -128,8 +212,88 @@ export default function HotelDetails() {
   };
 
   const handleReserveNow = () => {
-    setShowBookingConfirmation(true);
+    setShowCallbackRequest(true);
   };
+
+  const handleCallbackFormChange = (e) => {
+    const { name, value } = e.target;
+    setCallbackForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCallbackSubmit = (e) => {
+    e.preventDefault();
+    // Here you would normally send the callback request to your backend
+    console.log("Callback request submitted:", callbackForm);
+    setCallbackSubmitted(true);
+    
+    // After 3 seconds, show the booking confirmation
+    setTimeout(() => {
+      setCallbackSubmitted(false);
+      setShowCallbackRequest(false);
+      setShowBookingConfirmation(true);
+    }, 3000);
+  };
+
+  const toggleVirtualTour = () => {
+    setShowVirtualTour(!showVirtualTour);
+  };
+
+  const handleAmenityClick = (index) => {
+    setShowAmenityDetails(showAmenityDetails === index ? null : index);
+  };
+
+  const scrollToSection = (sectionRef) => {
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Enhanced amenities with icons and descriptions
+  const enhancedAmenities = [
+    { 
+      icon: <Wifi className="h-5 w-5" />, 
+      name: "High-Speed WiFi", 
+      description: "Complimentary high-speed internet access throughout the property with speeds up to 100 Mbps."
+    },
+    { 
+      icon: <Coffee className="h-5 w-5" />, 
+      name: "Gourmet Breakfast", 
+      description: "Daily complimentary breakfast buffet featuring local and international cuisine from 7:00 AM to 10:30 AM."
+    },
+    { 
+      icon: <Tv className="h-5 w-5" />, 
+      name: "Smart Entertainment", 
+      description: "55-inch smart TV with premium streaming services including Netflix, Amazon Prime, and local channels."
+    },
+    { 
+      icon: <Shield className="h-5 w-5" />, 
+      name: "24/7 Security", 
+      description: "Round-the-clock security with CCTV surveillance and secure key card access to all areas."
+    },
+    { 
+      icon: <Utensils className="h-5 w-5" />, 
+      name: "Fine Dining", 
+      description: "On-site restaurant offering authentic local cuisine and international dishes prepared by our award-winning chef."
+    },
+    { 
+      icon: <Car className="h-5 w-5" />, 
+      name: "Free Parking", 
+      description: "Complimentary valet and self-parking available for all guests throughout their stay."
+    },
+    { 
+      icon: <Sunset className="h-5 w-5" />, 
+      name: "Scenic Views", 
+      description: "Rooms featuring panoramic views of the surrounding mountains and valleys of Jammu & Kashmir."
+    },
+    { 
+      icon: <Clock className="h-5 w-5" />, 
+      name: "Flexible Check-in", 
+      description: "Early check-in and late check-out available upon request, subject to availability."
+    }
+  ];
 
   if (isLoading) {
     return (
@@ -233,9 +397,15 @@ export default function HotelDetails() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                 />
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="bg-white/80 rounded-full p-2">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-full p-2">
                     <Camera className="h-6 w-6 text-gray-800" />
                   </div>
+                </div>
+                
+                {/* Featured badge */}
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-1 rounded-full text-xs z-10 font-medium shadow-lg flex items-center">
+                  <Sparkles className="h-3 w-3 mr-1 text-yellow-300" />
+                  <span>Featured</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -255,13 +425,23 @@ export default function HotelDetails() {
                 ))}
               </div>
             </div>
-            <button 
-              className="mt-4 text-blue-600 flex items-center hover:underline"
-              onClick={() => setShowGalleryModal(true)}
-            >
-              <Camera className="h-5 w-5 mr-1" />
-              View all photos ({1 + selectedHotel.images.gallery.length})
-            </button>
+            <div className="flex items-center justify-between mt-4">
+              <button 
+                className="text-blue-600 flex items-center hover:underline"
+                onClick={() => setShowGalleryModal(true)}
+              >
+                <Camera className="h-5 w-5 mr-1" />
+                View all photos ({1 + selectedHotel.images.gallery.length})
+              </button>
+              
+              <button 
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors"
+                onClick={toggleVirtualTour}
+              >
+                <Sunset className="h-5 w-5 mr-2" />
+                Virtual Tour
+              </button>
+            </div>
           </div>
 
           {/* Main details */}
@@ -320,10 +500,23 @@ export default function HotelDetails() {
                   What this place offers
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
-                  {selectedHotel.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center text-gray-700 p-2 hover:bg-blue-50 rounded-md transition-colors">
-                      <Check size={18} className="text-[#0061ff] mr-2" />
-                      <span>{typeof amenity === 'string' ? amenity : amenity.name}</span>
+                  {enhancedAmenities.map((amenity, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-center text-gray-700 p-2 hover:bg-blue-50 rounded-md transition-colors amenity-details"
+                      onClick={() => handleAmenityClick(index)}
+                    >
+                      <div className="mr-2">{amenity.icon}</div>
+                      <div>
+                        <p className="font-medium">{amenity.name}</p>
+                        <p className="text-sm text-gray-600">{amenity.description}</p>
+                      </div>
+                      {showAmenityDetails === index && (
+                        <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-4">
+                          <p className="font-medium">{amenity.name}</p>
+                          <p className="text-sm text-gray-600">{amenity.description}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -385,7 +578,7 @@ export default function HotelDetails() {
                             className="w-10 h-10 rounded-full mr-3" 
                           />
                           <div>
-                            <p className="font-semibold text-gray-900">{review.user}</p>
+                            <p className="font-medium">{review.user}</p>
                             <div className="flex items-center">
                               <div className="flex mr-2">
                                 {[...Array(5)].map((_, i) => (
@@ -650,6 +843,194 @@ export default function HotelDetails() {
           >
             <ChevronRight size={32} />
           </button>
+        </div>
+      )}
+
+      {/* Virtual tour modal */}
+      {showVirtualTour && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+          <button 
+            onClick={toggleVirtualTour}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+          >
+            <X size={24} />
+          </button>
+          <div className="max-w-4xl max-h-screen p-4">
+            <iframe 
+              src="https://www.youtube.com/embed/VIDEO_ID" 
+              title="Virtual Tour" 
+              frameBorder="0" 
+              allowFullScreen 
+              className="w-full h-full"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Callback Request Modal */}
+      {showCallbackRequest && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-scaleIn relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute -right-16 -top-16 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
+            <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
+            
+            {!callbackSubmitted ? (
+              <>
+                <div className="flex justify-between items-center mb-6 relative z-10">
+                  <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                    <Phone className="text-blue-600 mr-2 h-5 w-5" />
+                    Request a Callback
+                  </h3>
+                  <button 
+                    onClick={() => setShowCallbackRequest(false)}
+                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                
+                <p className="text-gray-600 mb-4 relative z-10">
+                  Leave your contact details and our representative will call you back to confirm your booking at {selectedHotel.name}.
+                </p>
+                
+                <form onSubmit={handleCallbackSubmit} className="relative z-10">
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        value={callbackForm.name}
+                        onChange={handleCallbackFormChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          required
+                          value={callbackForm.phone}
+                          onChange={handleCallbackFormChange}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                          placeholder="Enter your phone number"
+                        />
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="preferredTime" className="block text-sm font-medium text-gray-700 mb-1">Preferred Time for Callback</label>
+                      <div className="relative">
+                        <select
+                          id="preferredTime"
+                          name="preferredTime"
+                          value={callbackForm.preferredTime}
+                          onChange={handleCallbackFormChange}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="morning">Morning (9 AM - 12 PM)</option>
+                          <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                          <option value="evening">Evening (5 PM - 8 PM)</option>
+                        </select>
+                        <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Additional Message (optional)</label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows="3"
+                        value={callbackForm.message}
+                        onChange={handleCallbackFormChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Any special requests or questions"
+                      ></textarea>
+                    </div>
+                    
+                    {/* Interest in cruise packages */}
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                      <label className="flex items-start">
+                        <input
+                          type="checkbox"
+                          className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-blue-800">
+                          I'm also interested in learning about JetSet Cruise packages and special offers
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 shadow-md"
+                    >
+                      <Phone size={16} />
+                      <span>Request Callback</span>
+                    </button>
+                  </div>
+                </form>
+                
+                <div className="flex items-center justify-center mt-4 space-x-4">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-6 opacity-60" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-60" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="American Express" className="h-6 opacity-60" />
+                </div>
+                
+                <p className="text-xs text-gray-500 mt-4 text-center relative z-10">
+                  By submitting this form, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                </p>
+              </>
+            ) : (
+              <div className="text-center py-8 relative z-10">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Callback Request Received!</h3>
+                <p className="text-gray-600 mb-6">
+                  Thank you for your request. Our representative will call you back shortly at the preferred time.
+                </p>
+                <div className="flex items-center justify-center gap-2 text-blue-600 mb-4">
+                  <Clock size={18} />
+                  <span>Processing your booking...</span>
+                </div>
+                
+                {/* Cruise upsell */}
+                <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-lg mt-4 mb-4 text-left">
+                  <h4 className="font-semibold mb-2 flex items-center">
+                    <Sparkles className="h-4 w-4 text-yellow-300 mr-2" />
+                    Enhance Your Stay with JetSet Cruises
+                  </h4>
+                  <p className="text-sm mb-3">Ask our representative about our exclusive cruise packages when they call you back!</p>
+                </div>
+                
+                <div className="flex justify-center mt-4">
+                  <button 
+                    onClick={() => {
+                      setCallbackSubmitted(false);
+                      setShowCallbackRequest(false);
+                    }}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

@@ -103,7 +103,7 @@ export default function LandingPage() {
         {/* Hero Background with Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-black/40 z-10"></div>
         <img
-          src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1742943892619-501567da0c62?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Luxury Accommodation"
           className="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom"
         />
