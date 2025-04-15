@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link } from 'react-router-dom';
 import './CruiseLineSection.css';
 import cruiseLineData from './data/cruiselines.json';
 import { FaStar } from 'react-icons/fa';
@@ -26,7 +26,7 @@ const CruiseLineSection = () => {
               <h4>{cruiseLine.name}</h4>
               <p className="price">Starts from {cruiseLine.price}/p.p</p>
               <Link 
-                href={`/cruise-cards?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
+                to={`/cruises?cruiseLine=${encodeURIComponent(cruiseLine.name)}`}
                 className="book-now"
               >
                 BOOK NOW
@@ -37,7 +37,7 @@ const CruiseLineSection = () => {
       </div>
       
       <Link 
-        href="/cruise-cards"
+        to="/cruises"
         className="explore-more"
       >
         Explore more
