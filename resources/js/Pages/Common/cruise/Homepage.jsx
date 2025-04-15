@@ -34,34 +34,41 @@ const styles = {
 
 const TrustIndicators = () => {
   return (
-    <div className="py-12 bg-white">
+    <div className="py-10 bg-white border-t border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 md:px-0">
-        <div className="flex flex-wrap justify-between items-center">
-          <div className="w-full md:w-auto text-center md:text-left mb-6 md:mb-0">
-            <h3 className="text-2xl font-bold text-gray-800">Trusted by Thousands</h3>
-            <p className="text-gray-600">Join our community of satisfied travelers</p>
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold text-gray-800">Trusted by Thousands</h3>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-16">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-[#0066b2] mb-1">12K+</div>
+            <div className="text-gray-600 text-sm">Happy Customers</div>
           </div>
           
-          <div className="flex flex-wrap justify-center md:justify-end gap-8 md:gap-12">
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-[#0066b2]">12K+</span>
-              <span className="text-gray-600 text-sm">Happy Customers</span>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-[#0066b2]">150+</span>
-              <span className="text-gray-600 text-sm">Destinations</span>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-[#0066b2]">98%</span>
-              <span className="text-gray-600 text-sm">Satisfaction Rate</span>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-[#0066b2]">24/7</span>
-              <span className="text-gray-600 text-sm">Customer Support</span>
-            </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-[#0066b2] mb-1">150+</div>
+            <div className="text-gray-600 text-sm">Destinations</div>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-[#0066b2] mb-1">98%</div>
+            <div className="text-gray-600 text-sm">Satisfaction Rate</div>
+          </div>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-[#0066b2] mb-1">24/7</div>
+            <div className="text-gray-600 text-sm">Customer Support</div>
+          </div>
+        </div>
+        
+        <div className="mt-8 flex justify-center">
+          <div className="flex gap-8 opacity-60">
+            <img src="/images/logos/forbes.png" alt="Forbes" className="h-6" />
+            <img src="/images/logos/travelandleisure.png" alt="Travel+Leisure" className="h-6" />
+            <img src="/images/logos/cruisecritic.png" alt="Cruise Critic" className="h-6" />
+            <img src="/images/logos/tripadvisor.png" alt="TripAdvisor" className="h-6" />
+            <img src="/images/logos/cntraveler.png" alt="CN Traveler" className="h-6" />
           </div>
         </div>
       </div>

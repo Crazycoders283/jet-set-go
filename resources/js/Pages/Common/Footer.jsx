@@ -6,15 +6,8 @@ import './Footer.css';
 // <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 const Footer = () => {
-  // Social media data with icons and illustration info
-  const socialMedia = [
-    { name: 'Facebook', icon: 'fab fa-facebook-f', color: '#4267B2' },
-    { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2' },
-    { name: 'Instagram', icon: 'fab fa-instagram', color: '#C13584' },
-    { name: 'LinkedIn', icon: 'fab fa-linkedin-in', color: '#0077B5' },
-    { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000' }
-  ];
-
+  const currentYear = new Date().getFullYear();
+  
   return (
     <footer className="footer">
       <div className="footer-content">
@@ -22,13 +15,16 @@ const Footer = () => {
           <div className="footer-logo">
             <img src="/images/logo.png" alt="JET SETTERS" className="logo-image" />
           </div>
+          <div className="footer-about">
+            <p>Discover extraordinary cruise experiences with us. We've helped thousands of travelers create unforgettable memories on the seas.</p>
+          </div>
           <div className="connect-us">
-            <h3>Connect us</h3>
+            <h3>Connect with us</h3>
             <div className="social-links">
               <a href="#" aria-label="Facebook" className="social-link">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" aria-label="Twitter" className="social-link">
+              <a href="#" aria-label="Twitter" className="social-link active">
                 <i className="fab fa-twitter"></i>
               </a>
               <a href="#" aria-label="Instagram" className="social-link">
@@ -46,52 +42,66 @@ const Footer = () => {
 
         <div className="footer-links">
           <div className="footer-column">
-            <h3>Service</h3>
+            <h3>Services</h3>
             <ul>
-              <li><Link to="#">Terms & conditions</Link></li>
-              <li><Link to="#">Coronavirus (COVID-19)</Link></li>
-              <li><Link to="#">Cruise</Link></li>
+              <li><Link to="#">Cruise Booking</Link></li>
+              <li><Link to="#">Terms & Conditions</Link></li>
+              <li><Link to="#">COVID-19 Updates</Link></li>
               <li><Link to="#">Flights</Link></li>
+              <li><Link to="#">Special Offers</Link></li>
             </ul>
           </div>
 
           <div className="footer-column">
-            <h3>Our Work</h3>
+            <h3>Company</h3>
             <ul>
-              <li><Link to="#">Packages</Link></li>
-              <li><Link to="#">About</Link></li>
-              <li><Link to="#">Contact us</Link></li>
+              <li><Link to="#">About Us</Link></li>
+              <li><Link to="#">Travel Blog</Link></li>
+              <li><Link to="#">Reviews</Link></li>
+              <li><Link to="#">Contact Us</Link></li>
+              <li><Link to="#">Careers</Link></li>
             </ul>
           </div>
 
           <div className="footer-column">
-            <h3>Packages</h3>
+            <h3>Popular Destinations</h3>
             <ul>
-              <li><Link to="#">Dubai</Link></li>
-              <li><Link to="#">Europe</Link></li>
-              <li><Link to="#">Kashmir</Link></li>
-              <li><Link to="#">North East & Bhutan</Link></li>
-              <li><Link to="#">Georgia</Link></li>
+              <li><Link to="#">Caribbean</Link></li>
+              <li><Link to="#">Mediterranean</Link></li>
+              <li><Link to="#">Alaska</Link></li>
+              <li><Link to="#">Hawaii</Link></li>
+              <li><Link to="#">Bahamas</Link></li>
             </ul>
           </div>
 
           <div className="footer-column">
-            <h3>Contacts us</h3>
-            <ul>
+            <h3>Contact Us</h3>
+            <ul className="contact-list">
               <li>
-                <i className="fas fa-envelope"></i>
+                <i className="fas fa-envelope contact-icon"></i>
                 <a href="mailto:bookings@jet-setters.us">bookings@jet-setters.us</a>
               </li>
               <li>
-                <i className="fas fa-phone"></i>
+                <i className="fas fa-phone contact-icon"></i>
                 <a href="tel:+18885813028">(+1) 888-581-3028</a>
               </li>
               <li>
-                <i className="fas fa-map-marker-alt"></i>
-                513 W Bonaventure Ave Tracy, CA 95391
+                <i className="fas fa-map-marker-alt contact-icon"></i>
+                <span>513 W Bonaventure Ave Tracy, CA 95391</span>
               </li>
             </ul>
           </div>
+        </div>
+      </div>
+      
+      <div className="footer-bottom">
+        <div className="copyright">
+          &copy; {currentYear} JET SETTERS. All rights reserved.
+        </div>
+        <div className="footer-badges">
+          <span className="badge"><i className="fas fa-lock"></i> Secure Booking</span>
+          <span className="badge"><i className="fas fa-headset"></i> 24/7 Support</span>
+          <span className="badge"><i className="fas fa-shield-alt"></i> Privacy Protected</span>
         </div>
       </div>
     </footer>
