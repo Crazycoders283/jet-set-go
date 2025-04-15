@@ -600,7 +600,6 @@
     font-size: 2.3rem;
   }
 }
-
 /* Fix for Safari iOS height issues */
 @supports (-webkit-touch-callout: none) {
   .hero-section {
