@@ -172,15 +172,177 @@ if (fs.existsSync(lowerPagesDir)) {
   copyDirRecursive(lowerPagesDir, pagesDir);
 }
 
+// Create Auth files regardless of copying success
+console.log('📝 Creating Auth files in Pages/Auth directory...');
+
+// Ensure Auth directory exists
+if (!fs.existsSync(pagesAuthDir)) {
+  fs.mkdirSync(pagesAuthDir, { recursive: true });
+}
+
+// Create CustomLogin.jsx
+const loginContent = `import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+
+const CustomLogin = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login({ email, password });
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Failed to sign in');
+    }
+  };
+
+  return (
+    <div style={{ padding: '50px', maxWidth: '400px', margin: '0 auto' }}>
+      <h1 style={{ textAlign: 'center' }}>Login</h1>
+      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <button type="submit" style={{ width: '100%', padding: '10px', background: '#0066B2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Log In
+        </button>
+      </form>
+      <p style={{ textAlign: 'center', marginTop: '20px' }}>
+        Don't have an account? <Link to="/register" style={{ color: '#0066B2' }}>Register</Link>
+      </p>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link to="/" style={{ color: '#0066B2' }}>Back to Home</Link>
+      </div>
+    </div>
+  );
+};
+
+export default CustomLogin;`;
+
+fs.writeFileSync(path.join(pagesAuthDir, 'CustomLogin.jsx'), loginContent);
+console.log('✅ Created CustomLogin.jsx in Pages/Auth directory');
+
+// Create CustomRegister.jsx
+const registerContent = `import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+
+const CustomRegister = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [error, setError] = useState('');
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (password !== passwordConfirm) {
+      return setError('Passwords do not match');
+    }
+    
+    try {
+      await register({ name, email, password });
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Failed to create an account');
+    }
+  };
+
+  return (
+    <div style={{ padding: '50px', maxWidth: '400px', margin: '0 auto' }}>
+      <h1 style={{ textAlign: 'center' }}>Register</h1>
+      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Confirm Password</label>
+          <input
+            type="password"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <button type="submit" style={{ width: '100%', padding: '10px', background: '#0066B2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Register
+        </button>
+      </form>
+      <p style={{ textAlign: 'center', marginTop: '20px' }}>
+        Already have an account? <Link to="/login" style={{ color: '#0066B2' }}>Login</Link>
+      </p>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link to="/" style={{ color: '#0066B2' }}>Back to Home</Link>
+      </div>
+    </div>
+  );
+};
+
+export default CustomRegister;`;
+
+fs.writeFileSync(path.join(pagesAuthDir, 'CustomRegister.jsx'), registerContent);
+console.log('✅ Created CustomRegister.jsx in Pages/Auth directory');
+
 // Special handling for Auth files
 const lowerAuthDir = path.join(lowerPagesDir, 'Auth');
 if (fs.existsSync(lowerAuthDir)) {
   console.log('📋 Special handling for Auth files...');
-  
-  // Ensure Auth directory exists
-  if (!fs.existsSync(pagesAuthDir)) {
-    fs.mkdirSync(pagesAuthDir, { recursive: true });
-  }
   
   // Copy Auth files specifically
   try {
@@ -197,51 +359,6 @@ if (fs.existsSync(lowerAuthDir)) {
     }
   } catch (err) {
     console.error('Error copying Auth files:', err);
-    
-    // Create fallback Auth files if copying fails
-    console.log('Creating fallback Auth files...');
-    
-    // Create CustomLogin.jsx
-    const loginContent = `import React from 'react';
-import { Link } from 'react-router-dom';
-
-const CustomLogin = () => {
-  return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <h1>Login</h1>
-      <p>Please log in to access your account</p>
-      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-        Back to Home
-      </Link>
-    </div>
-  );
-};
-
-export default CustomLogin;`;
-    
-    fs.writeFileSync(path.join(pagesAuthDir, 'CustomLogin.jsx'), loginContent);
-    console.log('  ✅ Created fallback CustomLogin.jsx');
-    
-    // Create CustomRegister.jsx
-    const registerContent = `import React from 'react';
-import { Link } from 'react-router-dom';
-
-const CustomRegister = () => {
-  return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <h1>Register</h1>
-      <p>Create a new account</p>
-      <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-        Back to Home
-      </Link>
-    </div>
-  );
-};
-
-export default CustomRegister;`;
-    
-    fs.writeFileSync(path.join(pagesAuthDir, 'CustomRegister.jsx'), registerContent);
-    console.log('  ✅ Created fallback CustomRegister.jsx');
   }
 }
 
