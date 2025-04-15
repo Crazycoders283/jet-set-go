@@ -4,7 +4,6 @@ import '../css/app.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 
 // Fallback components
 const LoadingComponent = () => <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
@@ -19,7 +18,7 @@ const DashboardFallback = () => (
   </div>
 );
 
-const HomepageFallback = () => (
+const WelcomeFallback = () => (
   <div style={{ padding: '50px', textAlign: 'center' }}>
     <h1>Welcome to JetSet</h1>
     <p>Loading homepage content...</p>
@@ -36,20 +35,35 @@ const ErrorFallback = () => (
   </div>
 );
 
+const ProfileFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>User Profile</h1>
+    <p>Your profile is loading...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
 // Dynamic imports with fallbacks
 const Dashboard = React.lazy(() => 
   import('./Pages/Dashboard')
     .catch(() => ({ default: DashboardFallback }))
 );
 
-const Homepage = React.lazy(() => 
-  import('./Pages/Homepage')
-    .catch(() => ({ default: HomepageFallback }))
+const Welcome = React.lazy(() => 
+  import('./Pages/Welcome')
+    .catch(() => ({ default: WelcomeFallback }))
 );
 
 const Error = React.lazy(() => 
   import('./Pages/Error')
     .catch(() => ({ default: ErrorFallback }))
+);
+
+const Profile = React.lazy(() => 
+  import('./Pages/Profile')
+    .catch(() => ({ default: ProfileFallback }))
 );
 
 // Cruise fallback components
@@ -88,8 +102,9 @@ const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/404" element={<Error />} />
@@ -107,9 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <React.StrictMode>
         <BrowserRouter>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <App />
         </BrowserRouter>
       </React.StrictMode>
     );
