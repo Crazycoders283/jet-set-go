@@ -45,25 +45,40 @@ const ProfileFallback = () => (
   </div>
 );
 
+const ProfileEditFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Edit Profile</h1>
+    <p>Profile editor is loading...</p>
+    <a href="/profile" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Profile
+    </a>
+  </div>
+);
+
 // Dynamic imports with fallbacks
 const Dashboard = React.lazy(() => 
-  import('./Pages/Dashboard')
+  import('./pages/Dashboard')
     .catch(() => ({ default: DashboardFallback }))
 );
 
 const Welcome = React.lazy(() => 
-  import('./Pages/Welcome')
+  import('./pages/Welcome')
     .catch(() => ({ default: WelcomeFallback }))
 );
 
 const Error = React.lazy(() => 
-  import('./Pages/Error')
+  import('./pages/Error')
     .catch(() => ({ default: ErrorFallback }))
 );
 
 const Profile = React.lazy(() => 
-  import('./Pages/Profile')
+  import('./pages/Profile')
     .catch(() => ({ default: ProfileFallback }))
+);
+
+const ProfileEdit = React.lazy(() => 
+  import('./pages/Profile/Edit')
+    .catch(() => ({ default: ProfileEditFallback }))
 );
 
 // Cruise fallback components
@@ -89,12 +104,12 @@ const ItineraryFallback = () => (
 
 // Import cruise-related pages with error handling
 const CruiseCards = React.lazy(() => 
-  import('./Pages/Common/cruise/pages/cruise-cards')
+  import('./pages/Common/cruise/pages/cruise-cards')
     .catch(() => ({ default: CruiseCardsFallback }))
 );
 
 const Itinerary = React.lazy(() => 
-  import('./Pages/Common/cruise/pages/Itinerary')
+  import('./pages/Common/cruise/pages/Itinerary')
     .catch(() => ({ default: ItineraryFallback }))
 );
 
@@ -105,6 +120,7 @@ const App = () => {
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/404" element={<Error />} />
