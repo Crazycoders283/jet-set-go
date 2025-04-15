@@ -125,10 +125,27 @@ const MyTripsFallback = () => (
   </div>
 );
 
+const HotelDetailsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Hotel Details</h1>
+    <p>Hotel details will appear here.</p>
+    <a href="/rental" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Rentals
+    </a>
+  </div>
+);
+
 const Flights = React.lazy(() => Promise.resolve({ default: FlightsFallback }));
 const Packages = React.lazy(() => Promise.resolve({ default: PackagesFallback }));
-const Rentals = React.lazy(() => Promise.resolve({ default: RentalsFallback }));
+const Rentals = React.lazy(() => 
+  import('./pages/Common/rentals/landingpage')
+    .catch(() => ({ default: RentalsFallback }))
+);
 const MyTrips = React.lazy(() => Promise.resolve({ default: MyTripsFallback }));
+const HotelDetails = React.lazy(() => 
+  import('./pages/Common/rentals/HotelDetails')
+    .catch(() => ({ default: HotelDetailsFallback }))
+);
 
 const App = () => {
   return (
@@ -141,6 +158,7 @@ const App = () => {
         <Route path="/flight" element={<Flights />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/rental" element={<Rentals />} />
+        <Route path="/hotel-details" element={<HotelDetails />} />
         <Route path="/my-trips" element={<MyTrips />} />
         <Route path="/404" element={<Error />} />
         <Route path="*" element={<Navigate to="/404" />} />
