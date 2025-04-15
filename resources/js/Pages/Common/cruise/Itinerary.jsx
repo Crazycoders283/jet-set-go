@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { FaShip } from 'react-icons/fa';
+import Navbar from '../Navbar';
+import Footer from '../Footer';
 
 const cruiseHighlights = [
   { title: "Cruise Dining", img: "/images/dining.jpg" },
@@ -407,157 +409,180 @@ const Itinerary = () => {
   // For now we'll use static data
   
   return (
-    <div className="itinerary-container">
-      <CombinedStyles />
+    <>
+      <Navbar />
       
-      {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-        <Link 
-          to="/cruises" 
-          className="bg-[#0066b2] hover:bg-[#005091] text-white font-medium py-2 px-4 rounded-md transition-colors"
-          style={{ 
-            backgroundColor: '#0066b2',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '4px',
-            textDecoration: 'none',
-            fontWeight: '500',
-            display: 'inline-block'
-          }}
-        >
-          Back to Cruises
-        </Link>
-      </div>
-      
-      {/* Cruise Header */}
-      <div className="cruise-header">
-        <div className="header-top">
-          <span className="destination-text">Miami</span>
-          <span className="arrow-icon">≫</span>
-          <span className="destination-text">Florida</span>
-          <span className="duration">2N/3D</span>
-        </div>
-
-        <div className="booking-info">
-          <div className="booking-info-item">
-            <FaShip size={16} color="#1e88e5" />
-            <span>Embarkation:</span>
-            <span style={{ fontWeight: 600 }}>Jan 13th, 4:30 PM</span>
-          </div>
-          <div className="booking-info-item">
-            <FaShip size={16} color="#1e88e5" />
-            <span>Disembarkation:</span>
-            <span style={{ fontWeight: 600 }}>Jan 17th, 7:30 PM</span>
-          </div>
-          <div className="booking-info-item">
-            <span>Cruise Line:</span>
-            <span style={{ fontWeight: 600 }}>{cruiseLine || 'Royal Caribbean'}</span>
-          </div>
-          <div className="booking-info-item">
-            <span>Visiting Ports:</span>
-            <span style={{ fontWeight: 600 }}>Miami | Florida</span>
-          </div>
-        </div>
-
-        <div className="price-section">
-          <div style={{ color: '#4a5568', fontSize: '0.938rem', marginBottom: '0.25rem' }}>Starting from</div>
-          <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1a202c', marginBottom: '0.25rem' }}>$200</div>
-          <div style={{ fontSize: '0.813rem', color: '#718096', marginBottom: '1rem' }}>
-            Excl. Tax Per Person in Double Occupancy
-          </div>
-          <button className="select-room-btn">Select Room</button>
+      {/* Hero Header Image */}
+      <div className="relative w-full">
+        <img 
+          src="/images/Rectangle 1434 (1).png" 
+          alt="Cruise Itinerary" 
+          className="w-full h-[400px] object-cover object-center brightness-75"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/60 flex flex-col items-center justify-center px-4">
+          <h1 className="text-4xl md:text-6xl text-white font-bold text-center mb-4 drop-shadow-lg">
+            {cruiseLine || 'Royal Caribbean'} Itinerary
+          </h1>
+          <p className="text-xl md:text-2xl text-white text-center max-w-3xl mx-auto font-light drop-shadow-md">
+            Explore your upcoming cruise adventure day by day
+          </p>
         </div>
       </div>
 
-      {/* Itinerary Section */}
-      <div className="itinerary-section">
-        <h2 className="itinerary-title">Itinerary</h2>
-        <p className="itinerary-subtitle">Day wise details of your package</p>
-
-        {/* Day 1 */}
-        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
-          <div className="day-box">
-            <span>Day</span>
-            <span>1</span>
-          </div>
-          <div className="day-content">
-            <h3 className="day-title">Miami Port</h3>
-            <p className="day-subtitle">WELCOME ONBOARD</p>
-            <p className="day-description">
-              Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
-            </p>
-          </div>
-        </div>
-
-        {/* Day 2 */}
-        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
-          <div className="day-box">
-            <span>Day</span>
-            <span>2</span>
-          </div>
-          <div className="day-content">
-            <h3 className="day-title">At Sea</h3>
-            <p className="day-subtitle">DAY AT SEA</p>
-            <p className="day-description">
-              Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
-            </p>
-          </div>
-        </div>
-
-        {/* Day 3 */}
-        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem' }}>
-          <div className="day-box">
-            <span>Day</span>
-            <span>3</span>
-          </div>
-          <div className="day-content">
-            <h3 className="day-title">Florida Port</h3>
-            <p className="day-subtitle">ARRIVED IN Florida</p>
-          </div>
-        </div>
-
-        <button className="view-more">
-          View Full Itinerary
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Cruise Highlights */}
-      <div className="highlights-section">
-        <h2 className="text-2xl font-bold text-center">Your Cruise Highlight</h2>
-        <div className="highlights-grid">
-          {cruiseHighlights.map((highlight, index) => (
-            <div key={index} className="highlight-card">
-              <img src={highlight.img} alt={highlight.title} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Customer Reviews */}
-      <div className="reviews-section">
-        <h2>Customer Reviews</h2>
-        <div className="review-quote">"</div>
-        <p className="review-text">
-          The tours in this website are great. I had been really enjoy with my family! The team is very professional and taking care of the customers. Will surely recommend to my freind to join this company!
-        </p>
-        <div className="reviewer-name">Ali Tufan</div>
-        <div className="reviewer-position">Product Manager, Apple Inc.</div>
+      <div className="itinerary-container">
+        <CombinedStyles />
         
-        <div className="reviewer-images">
-          {reviewers.map((reviewer) => (
-            <div 
-              key={reviewer.id} 
-              className={`reviewer-image ${reviewer.isActive ? 'active' : ''}`}
-            >
-              <img src={reviewer.image} alt={`Reviewer ${reviewer.id}`} />
+        {/* Navigation */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <Link 
+            to="/cruises" 
+            className="bg-[#0066b2] hover:bg-[#005091] text-white font-medium py-2 px-4 rounded-md transition-colors"
+            style={{ 
+              backgroundColor: '#0066b2',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontWeight: '500',
+              display: 'inline-block'
+            }}
+          >
+            Back to Cruises
+          </Link>
+        </div>
+        
+        {/* Cruise Header */}
+        <div className="cruise-header">
+          <div className="header-top">
+            <span className="destination-text">Miami</span>
+            <span className="arrow-icon">≫</span>
+            <span className="destination-text">Florida</span>
+            <span className="duration">2N/3D</span>
+          </div>
+
+          <div className="booking-info">
+            <div className="booking-info-item">
+              <FaShip size={16} color="#1e88e5" />
+              <span>Embarkation:</span>
+              <span style={{ fontWeight: 600 }}>Jan 13th, 4:30 PM</span>
             </div>
-          ))}
+            <div className="booking-info-item">
+              <FaShip size={16} color="#1e88e5" />
+              <span>Disembarkation:</span>
+              <span style={{ fontWeight: 600 }}>Jan 17th, 7:30 PM</span>
+            </div>
+            <div className="booking-info-item">
+              <span>Cruise Line:</span>
+              <span style={{ fontWeight: 600 }}>{cruiseLine || 'Royal Caribbean'}</span>
+            </div>
+            <div className="booking-info-item">
+              <span>Visiting Ports:</span>
+              <span style={{ fontWeight: 600 }}>Miami | Florida</span>
+            </div>
+          </div>
+
+          <div className="price-section">
+            <div style={{ color: '#4a5568', fontSize: '0.938rem', marginBottom: '0.25rem' }}>Starting from</div>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: '#1a202c', marginBottom: '0.25rem' }}>$200</div>
+            <div style={{ fontSize: '0.813rem', color: '#718096', marginBottom: '1rem' }}>
+              Excl. Tax Per Person in Double Occupancy
+            </div>
+            <button className="select-room-btn">Select Room</button>
+          </div>
+        </div>
+
+        {/* Itinerary Section */}
+        <div className="itinerary-section">
+          <h2 className="itinerary-title">Itinerary</h2>
+          <p className="itinerary-subtitle">Day wise details of your package</p>
+
+          {/* Day 1 */}
+          <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
+            <div className="day-box">
+              <span>Day</span>
+              <span>1</span>
+            </div>
+            <div className="day-content">
+              <h3 className="day-title">Miami Port</h3>
+              <p className="day-subtitle">WELCOME ONBOARD</p>
+              <p className="day-description">
+                Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
+              </p>
+            </div>
+          </div>
+
+          {/* Day 2 */}
+          <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '2rem' }}>
+            <div className="day-box">
+              <span>Day</span>
+              <span>2</span>
+            </div>
+            <div className="day-content">
+              <h3 className="day-title">At Sea</h3>
+              <p className="day-subtitle">DAY AT SEA</p>
+              <p className="day-description">
+                Just as you step aboard the Empress — the top cruise in India — also known as 'A City on the Sea,' you'll be greeted with a warm welcome. Once settled, dive right in and explore the many offerings lined up for you aboard our cruise ship.
+              </p>
+            </div>
+          </div>
+
+          {/* Day 3 */}
+          <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem' }}>
+            <div className="day-box">
+              <span>Day</span>
+              <span>3</span>
+            </div>
+            <div className="day-content">
+              <h3 className="day-title">Florida Port</h3>
+              <p className="day-subtitle">ARRIVED IN Florida</p>
+            </div>
+          </div>
+
+          <button className="view-more">
+            View Full Itinerary
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Cruise Highlights */}
+        <div className="highlights-section">
+          <h2 className="text-2xl font-bold text-center">Your Cruise Highlight</h2>
+          <div className="highlights-grid">
+            {cruiseHighlights.map((highlight, index) => (
+              <div key={index} className="highlight-card">
+                <img src={highlight.img} alt={highlight.title} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Customer Reviews */}
+        <div className="reviews-section">
+          <h2>Customer Reviews</h2>
+          <div className="review-quote">"</div>
+          <p className="review-text">
+            The tours in this website are great. I had been really enjoy with my family! The team is very professional and taking care of the customers. Will surely recommend to my freind to join this company!
+          </p>
+          <div className="reviewer-name">Ali Tufan</div>
+          <div className="reviewer-position">Product Manager, Apple Inc.</div>
+          
+          <div className="reviewer-images">
+            {reviewers.map((reviewer) => (
+              <div 
+                key={reviewer.id} 
+                className={`reviewer-image ${reviewer.isActive ? 'active' : ''}`}
+              >
+                <img src={reviewer.image} alt={`Reviewer ${reviewer.id}`} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      
+      <Footer />
+    </>
   );
 };
 
