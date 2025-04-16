@@ -138,7 +138,10 @@ const HotelDetailsFallback = () => (
 );
 
 const Flights = React.lazy(() => Promise.resolve({ default: FlightsFallback }));
-const Packages = React.lazy(() => Promise.resolve({ default: PackagesFallback }));
+const Packages = React.lazy(() => 
+  import('./pages/Common/packages/planding')
+    .catch(() => ({ default: PackagesFallback }))
+);
 const Rentals = React.lazy(() => 
   import('./Pages/Common/rentals/LandingPage.jsx')
     .catch(() => ({ default: RentalsFallback }))

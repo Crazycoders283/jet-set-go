@@ -62,10 +62,11 @@ export default defineConfig(({ mode }) => {
         },
         server: {
             hmr: {
-                host: '0.0.0.0',
+                host: 'localhost',
                 protocol: isSecure ? 'wss' : 'ws',
+                clientPort: 5173
             },
-            host: '0.0.0.0',
+            host: true,
             port: 5173,
             https: isSecure ? httpsConfig : false,
             watch: {
