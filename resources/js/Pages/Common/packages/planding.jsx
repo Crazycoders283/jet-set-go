@@ -165,7 +165,7 @@ const TravelPackages = () => {
                   <div className="flex flex-wrap gap-2 mb-3">
                     {pkg.features?.slice(0, 3).map((feature, idx) => (
                       <span
-                        key={idx}
+                        key={`${pkg.id}-feature-${idx}`}
                         className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full"
                       >
                         {feature}
@@ -306,7 +306,7 @@ const TravelPackages = () => {
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border z-50">
                       {[1, 2, 3, 4, 5, 6].map((num) => (
                         <div
-                          key={num}
+                          key={`traveler-${num}`}
                           className="px-4 py-2 hover:bg-blue-50 cursor-pointer flex items-center justify-between"
                           onClick={() => {
                             setTravelers(num)
@@ -420,7 +420,7 @@ const TravelPackages = () => {
                   {/* Features */}
                   <div className="flex flex-wrap gap-2 mb-3">
                     {item.features.map((feature, idx) => (
-                      <span key={idx} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                      <span key={`${item.id}-feature-${idx}`} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
                         {feature}
                       </span>
                     ))}
@@ -431,7 +431,7 @@ const TravelPackages = () => {
                     <h4 className="text-sm font-medium text-gray-600 mb-2">Package Highlights:</h4>
                     <ul className="text-sm text-gray-500 space-y-1">
                       {item.highlights.map((highlight, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
+                        <li key={`${item.id}-highlight-${idx}`} className="flex items-center gap-2">
                           <Sunrise size={14} className="text-blue-500" />
                           {highlight}
                         </li>
@@ -620,7 +620,7 @@ const TravelPackages = () => {
       </section>
 
       {/* Add custom styles for animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes scroll {
           0% { transform: translateY(0); }
           50% { transform: translateY(6px); }
