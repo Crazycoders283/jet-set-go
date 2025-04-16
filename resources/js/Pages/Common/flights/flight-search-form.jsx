@@ -1,11 +1,18 @@
 "use client"
 
-import React, { useState } from "react"
-import { Calendar, Users } from "lucide-react"
+import React, { useState, useEffect } from "react"
+import { Calendar, Users, Plane } from "lucide-react"
 import { defaultSearchData, specialFares } from "./data.js"
 
-export default function FlightSearchForm() {
-  const [formData, setFormData] = useState(defaultSearchData)
+export default function FlightSearchForm({ initialData, onSearch }) {
+  const [formData, setFormData] = useState(initialData || defaultSearchData)
+
+  // Update form data when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleTripTypeChange = (type) => {
     setFormData({ ...formData, tripType: type })
@@ -16,8 +23,13 @@ export default function FlightSearchForm() {
   }
 
   const handleSearch = () => {
-    // In a real app, this would submit the search data to an API or route
-    console.log("Search data:", formData)
+    // Call the onSearch prop with the form data
+    if (onSearch) {
+      onSearch(formData);
+    } else {
+      // In a real app, this would submit the search data to an API or route
+      console.log("Search data:", formData)
+    }
   }
 
   return (
@@ -28,7 +40,7 @@ export default function FlightSearchForm() {
           className={`px-8 py-2 rounded-l-full ${
             formData.tripType === "oneWay" 
               ? "bg-blue-600 text-white" 
-              : "bg-white/80 text-gray-700 hover:bg-white/90"
+              : "bg-white/90 text-gray-700 hover:bg-white"
           } transition-colors`}
           onClick={() => handleTripTypeChange("oneWay")}
         >
@@ -38,7 +50,7 @@ export default function FlightSearchForm() {
           className={`px-8 py-2 rounded-r-full ${
             formData.tripType === "roundTrip" 
               ? "bg-blue-600 text-white" 
-              : "bg-white/80 text-gray-700 hover:bg-white/90"
+              : "bg-white/90 text-gray-700 hover:bg-white"
           } transition-colors`}
           onClick={() => handleTripTypeChange("roundTrip")}
         >
@@ -111,7 +123,7 @@ export default function FlightSearchForm() {
               type="text"
               value={formData.travelers}
               className="w-full border-none outline-none text-gray-800 text-base"
-              readOnly
+              onChange={(e) => handleInputChange("travelers", e.target.value)}
             />
             <Users className="h-5 w-5 text-gray-400" />
           </div>
@@ -120,18 +132,19 @@ export default function FlightSearchForm() {
         {/* Search Button */}
         <div className="flex items-center justify-center p-3">
           <button 
-            className="w-full h-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+            className="w-full h-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors flex items-center justify-center gap-2"
             onClick={handleSearch}
           >
-            Search
+            <Plane size={18} className="rotate-90" />
+            <span>Search</span>
           </button>
         </div>
       </div>
 
       {/* Special Fares */}
-      <div className="mt-4 flex items-center gap-3">
-        <span className="text-sm text-white">Special Fares (Optional):</span>
-        <div className="flex gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <span className="text-sm text-white">Special Fares:</span>
+        <div className="flex flex-wrap gap-2">
           {specialFares.map((fare) => (
             <button
               key={fare.id}

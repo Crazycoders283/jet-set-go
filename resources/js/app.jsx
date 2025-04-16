@@ -151,13 +151,19 @@ const HotelDetails = React.lazy(() =>
 
 // Import FlightLanding component
 const FlightLanding = React.lazy(() => 
-  import('./Pages/Common/flights/flightlanding')
+  import('./pages/Common/flights/flightlanding')
+    .catch(() => ({ default: FlightsFallback }))
+);
+
+// Import FlightSearchPage component
+const FlightSearchPage = React.lazy(() => 
+  import('./pages/Common/flights/flightsearchpage')
     .catch(() => ({ default: FlightsFallback }))
 );
 
 // Add ItineraryPackage import
 const ItineraryPackage = React.lazy(() => 
-  import('./Pages/Common/packages/itp')
+  import('./pages/Common/packages/itp')
     .catch(() => ({ default: () => <div>Loading Itinerary...</div> }))
 );
 
@@ -240,6 +246,23 @@ const Login = React.lazy(() =>
     .catch(() => ({ default: LoginFallback }))
 );
 
+// Import FlightBookingConfirmation component
+const FlightBookingConfirmation = React.lazy(() => 
+  import('./Pages/Common/flights/FlightBookingConfirmation')
+    .catch(() => ({ default: () => <div>Loading Booking Confirmation...</div> }))
+);
+
+// Add the imports for FlightPayment and FlightBookingSuccess components
+const FlightPayment = React.lazy(() => 
+  import('./Pages/Common/flights/FlightPayment')
+    .catch(() => ({ default: () => <div>Loading Payment Page...</div> }))
+);
+
+const FlightBookingSuccess = React.lazy(() => 
+  import('./Pages/Common/flights/FlightBookingSuccess')
+    .catch(() => ({ default: () => <div>Loading Booking Success...</div> }))
+);
+
 const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
@@ -252,6 +275,10 @@ const App = () => {
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/flight" element={<Flights />} />
         <Route path="/flights" element={<FlightLanding />} />
+        <Route path="/flights/search" element={<FlightSearchPage />} />
+        <Route path="/flights/booking/:bookingId" element={<FlightBookingConfirmation />} />
+        <Route path="/flight-payment" element={<FlightPayment />} />
+        <Route path="/flight-booking-success" element={<FlightBookingSuccess />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/rental" element={<Rentals />} />
         <Route path="/hotel-details" element={<HotelDetails />} />

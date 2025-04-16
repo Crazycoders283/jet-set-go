@@ -1,4 +1,5 @@
 import React from "react"
+import { useNavigate } from "react-router-dom"
 import FlightSearchForm from "./flight-search-form"
 import PopularDestinations from "./popular-destination"
 import CheapestFlights from "./cheapest-flight"
@@ -10,6 +11,13 @@ import Footer from "../Footer"
 import { heroImage } from "./data.js"
 
 export default function FlightLanding() {
+  const navigate = useNavigate();
+
+  const handleSearch = (formData) => {
+    // Navigate to search page with query parameters
+    navigate('/flights/search', { state: { searchData: formData } });
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -33,7 +41,7 @@ export default function FlightLanding() {
               </div>
               <h1 className="text-white text-4xl md:text-6xl font-bold mb-12">Our Cheapest Flight Search</h1>
             </div>
-            <FlightSearchForm />
+            <FlightSearchForm onSearch={handleSearch} />
           </div>
         </div>
       </section>
