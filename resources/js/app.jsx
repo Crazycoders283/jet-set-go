@@ -151,19 +151,19 @@ const HotelDetails = React.lazy(() =>
 
 // Import FlightLanding component
 const FlightLanding = React.lazy(() => 
-  import('./pages/Common/flights/flightlanding')
+  import('./Pages/Common/flights/flightlanding')
     .catch(() => ({ default: FlightsFallback }))
 );
 
 // Import FlightSearchPage component
 const FlightSearchPage = React.lazy(() => 
-  import('./pages/Common/flights/flightsearchpage')
+  import('./Pages/Common/flights/flightsearchpage')
     .catch(() => ({ default: FlightsFallback }))
 );
 
 // Add ItineraryPackage import
 const ItineraryPackage = React.lazy(() => 
-  import('./pages/Common/packages/itp')
+  import('./Pages/Common/packages/itp')
     .catch(() => ({ default: () => <div>Loading Itinerary...</div> }))
 );
 
