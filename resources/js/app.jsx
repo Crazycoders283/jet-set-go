@@ -211,12 +211,31 @@ const Careers = React.lazy(() =>
     .catch(() => ({ default: CareersFallback }))
 );
 
+// Import login page component
+const LoginFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Login</h1>
+    <p>Loading login page...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+// Login page import
+const Login = React.lazy(() => 
+  import('./pages/Common/login/login')
+    .catch(() => ({ default: LoginFallback }))
+);
+
 const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<Navigate to="/login" />} /> {/* Redirect to login for now */}
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/flight" element={<Flights />} />
