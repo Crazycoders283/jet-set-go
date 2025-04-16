@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './HeroSection.css';
 import { FaMapMarkerAlt, FaCalendarAlt, FaShip, FaAnchor, FaDollarSign, FaSearch, FaStar, FaArrowRight, FaChevronRight } from 'react-icons/fa';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const [activeField, setActiveField] = useState(null);
   const [searchValues, setSearchValues] = useState({
     location: 'USA',
@@ -51,6 +52,19 @@ const HeroSection = () => {
       ...searchValues,
       [field]: value
     });
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    
+    // Create query parameters from search values
+    const queryParams = new URLSearchParams();
+    Object.entries(searchValues).forEach(([key, value]) => {
+      if (value) queryParams.append(key, value);
+    });
+    
+    // Navigate to cruises page with search parameters
+    navigate(`/cruises?${queryParams.toString()}`);
   };
 
   return (
@@ -246,7 +260,7 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              <Link to="/cruises" className="search-button">
+              <button onClick={handleSearch} className="search-button">
                 <div className="search-button-content">
                   <FaSearch className="search-icon" />
                   <span>Find Cruises</span>
@@ -254,7 +268,7 @@ const HeroSection = () => {
                 <div className="search-button-hover">
                   <FaChevronRight className="arrow-icon" />
                 </div>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -305,7 +319,10 @@ const HeroSection = () => {
         </div>
 
         <div className="animate-fade-in-up hero-book-now-wrapper" style={{ animationDelay: '1s' }}>
-          <Link to="/cruises" className="hero-book-now">
+          <Link to="/cruises" onClick={(e) => {
+            e.preventDefault();
+            navigate('/cruises');
+          }} className="hero-book-now">
             <span>EXPLORE CRUISES</span>
             <FaArrowRight className="ml-2" />
           </Link>

@@ -2,6 +2,8 @@ import { Search, Calendar, ChevronDown, MapPin, Users, Star, ArrowRight, DollarS
 import { useState } from "react"
 import packagesData from '../../../data/packages.json'
 import { Link } from "react-router-dom"
+import Navbar from '../Navbar'
+import Footer from '../Footer'
 
 const TravelPackages = () => {
   const [selectedPackageType, setSelectedPackageType] = useState("All Inclusive")
@@ -225,6 +227,8 @@ const TravelPackages = () => {
 
   return (
     <div className="bg-[#f8fafc] text-gray-800">
+      <Navbar />
+      
       {/* Hero Section */}
       <section
         className="relative h-[75vh] flex items-center justify-center overflow-hidden"
@@ -637,6 +641,8 @@ const TravelPackages = () => {
           animation: fadeIn 1s ease-out;
         }
       `}</style>
+
+      <Footer />
     </div>
   );
 };

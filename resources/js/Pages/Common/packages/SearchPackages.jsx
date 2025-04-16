@@ -2,6 +2,8 @@ import { Search, MapPin, Star, ArrowRight, Clock, DollarSign, Heart, Plane, X, C
 import { useState, useEffect, useMemo } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import packagesData from '../../../data/packages.json'
+import Navbar from '../Navbar'
+import Footer from '../Footer'
 
 const SearchPackages = () => {
   const navigate = useNavigate()
@@ -136,6 +138,8 @@ const SearchPackages = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
       {/* Search Header with Back Button */}
       <div className="bg-white shadow-md sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -402,6 +406,8 @@ const SearchPackages = () => {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   )
 }

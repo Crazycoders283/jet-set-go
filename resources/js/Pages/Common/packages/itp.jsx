@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { ChevronDown, MapPin, Calendar, Star, Clock, Users, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { FaHotel, FaPlane, FaUtensils, FaShieldAlt, FaCheck, FaMapMarkerAlt, FaRegClock, FaUsers, FaStar, FaCalendarAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import itineraryData from '../../../data/itinerarypackages.json'
+import Navbar from '../Navbar'
+import Footer from '../Footer'
 
 const ItineraryPackage = () => {
   const [selectedPackage, setSelectedPackage] = useState('dubai')
@@ -70,7 +72,8 @@ const ItineraryPackage = () => {
   if (!packageData) return null
 
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-white">
+      <Navbar />
       <div className="container mx-auto px-4">
         {/* Image Gallery Section */}
         <div className="relative w-full h-[400px] mb-8 rounded-2xl overflow-hidden group">
@@ -653,6 +656,7 @@ const ItineraryPackage = () => {
           }
         `}</style>
       </div>
+      <Footer />
     </div>
   )
 }
