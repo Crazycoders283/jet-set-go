@@ -77,6 +77,16 @@ export default defineConfig(({ mode }) => {
                 origin: '*',
                 methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
                 credentials: true
+            },
+            // Handle client-side routing in development
+            historyApiFallback: true,
+            // Proxy API requests to backend server
+            proxy: {
+                '/api': {
+                    target: 'http://localhost:8080',
+                    changeOrigin: true,
+                    secure: false
+                }
             }
         }
     };

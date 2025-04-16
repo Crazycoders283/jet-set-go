@@ -13,6 +13,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Get directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -47,25 +51,24 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  
-  const buildPath = path.join(__dirname, 'public', 'build');
-  app.use(express.static(buildPath));
+// Serve static assets
+const buildPath = path.join(__dirname, 'public', 'build');
+app.use(express.static(buildPath));
 
-  // Handle SPA routing - send all non-API routes to index.html
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api')) {
-      return next();
+// Handle SPA routing - send all requests to index.html except for API and static files
+app.get('*', (req, res, next) => {
+  // Skip API routes and static files
+  if (req.path.startsWith('/api') || req.path.includes('.')) {
+    return next();
+  }
+  
+  res.sendFile(path.join(buildPath, 'index.html'), err => {
+    if (err) {
+      console.error('Error sending index.html:', err);
+      next(err);
     }
-    
-    res.sendFile(path.join(buildPath, 'index.html'));
   });
-}
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
