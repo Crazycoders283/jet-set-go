@@ -151,7 +151,7 @@ const HotelDetails = React.lazy(() =>
 
 // Add ItineraryPackage import
 const ItineraryPackage = React.lazy(() => 
-  import('./pages/Common/packages/itp')
+  import('./Pages/Common/packages/itp')
     .catch(() => ({ default: () => <div>Loading Itinerary...</div> }))
 );
 
@@ -198,22 +198,22 @@ const CareersFallback = () => (
 
 // Import new pages with error handling
 const Privacy = React.lazy(() => 
-  import('./pages/Privacy')
+  import('./Pages/Privacy')
     .catch(() => ({ default: PrivacyFallback }))
 );
 
 const Terms = React.lazy(() => 
-  import('./pages/Terms')
+  import('./Pages/Terms')
     .catch(() => ({ default: TermsFallback }))
 );
 
 const Cookies = React.lazy(() => 
-  import('./pages/Cookies')
+  import('./Pages/Cookies')
     .catch(() => ({ default: CookiesFallback }))
 );
 
 const Careers = React.lazy(() => 
-  import('./pages/Careers')
+  import('./Pages/Careers')
     .catch(() => ({ default: CareersFallback }))
 );
 
@@ -230,7 +230,7 @@ const LoginFallback = () => (
 
 // Login page import
 const Login = React.lazy(() => 
-  import('./pages/Common/login/login')
+  import('./Pages/Common/login/login')
     .catch(() => ({ default: LoginFallback }))
 );
 
