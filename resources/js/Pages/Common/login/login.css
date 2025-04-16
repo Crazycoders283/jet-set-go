@@ -1,14 +1,15 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=Work+Sans:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Work+Sans:wght@400;600&display=swap');
 
 /* Login Container */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f3f4f6;
-  font-family: 'Work Sans', sans-serif; /* Default font for all content */
+  font-family: 'Work Sans', sans-serif;
+  padding: 1rem;
 }
 
 /* Login Card */
@@ -18,7 +19,7 @@
   background: #ffffff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0px 4px 6px rgba(2, 8, 61, 0.712);
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
@@ -26,11 +27,28 @@
 /* Image Section */
 .login-image {
   height: 160px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   width: 100%;
+  background-color: #0855A2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.login-logo-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* Login Content */
@@ -40,12 +58,12 @@
 }
 
 .login-title {
-  font-size: 2.5rem; /* Adjusted size to 40px */
-  font-weight: 600; /* Semi-bold weight */
+  font-size: 2.5rem;
+  font-weight: 600;
   color: #0855A2;
   margin-bottom: 1.5rem;
-  text-align: left; /* Left-align the heading */
-  font-family: 'Poppins', sans-serif; /* Specific font for the Login heading */
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
 }
 
 .login-form {
@@ -54,34 +72,36 @@
   gap: 1rem;
 }
 
-/* Form Labels (Email & Password) */
+/* Form Labels */
 .form-group label {
-  font-size: 16px; /* Set label font size */
-  font-weight: 400; /* Regular weight */
-  color: #06457A; /* Label color */
-  font-family: 'Poppins', sans-serif; /* Use Poppins Regular font for labels */
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+  color: #06457A;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Input Fields (Username and Password) */
+/* Input Fields */
 .form-input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #111111;
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 0.875rem;
-  color: #000000; /* Ensures input text is black */
-  font-family: 'Poppins', sans-serif; /* Use Poppins for input text */
+  color: #000000;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-input::placeholder {
-  color: #000000; /* Black placeholder text */
-  opacity: 1; /* Ensures placeholder is visible */
+  color: #9ca3af;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #06457A;
-  box-shadow: 0 0 0 1px #06457A;
+  border-color: #0855A2;
+  box-shadow: 0 0 0 3px rgba(8, 85, 162, 0.1);
 }
 
 .form-options {
@@ -89,22 +109,28 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
 
 .remember-me {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #111111;
+  color: #4b5563;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+  cursor: pointer;
 }
 
 /* Forgot Password Styling */
 .forgot-password {
-  color: #0855A2; /* Link color */
+  color: #0855A2;
   text-decoration: none;
-  font-size: 9.96px; /* Font size */
-  font-weight: bold; /* Bold text */
-  font-family: 'Work Sans', sans-serif; /* Use Work Sans font */
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .forgot-password:hover {
@@ -115,28 +141,55 @@
 .login-button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #0855A2; /* Button 1 color */
-  color: #ffffff; /* White text */
+  background-color: #0855A2;
+  color: #ffffff;
   font-size: 1rem;
-  font-weight: bold; /* Bold weight for text */
-  font-family: 'Gilroy', sans-serif; /* Gilroy font for bold text */
+  font-weight: 600;
   border: none;
-  border-radius: 7.11px; /* Updated corner radius */
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s; /* Added hover effect */
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 1rem;
 }
 
 .login-button:hover {
-  background-color: #06457A; /* Slightly darker color for hover */
-  transform: scale(1.05); /* Slight zoom effect */
+  background-color: #06457A;
 }
 
+.login-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(8, 85, 162, 0.3);
+}
+
+.login-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
 
 .login-divider {
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   text-align: center;
   color: #6b7280;
   font-size: 0.875rem;
+  position: relative;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.login-divider::before {
+  left: 0;
+}
+
+.login-divider::after {
+  right: 0;
 }
 
 /* Social Login */
@@ -147,35 +200,31 @@
 }
 
 .social-button {
-  border: 1px solid #d1d5db;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.social-button img {
-  width: 24px;
-  height: 24px;
+  transition: all 0.2s;
+  padding: 0;
 }
 
 .social-button:hover {
-  transform: scale(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Optional Specific Email Button Styling */
-.social-button img[alt="Email"] {
-  filter: brightness(0.5); /* Adjust brightness for contrast if needed */
-}
-
-/* By Proceeding Sentence Styling */
+/* Footer */
 .login-footer {
   margin-top: 1.5rem;
   text-align: center;
-  font-size: 9.96px; /* Font size for footer text */
-  color: #000000; /* Thick black color */
-  font-family: 'Work Sans', sans-serif; /* Use Work Sans Regular font */
-  font-weight: normal; /* Regular weight */
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 /* Links in text */
