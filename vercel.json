@@ -15,31 +15,34 @@
     ],
     "routes": [
         {
-            "src": "/api/(.*)",
-            "dest": "server.js"
+            "src": "/build/(.*)",
+            "headers": {
+                "cache-control": "public, max-age=31536000, immutable"
+            },
+            "dest": "/build/$1"
         },
         {
-            "src": "/build/(.*)\\.js$",
+            "src": "/(.*)\\.(?:js|jsx|ts|tsx)",
             "headers": {
                 "Content-Type": "application/javascript",
-                "Cache-Control": "public, max-age=31536000, immutable"
+                "cache-control": "public, max-age=31536000, immutable"
             },
-            "dest": "/build/$1.js"
+            "dest": "/$1"
         },
         {
-            "src": "/chunks/(.*)\\.js$",
+            "src": "/(.*)\\.css",
             "headers": {
-                "Content-Type": "application/javascript",
-                "Cache-Control": "public, max-age=31536000, immutable"
+                "Content-Type": "text/css",
+                "cache-control": "public, max-age=31536000, immutable"
             },
-            "dest": "/build/chunks/$1.js"
+            "dest": "/$1"
         },
         {
             "src": "/assets/(.*)",
             "headers": {
-                "Cache-Control": "public, max-age=31536000, immutable"
+                "cache-control": "public, max-age=31536000, immutable"
             },
-            "dest": "/build/assets/$1"
+            "dest": "/assets/$1"
         },
         {
             "handle": "filesystem"

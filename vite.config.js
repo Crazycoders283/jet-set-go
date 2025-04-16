@@ -30,8 +30,10 @@ export default defineConfig(({ mode }) => {
     
     return {
         plugins: [
-            react(),
+            react()
         ],
+        root: '.',
+        base: '/',
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, './resources/js'),
@@ -43,29 +45,21 @@ export default defineConfig(({ mode }) => {
             outDir: 'public/build',
             emptyOutDir: true,
             manifest: true,
-            assetsDir: '',
             rollupOptions: {
                 input: {
-                    app: path.resolve(__dirname, 'resources/js/app.jsx')
+                    main: path.resolve(__dirname, 'index.html')
                 },
                 output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {
                             return 'vendor';
                         }
-                    },
-                    format: 'es',
-                    entryFileNames: '[name].js',
-                    chunkFileNames: 'chunks/[name].[hash].js',
-                    assetFileNames: 'assets/[name].[hash][extname]'
-                },
-                // Force all path resolutions to be case-sensitive
-                onwarn(warning, warn) {
-                    // Skip certain warnings
-                    if (warning.code === 'MIXED_EXPORTS') return;
-                    warn(warning);
+                    }
                 }
             }
+        },
+        optimizeDeps: {
+            include: ['react', 'react-dom', 'react-router-dom']
         },
         server: {
             hmr: {
@@ -79,15 +73,12 @@ export default defineConfig(({ mode }) => {
             watch: {
                 usePolling: true,
             },
-            // Allow connections from any origin for use in deployment environments
             cors: {
                 origin: '*',
                 methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
                 credentials: true
             },
-            // Handle client-side routing in development
             historyApiFallback: true,
-            // Proxy API requests to backend server
             proxy: {
                 '/api': {
                     target: 'http://localhost:8080',
