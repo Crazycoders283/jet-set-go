@@ -43,8 +43,11 @@ export default defineConfig(({ mode }) => {
             outDir: 'public/build',
             emptyOutDir: true,
             manifest: true,
-            assetsDir: 'assets',
+            assetsDir: '',
             rollupOptions: {
+                input: {
+                    app: path.resolve(__dirname, 'resources/js/app.jsx')
+                },
                 output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {
@@ -52,9 +55,9 @@ export default defineConfig(({ mode }) => {
                         }
                     },
                     format: 'es',
-                    entryFileNames: '[name]-[hash].js',
-                    chunkFileNames: '[name]-[hash].js',
-                    assetFileNames: '[name]-[hash][extname]'
+                    entryFileNames: '[name].js',
+                    chunkFileNames: 'chunks/[name].[hash].js',
+                    assetFileNames: 'assets/[name].[hash][extname]'
                 },
                 // Force all path resolutions to be case-sensitive
                 onwarn(warning, warn) {

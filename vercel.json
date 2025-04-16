@@ -19,29 +19,27 @@
             "dest": "server.js"
         },
         {
-            "src": "/assets/(.*)\\.js$",
+            "src": "/build/(.*)\\.js$",
             "headers": {
-                "Content-Type": "application/javascript"
+                "Content-Type": "application/javascript",
+                "Cache-Control": "public, max-age=31536000, immutable"
             },
-            "dest": "/public/build/assets/$1.js"
+            "dest": "/build/$1.js"
+        },
+        {
+            "src": "/chunks/(.*)\\.js$",
+            "headers": {
+                "Content-Type": "application/javascript",
+                "Cache-Control": "public, max-age=31536000, immutable"
+            },
+            "dest": "/build/chunks/$1.js"
         },
         {
             "src": "/assets/(.*)",
-            "dest": "/public/build/assets/$1"
-        },
-        {
-            "src": "/(.*)\\.js$",
             "headers": {
-                "Content-Type": "application/javascript"
+                "Cache-Control": "public, max-age=31536000, immutable"
             },
-            "dest": "/public/build/$1.js"
-        },
-        {
-            "src": "/(.*)\\.css$",
-            "headers": {
-                "Content-Type": "text/css"
-            },
-            "dest": "/public/build/$1.css"
+            "dest": "/build/assets/$1"
         },
         {
             "handle": "filesystem"
@@ -49,7 +47,7 @@
         {
             "src": "/(.*)",
             "headers": {
-                "Cache-Control": "s-maxage=1, stale-while-revalidate"
+                "Cache-Control": "public, max-age=0, must-revalidate"
             },
             "dest": "/index.html"
         }
