@@ -1,10 +1,12 @@
 import '../css/app.css';
 import '../css/fonts.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // No need for bootstrap.js as we're not using Laravel's features
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Fallback components
 const LoadingComponent = () => <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
@@ -147,6 +149,68 @@ const HotelDetails = React.lazy(() =>
     .catch(() => ({ default: HotelDetailsFallback }))
 );
 
+// New pages for footer links
+const PrivacyFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Privacy Policy</h1>
+    <p>Loading Privacy Policy...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const TermsFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Terms of Service</h1>
+    <p>Loading Terms of Service...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const CookiesFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Cookie Policy</h1>
+    <p>Loading Cookie Policy...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+const CareersFallback = () => (
+  <div style={{ padding: '50px', textAlign: 'center' }}>
+    <h1>Careers</h1>
+    <p>Loading career opportunities...</p>
+    <a href="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 20px', background: '#0066B2', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      Back to Home
+    </a>
+  </div>
+);
+
+// Import new pages with error handling
+const Privacy = React.lazy(() => 
+  import('./pages/Privacy')
+    .catch(() => ({ default: PrivacyFallback }))
+);
+
+const Terms = React.lazy(() => 
+  import('./pages/Terms')
+    .catch(() => ({ default: TermsFallback }))
+);
+
+const Cookies = React.lazy(() => 
+  import('./pages/Cookies')
+    .catch(() => ({ default: CookiesFallback }))
+);
+
+const Careers = React.lazy(() => 
+  import('./pages/Careers')
+    .catch(() => ({ default: CareersFallback }))
+);
+
 const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
@@ -160,6 +224,23 @@ const App = () => {
         <Route path="/rental" element={<Rentals />} />
         <Route path="/hotel-details" element={<HotelDetails />} />
         <Route path="/my-trips" element={<MyTrips />} />
+        
+        {/* Footer Pages */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/about" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/contact" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/cruise-booking" element={<Navigate to="/cruises" />} /> {/* Redirect to cruises */}
+        <Route path="/blog" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/reviews" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/covid-updates" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/special-offers" element={<Navigate to="/" />} /> {/* Placeholder redirect */}
+        <Route path="/destinations/:destination" element={<Navigate to="/cruises" />} /> {/* Redirect to cruises */}
+        <Route path="/secure-booking" element={<Navigate to="/privacy" />} /> {/* Redirect to privacy */}
+        <Route path="/support" element={<Navigate to="/contact" />} /> {/* Redirect to contact */}
+        
         <Route path="/404" element={<Error />} />
         <Route path="*" element={<Navigate to="/404" />} />
       </Routes>
@@ -175,7 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <React.StrictMode>
         <BrowserRouter>
-          <App />
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
         </BrowserRouter>
       </React.StrictMode>
     );
