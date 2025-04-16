@@ -1,7 +1,4 @@
-import '../css/app.css';
-import '../css/fonts.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// No need for bootstrap.js as we're not using Laravel's features
+// CSS imports moved to main.jsx entry point
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -279,19 +276,5 @@ const App = () => {
   );
 };
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('app');
-  if (container) {
-    const root = createRoot(container);
-    root.render(
-      <React.StrictMode>
-        <BrowserRouter>
-          <HelmetProvider>
-            <App />
-          </HelmetProvider>
-        </BrowserRouter>
-      </React.StrictMode>
-    );
-  }
-});
+// Export the App component as default
+export default App;

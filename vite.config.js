@@ -33,16 +33,17 @@ export default defineConfig(({ mode }) => {
             react()
         ],
         root: '.',
-        base: '/',
+        base: '',
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, './resources/js'),
-                './pages': path.resolve(__dirname, './resources/js/Pages'),
-                './Pages': path.resolve(__dirname, './resources/js/Pages')
+                '@pages': path.resolve(__dirname, './resources/js/Pages'),
+                '@components': path.resolve(__dirname, './resources/js/Components'),
+                '@src': path.resolve(__dirname, './src')
             }
         },
         build: {
-            outDir: 'public/build',
+            outDir: 'dist',
             emptyOutDir: true,
             manifest: true,
             rollupOptions: {
@@ -81,7 +82,7 @@ export default defineConfig(({ mode }) => {
             historyApiFallback: true,
             proxy: {
                 '/api': {
-                    target: 'http://localhost:8080',
+                    target: 'http://localhost:5000',
                     changeOrigin: true,
                     secure: false
                 }

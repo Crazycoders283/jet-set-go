@@ -11,7 +11,7 @@ import sequelize from './backend/config/database.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000; // Changed from 8080 to avoid conflicts
 
 // Get directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -51,10 +51,17 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
 
-// Serve static assets from the Vite build output
-const buildPath = path.join(__dirname, 'public', 'build');
-app.use(express.static(buildPath));
+// Serve static assets from the Vite build output - ensure proper order
+const distPath = path.join(__dirname, 'dist');
+
+// Serve assets from dist directory first (production build)
+app.use(express.static(distPath));
+
+// Then serve from public directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Also serve static files from the root directory (for development)
+app.use(express.static(__dirname));
 
 // Handle SPA routing - send all requests to index.html except for API and static files
 app.get('*', (req, res, next) => {
@@ -63,7 +70,7 @@ app.get('*', (req, res, next) => {
     return next();
   }
   
-  res.sendFile(path.join(buildPath, 'index.html'), err => {
+  res.sendFile(path.join(distPath, 'index.html'), err => {
     if (err) {
       console.error('Error sending index.html:', err);
       next(err);
