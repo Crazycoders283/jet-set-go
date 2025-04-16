@@ -51,9 +51,10 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
 
-// Serve static assets
+// Serve static assets from the Vite build output
 const buildPath = path.join(__dirname, 'public', 'build');
 app.use(express.static(buildPath));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Handle SPA routing - send all requests to index.html except for API and static files
 app.get('*', (req, res, next) => {
