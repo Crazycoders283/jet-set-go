@@ -149,6 +149,12 @@ const HotelDetails = React.lazy(() =>
     .catch(() => ({ default: HotelDetailsFallback }))
 );
 
+// Import FlightLanding component
+const FlightLanding = React.lazy(() => 
+  import('./pages/Common/flights/flightlanding')
+    .catch(() => ({ default: FlightsFallback }))
+);
+
 // Add ItineraryPackage import
 const ItineraryPackage = React.lazy(() => 
   import('./Pages/Common/packages/itp')
@@ -245,6 +251,7 @@ const App = () => {
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/flight" element={<Flights />} />
+        <Route path="/flights" element={<FlightLanding />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/rental" element={<Rentals />} />
         <Route path="/hotel-details" element={<HotelDetails />} />

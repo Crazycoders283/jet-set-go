@@ -76,7 +76,7 @@ const Navbar = () => {
         <Link to="/" className="nav-link">
           Cruise
         </Link>
-        <Link to="/flight" className="nav-link">
+        <Link to="/flights" className="nav-link">
           Flight
         </Link>
         <Link to="/packages" className="nav-link">
@@ -192,7 +192,7 @@ const Navbar = () => {
           <Link to="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
             Cruise
           </Link>
-          <Link to="/flight" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link to="/flights" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
             Flight
           </Link>
           <Link to="/packages" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
