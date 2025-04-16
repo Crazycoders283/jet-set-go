@@ -19,8 +19,15 @@
             "dest": "server.js"
         },
         {
+            "src": "/assets/(.*)",
+            "dest": "/public/build/assets/$1"
+        },
+        {
+            "handle": "filesystem"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/public/build/$1"
+            "dest": "/index.html"
         }
     ],
     "env": {
