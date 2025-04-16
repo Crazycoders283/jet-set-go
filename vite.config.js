@@ -50,7 +50,11 @@ export default defineConfig(({ mode }) => {
                         if (id.includes('node_modules')) {
                             return 'vendor';
                         }
-                    }
+                    },
+                    format: 'es',
+                    entryFileNames: '[name]-[hash].js',
+                    chunkFileNames: '[name]-[hash].js',
+                    assetFileNames: '[name]-[hash][extname]'
                 },
                 // Force all path resolutions to be case-sensitive
                 onwarn(warning, warn) {

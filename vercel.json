@@ -19,14 +19,38 @@
             "dest": "server.js"
         },
         {
+            "src": "/assets/(.*)\\.js$",
+            "headers": {
+                "Content-Type": "application/javascript"
+            },
+            "dest": "/public/build/assets/$1.js"
+        },
+        {
             "src": "/assets/(.*)",
             "dest": "/public/build/assets/$1"
+        },
+        {
+            "src": "/(.*)\\.js$",
+            "headers": {
+                "Content-Type": "application/javascript"
+            },
+            "dest": "/public/build/$1.js"
+        },
+        {
+            "src": "/(.*)\\.css$",
+            "headers": {
+                "Content-Type": "text/css"
+            },
+            "dest": "/public/build/$1.css"
         },
         {
             "handle": "filesystem"
         },
         {
             "src": "/(.*)",
+            "headers": {
+                "Cache-Control": "s-maxage=1, stale-while-revalidate"
+            },
             "dest": "/index.html"
         }
     ],
