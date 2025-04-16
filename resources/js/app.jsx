@@ -152,6 +152,12 @@ const HotelDetails = React.lazy(() =>
     .catch(() => ({ default: HotelDetailsFallback }))
 );
 
+// Add ItineraryPackage import
+const ItineraryPackage = React.lazy(() => 
+  import('./pages/Common/packages/itp')
+    .catch(() => ({ default: () => <div>Loading Itinerary...</div> }))
+);
+
 // New pages for footer links
 const PrivacyFallback = () => (
   <div style={{ padding: '50px', textAlign: 'center' }}>
@@ -246,6 +252,9 @@ const App = () => {
         <Route path="/rental" element={<Rentals />} />
         <Route path="/hotel-details" element={<HotelDetails />} />
         <Route path="/my-trips" element={<MyTrips />} />
+        
+        {/* Add ItineraryPackage route */}
+        <Route path="/packages/itinerary" element={<ItineraryPackage />} />
         
         {/* Footer Pages */}
         <Route path="/privacy" element={<Privacy />} />
