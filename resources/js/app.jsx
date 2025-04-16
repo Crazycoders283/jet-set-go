@@ -79,7 +79,7 @@ const CruiseCards = React.lazy(() =>
 );
 
 const Itinerary = React.lazy(() => 
-  import('./pages/Common/cruise/Itinerary')
+  import('./Pages/Common/cruise/Itinerary')
     .catch(() => ({ default: ItineraryFallback }))
 );
 
