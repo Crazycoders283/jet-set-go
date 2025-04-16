@@ -151,7 +151,7 @@ const HotelDetails = React.lazy(() =>
 
 // Import FlightLanding component
 const FlightLanding = React.lazy(() => 
-  import('./pages/Common/flights/flightlanding')
+  import('./Pages/Common/flights/flightlanding')
     .catch(() => ({ default: FlightsFallback }))
 );
 
