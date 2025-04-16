@@ -213,6 +213,7 @@ export default function FlightPayment() {
               {paymentSuccess ? "Payment Successful" : "Payment Failed"}
             </h3>
             <button 
+              type="button"
               onClick={closePaymentResult}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
@@ -238,6 +239,7 @@ export default function FlightPayment() {
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Payment Failed</h4>
                 <p className="text-gray-600 mb-4 text-sm">We couldn't process your payment. Please check your details or try another method.</p>
                 <button 
+                  type="button"
                   onClick={closePaymentResult}
                   className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
                 >
@@ -303,6 +305,7 @@ export default function FlightPayment() {
           {children}
           <div className="mt-6">
             <button 
+              type="button"
               className={`w-full text-white py-3 rounded-lg font-semibold text-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-md hover:shadow-lg ${timerExpired ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:scale-[1.01]'} disabled:opacity-70`}
               onClick={handlePaymentSubmit}
               disabled={processingPayment || timerExpired}
@@ -390,6 +393,7 @@ export default function FlightPayment() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
         <div className="flex items-center mb-8">
           <button 
+            type="button"
             onClick={() => navigate(-1)} 
             className="flex items-center text-gray-700 hover:text-blue-700 transition-colors font-medium p-2 rounded-md hover:bg-gray-100"
           >
@@ -504,7 +508,7 @@ export default function FlightPayment() {
              {/* Promo Code Card */}
               <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 transform transition-all duration-300 hover:shadow-xl">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">Apply Promo Code</h2>
-                <div className="flex space-x-2">
+                <form onSubmit={(e) => e.preventDefault()} className="flex space-x-2">
                   <input 
                     type="text"
                     value={promoCode}
@@ -514,13 +518,14 @@ export default function FlightPayment() {
                     disabled={promoApplied}
                   />
                   <button
+                    type="button"
                     onClick={applyPromoCode}
                     className={`px-5 py-3 rounded-lg font-semibold transition-colors ${promoApplied ? 'bg-green-600 text-white cursor-not-allowed' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                     disabled={promoApplied || !promoCode}
                   >
                     {promoApplied ? 'Applied' : 'Apply'}
                   </button>
-                </div>
+                </form>
                  {promoApplied && (
                    <p className="text-green-600 text-sm mt-2 font-medium">Promo code applied! You saved ₹{discountAmount.toFixed(2)}.</p>
                  )}
@@ -642,87 +647,89 @@ export default function FlightPayment() {
                       </div>
                       
                       {/* Card Input Form */}
-                      <div className="grid grid-cols-1 gap-4">
-                         <div>
-                           <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                           <div className="relative rounded-md shadow-sm">
-                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                               <CreditCard className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <form onSubmit={(e) => e.preventDefault()}>
+                        <div className="grid grid-cols-1 gap-4">
+                           <div>
+                             <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                             <div className="relative rounded-md shadow-sm">
+                               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                 <CreditCard className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                               </div>
+                               <input
+                                 type="text"
+                                 id="cardNumber"
+                                 name="cardNumber"
+                                 value={cardDetails.cardNumber}
+                                 onChange={handleCardDetailsChange}
+                                 onFocus={() => setIsCardFlipped(false)}
+                                 placeholder="0000 0000 0000 0000"
+                                 maxLength="19"
+                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
+                               />
                              </div>
-                             <input
-                               type="text"
-                               id="cardNumber"
-                               name="cardNumber"
-                               value={cardDetails.cardNumber}
-                               onChange={handleCardDetailsChange}
-                               onFocus={() => setIsCardFlipped(false)}
-                               placeholder="0000 0000 0000 0000"
-                               maxLength="19"
-                               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                             />
                            </div>
-                         </div>
-                          <div>
-                             <label htmlFor="cardHolder" className="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
-                             <input
-                               type="text"
-                               id="cardHolder"
-                               name="cardHolder"
-                               value={cardDetails.cardHolder}
-                               onChange={handleCardDetailsChange}
-                               onFocus={() => setIsCardFlipped(false)}
-                               placeholder="John Doe"
-                               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                             />
-                          </div>
-                         <div className="grid grid-cols-2 gap-4">
-                             <div>
-                               <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                               <div className="relative">
-                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                   <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <div>
+                               <label htmlFor="cardHolder" className="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
+                               <input
+                                 type="text"
+                                 id="cardHolder"
+                                 name="cardHolder"
+                                 value={cardDetails.cardHolder}
+                                 onChange={handleCardDetailsChange}
+                                 onFocus={() => setIsCardFlipped(false)}
+                                 placeholder="John Doe"
+                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               />
+                            </div>
+                           <div className="grid grid-cols-2 gap-4">
+                               <div>
+                                 <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                 <div className="relative">
+                                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                     <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                   </div>
+                                   <input
+                                     type="text"
+                                     id="expiryDate"
+                                     name="expiryDate"
+                                     value={cardDetails.expiryDate}
+                                     onChange={handleCardDetailsChange}
+                                     onFocus={() => setIsCardFlipped(false)}
+                                     placeholder="MM/YY"
+                                     maxLength="5"
+                                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
+                                   />
                                  </div>
-                                 <input
-                                   type="text"
-                                   id="expiryDate"
-                                   name="expiryDate"
-                                   value={cardDetails.expiryDate}
-                                   onChange={handleCardDetailsChange}
-                                   onFocus={() => setIsCardFlipped(false)}
-                                   placeholder="MM/YY"
-                                   maxLength="5"
-                                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                                 />
                                </div>
-                             </div>
-                             <div>
-                               <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                               <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                     <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                  </div>
-                                 <input
-                                   type="password"
-                                   id="cvv"
-                                   name="cvv"
-                                   value={cardDetails.cvv}
-                                   onChange={handleCardDetailsChange}
-                                   onFocus={() => setIsCardFlipped(true)}
-                                   onBlur={() => setIsCardFlipped(false)}
-                                   placeholder="•••"
-                                   maxLength="4"
-                                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                                 />
+                               <div>
+                                 <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                                 <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                       <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                   <input
+                                     type="password"
+                                     id="cvv"
+                                     name="cvv"
+                                     value={cardDetails.cvv}
+                                     onChange={handleCardDetailsChange}
+                                     onFocus={() => setIsCardFlipped(true)}
+                                     onBlur={() => setIsCardFlipped(false)}
+                                     placeholder="•••"
+                                     maxLength="4"
+                                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
+                                   />
+                                 </div>
                                </div>
-                             </div>
-                         </div>
-                          <div className="mt-2">
-                            <label className="flex items-center text-sm">
-                              <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2" />
-                              <span className="text-gray-700">Save this card securely for future payments</span>
-                            </label>
-                          </div>
-                      </div>
+                           </div>
+                            <div className="mt-2">
+                              <label className="flex items-center text-sm">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2" />
+                                <span className="text-gray-700">Save this card securely for future payments</span>
+                              </label>
+                            </div>
+                        </div>
+                      </form>
                    </PaymentMethodOption>
 
                    {/* UPI Option */}
@@ -735,28 +742,30 @@ export default function FlightPayment() {
                       <div className="space-y-4">
                         <div>
                            <label htmlFor="upiId" className="block text-sm font-medium text-gray-700 mb-1">Enter UPI ID</label>
-                           <input
-                             type="text"
-                             id="upiId"
-                             value={upiId}
-                             onChange={(e) => setUpiId(e.target.value)}
-                             placeholder="yourname@bank"
-                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           />
+                           <form onSubmit={(e) => e.preventDefault()}>
+                             <input
+                               type="text"
+                               id="upiId"
+                               value={upiId}
+                               onChange={(e) => setUpiId(e.target.value)}
+                               placeholder="yourname@bank"
+                               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                             />
+                           </form>
                             <p className="text-xs text-gray-500 mt-1">We'll send a payment request to this ID.</p>
                         </div>
                          <div>
                              <p className="text-sm font-medium text-gray-700 mb-2">Or pay using UPI app:</p>
                              <div className="flex flex-wrap gap-3">
-                                <button className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                                <button type="button" className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
                                    <img src="https://cdn-icons-png.flaticon.com/512/6124/6124998.png" alt="Google Pay" className="w-6 h-6" />
                                    <span className="text-xs font-medium">Google Pay</span>
                                 </button>
-                                 <button className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                                 <button type="button" className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
                                    <img src="https://cdn-icons-png.flaticon.com/512/6124/6124997.png" alt="PhonePe" className="w-6 h-6" />
                                    <span className="text-xs font-medium">PhonePe</span>
                                  </button>
-                                  <button className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                                  <button type="button" className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
                                    <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png" alt="Paytm" className="w-6 h-6" />
                                    <span className="text-xs font-medium">Paytm</span>
                                   </button>
@@ -774,30 +783,32 @@ export default function FlightPayment() {
                    >
                        <p className="text-sm text-gray-600 mb-3">Select your bank from the list below:</p>
                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-                         <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
+                         <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/HDFC_Bank_Logo.svg/1280px-HDFC_Bank_Logo.svg.png" alt="HDFC" className="h-6 mb-1" />
                            <span className="text-xs">HDFC Bank</span>
                          </button>
-                         <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
+                         <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/State_Bank_of_India_logo.svg/1280px-State_Bank_of_India_logo.svg.png" alt="SBI" className="h-6 mb-1" />
                            <span className="text-xs">SBI Bank</span>
                          </button>
-                         <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
+                         <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/AXIS_BANK_LOGO.svg/1280px-AXIS_BANK_LOGO.svg.png" alt="Axis" className="h-6 mb-1" />
                            <span className="text-xs">Axis Bank</span>
                          </button>
-                         <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
+                         <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center">
                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/ICICI_Bank_Logo.svg/1280px-ICICI_Bank_Logo.svg.png" alt="ICICI" className="h-6 mb-1" />
                            <span className="text-xs">ICICI Bank</span>
                          </button>
                        </div>
-                       <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                          <option>Select Other Bank...</option>
-                          <option>Kotak Mahindra Bank</option>
-                          <option>Yes Bank</option>
-                          <option>IDFC First Bank</option>
-                          <option>Bank of Baroda</option>
-                       </select>
+                       <form onSubmit={(e) => e.preventDefault()}>
+                         <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option>Select Other Bank...</option>
+                            <option>Kotak Mahindra Bank</option>
+                            <option>Yes Bank</option>
+                            <option>IDFC First Bank</option>
+                            <option>Bank of Baroda</option>
+                         </select>
+                       </form>
                    </PaymentMethodOption>
                    
                    {/* Wallet Option */}
@@ -808,15 +819,15 @@ export default function FlightPayment() {
                       description="Paytm, PhonePe, Amazon Pay & More"
                    >
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                        <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
+                        <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/1280px-Paytm_Logo_%28standalone%29.svg.png" alt="Paytm" className="h-5 mr-2" />
                           <span className="text-sm">Paytm</span>
                         </button>
-                        <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
+                        <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Amazon_Pay_logo.svg/1280px-Amazon_Pay_logo.svg.png" alt="Amazon Pay" className="h-5 mr-2" />
                           <span className="text-sm">Amazon Pay</span>
                         </button>
-                        <button className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
+                        <button type="button" className="border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mobikwik_logo.svg/1280px-Mobikwik_logo.svg.png" alt="MobiKwik" className="h-5 mr-2" />
                           <span className="text-sm">MobiKwik</span>
                         </button>
