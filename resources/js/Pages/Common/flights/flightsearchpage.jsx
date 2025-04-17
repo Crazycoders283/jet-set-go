@@ -9,8 +9,19 @@ import {
   cheapFlights, 
   destinations,
   sourceCities,
-  specialFares
+  specialFares,
+  flightBookingData
 } from "./data.js";
+
+// CONFIGURATION: Set this to true when Amadeus API is available
+const USE_AMADEUS_API = false;
+
+// Amadeus API configuration (to be used when API is available)
+const AMADEUS_API_CONFIG = {
+  baseUrl: "https://test.api.amadeus.com/v2",
+  apiKey: "YOUR_AMADEUS_API_KEY", // Replace with your actual API key
+  apiSecret: "YOUR_AMADEUS_API_SECRET" // Replace with your actual API secret
+};
 
 export default function FlightSearchPage() {
   const location = useLocation();
@@ -29,6 +40,7 @@ export default function FlightSearchPage() {
     stops: "any",
     airlines: []
   });
+  const [apiToken, setApiToken] = useState(null);
   
   // Date-based pricing state
   const [selectedDateIndex, setSelectedDateIndex] = useState(3); // Middle date as default
@@ -69,6 +81,36 @@ export default function FlightSearchPage() {
     setDateRange(dates);
   }, []);
 
+  // Authenticate with Amadeus API when component mounts
+  useEffect(() => {
+    if (USE_AMADEUS_API) {
+      authenticateAmadeus();
+    }
+  }, []);
+
+  // Authenticate with Amadeus API and get token
+  const authenticateAmadeus = async () => {
+    try {
+      // In a real implementation, you would make a POST request to Amadeus auth endpoint
+      // Example:
+      // const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/x-www-form-urlencoded',
+      //   },
+      //   body: `grant_type=client_credentials&client_id=${AMADEUS_API_CONFIG.apiKey}&client_secret=${AMADEUS_API_CONFIG.apiSecret}`
+      // });
+      // const data = await response.json();
+      // setApiToken(data.access_token);
+      
+      // For now, we'll just set a mock token
+      console.log("Authenticated with Amadeus API (mock)");
+      setApiToken("mock_amadeus_token");
+    } catch (error) {
+      console.error("Failed to authenticate with Amadeus API:", error);
+    }
+  };
+
   // Enhanced flight images from Unsplash
   const flightImages = [
     "https://images.unsplash.com/photo-1564698735457-9c2869f64ca1?q=80&w=1200&auto=format&fit=crop",
@@ -79,43 +121,119 @@ export default function FlightSearchPage() {
     "https://images.unsplash.com/photo-1570301926313-caac8c745d0d?q=80&w=1200&auto=format&fit=crop"
   ];
 
-  // Mock flight data based on cheap flights
-  const mockFlights = [
-    ...cheapFlights.map((flight, index) => ({
-      id: flight.id,
-      from: searchParams.from || "Washington D.C.",
-      to: flight.destination,
-      departDate: flight.date,
-      returnDate: "",
-      airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
-      duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
-      stops: Math.floor(Math.random() * 3),
-      price: parseInt(flight.price.replace(/[^\d]/g, "")),
-      image: flightImages[index % flightImages.length]
-    })),
-    // Generate more flights for search results
-    ...[...Array(8)].map((_, i) => ({
-      id: cheapFlights.length + i + 1,
-      from: searchParams.from || "Washington D.C.",
-      to: destinations[Math.floor(Math.random() * destinations.length)].name,
-      departDate: "Wed, 15 Jan",
-      returnDate: "",
-      airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
-      duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
-      stops: Math.floor(Math.random() * 3),
-      price: Math.floor(Math.random() * 8000) + 1000,
-      image: flightImages[i % flightImages.length]
-    }))
-  ];
+  // Generate mock flight data from data.js
+  const generateMockFlights = () => {
+    return [
+      ...cheapFlights.map((flight, index) => ({
+        id: flight.id,
+        from: searchParams.from || "Washington D.C.",
+        to: flight.destination,
+        departDate: flight.date,
+        returnDate: "",
+        airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
+        duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
+        stops: Math.floor(Math.random() * 3),
+        price: parseInt(flight.price.replace(/[^\d]/g, "")),
+        image: flightImages[index % flightImages.length]
+      })),
+      // Generate more flights for search results
+      ...[...Array(8)].map((_, i) => ({
+        id: cheapFlights.length + i + 1,
+        from: searchParams.from || "Washington D.C.",
+        to: destinations[Math.floor(Math.random() * destinations.length)].name,
+        departDate: "Wed, 15 Jan",
+        returnDate: "",
+        airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
+        duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
+        stops: Math.floor(Math.random() * 3),
+        price: Math.floor(Math.random() * 8000) + 1000,
+        image: flightImages[i % flightImages.length]
+      }))
+    ];
+  };
 
-  // Simulate API call when search parameters change
+  // Search flights using Amadeus API
+  const searchFlightsWithApi = async (params) => {
+    try {
+      if (!apiToken) {
+        await authenticateAmadeus();
+      }
+
+      // In a real implementation, you would make a GET request to Amadeus flight offers search endpoint
+      // Example:
+      // const originLocationCode = params.from.substring(0, 3).toUpperCase();
+      // const destinationLocationCode = params.to.substring(0, 3).toUpperCase();
+      // const departureDate = formatDateForAmadeus(params.departDate);
+      // const returnDate = params.tripType === 'roundTrip' ? formatDateForAmadeus(params.returnDate) : '';
+      // const adults = parseInt(params.travelers.split(' ')[0]);
+      
+      // const url = `${AMADEUS_API_CONFIG.baseUrl}/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&departureDate=${departureDate}${returnDate ? '&returnDate=' + returnDate : ''}&adults=${adults}&max=20`;
+      
+      // const response = await fetch(url, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Authorization': `Bearer ${apiToken}`
+      //   }
+      // });
+      
+      // const data = await response.json();
+      // const apiFlights = transformAmadeusResponse(data);
+      // return apiFlights;
+
+      // For now, return mock data with a delay to simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return generateMockFlights();
+    } catch (error) {
+      console.error("Error fetching flights from Amadeus API:", error);
+      // Fallback to mock data if API call fails
+      return generateMockFlights();
+    }
+  };
+
+  // Transform Amadeus API response to our format
+  const transformAmadeusResponse = (apiResponse) => {
+    // This would parse and transform the Amadeus API response into our flight format
+    // For now, just returning mock data
+    return generateMockFlights();
+  };
+
+  // Format date for Amadeus API (YYYY-MM-DD)
+  const formatDateForAmadeus = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  // Get flights data when search parameters change
   useEffect(() => {
     setLoading(true);
-    // Simulate API delay
+    
+    const getFlights = async () => {
+      try {
+        let flightData;
+        
+        if (USE_AMADEUS_API) {
+          // Use real API if enabled
+          flightData = await searchFlightsWithApi(searchParams);
+        } else {
+          // Use mock data as fallback
+          flightData = generateMockFlights();
+        }
+        
+        setFlights(flightData);
+      } catch (error) {
+        console.error("Error getting flights:", error);
+        // Fallback to mock data if there's an error
+        setFlights(generateMockFlights());
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Simulate delay for better UX
     const timer = setTimeout(() => {
-      setFlights(mockFlights);
-      setLoading(false);
-    }, 1000);
+      getFlights();
+    }, 500);
     
     return () => clearTimeout(timer);
   }, [searchParams]);
@@ -183,12 +301,22 @@ export default function FlightSearchPage() {
   // Handle date selection for date-based pricing
   const handleDateSelection = (index) => {
     setSelectedDateIndex(index);
-    // In a real app, this would trigger a new search with the selected date
     setLoading(true);
-    setTimeout(() => setLoading(false), 800);
+    
+    // Get new search date
+    const newDate = dateRange[index].date;
+    const formattedDate = formatDate(newDate);
+    
+    // Update search params with the new date
+    const updatedParams = {
+      ...searchParams,
+      departDate: formattedDate
+    };
+    
+    setSearchParams(updatedParams);
   };
   
-  // Shift date range left or right
+  // Handle trip type change
   const handleTripTypeChange = (type) => {
     setTripType(type);
   };
@@ -249,11 +377,26 @@ export default function FlightSearchPage() {
     return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
   };
 
-  // Handle booking flight
+  // Handle booking a flight
   const handleBookFlight = (flight) => {
-    navigate(`/flights/booking/${flight.id}`, { 
+    if (USE_AMADEUS_API) {
+      // In a real app, you would make an API call to create a booking
+      console.log("Creating booking with Amadeus API for flight:", flight);
+    }
+    
+    // Navigate to booking confirmation page with flight details
+    navigate("/flights/booking-confirmation", { 
       state: { 
-        flightDetails: flight 
+        bookingData: {
+          ...flightBookingData.bookings[0], // Use mock booking data
+          flight: {
+            ...flightBookingData.bookings[0].flight,
+            departureCity: flight.from,
+            arrivalCity: flight.to,
+            departureDate: flight.departDate,
+            airline: flight.airline
+          }
+        }
       }
     });
   };
@@ -303,7 +446,9 @@ export default function FlightSearchPage() {
                   type="text"
                   placeholder="Washington D.C."
                   className="w-full border-none outline-none text-gray-800 text-base"
-                  value={searchParams.from}
+                  defaultValue={searchParams.from}
+                  readOnly
+                  onClick={() => handleSearch(searchParams)}
                 />
               </div>
 
@@ -314,7 +459,9 @@ export default function FlightSearchPage() {
                   type="text"
                   placeholder="Country, city or airport"
                   className="w-full border-none outline-none text-gray-800 text-base"
-                  value={searchParams.to}
+                  defaultValue={searchParams.to}
+                  readOnly
+                  onClick={() => handleSearch(searchParams)}
                 />
               </div>
 
@@ -326,7 +473,9 @@ export default function FlightSearchPage() {
                     type="text"
                     placeholder="Add date"
                     className="w-full border-none outline-none text-gray-800 text-base"
-                    value={searchParams.departDate}
+                    defaultValue={searchParams.departDate}
+                    readOnly
+                    onClick={() => handleSearch(searchParams)}
                   />
                   <Calendar className="h-5 w-5 text-gray-400" />
                 </div>
@@ -341,7 +490,9 @@ export default function FlightSearchPage() {
                     placeholder="Add date"
                     className="w-full border-none outline-none text-gray-800 text-base"
                     disabled={tripType === "oneWay"}
-                    value={searchParams.returnDate}
+                    defaultValue={searchParams.returnDate}
+                    readOnly
+                    onClick={() => handleSearch(searchParams)}
                   />
                   <Calendar className="h-5 w-5 text-gray-400" />
                 </div>
@@ -656,7 +807,7 @@ export default function FlightSearchPage() {
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="appearance-none bg-gray-100 px-3 py-1.5 pr-8 rounded-md text-sm border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 >
                   <option value="price-low">Price (Lowest)</option>
                   <option value="price-high">Price (Highest)</option>
@@ -860,7 +1011,7 @@ export default function FlightSearchPage() {
                             <div className="flex items-center gap-3">
                               <div className={`w-16 h-16 ${airlineColors[flight.airline] || "bg-gray-600"} rounded-lg flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform`}>
                                 <img 
-                                  src={`https://via.placeholder.com/40x40?text=${flight.airline[0]}`}
+                                  src={`https://placehold.co/40x40/5272F2/FFFFFF?text=${flight.airline[0]}`}
                                   alt={flight.airline}
                                   className="w-12 h-12 object-contain"
                                 />

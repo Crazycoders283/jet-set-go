@@ -5,6 +5,16 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { flightBookingData } from "./data";
 
+// CONFIGURATION: Set this to true when Amadeus API is available
+const USE_AMADEUS_API = false;
+
+// Amadeus API configuration
+const AMADEUS_API_CONFIG = {
+  baseUrl: "https://test.api.amadeus.com/v2",
+  apiKey: "YOUR_AMADEUS_API_KEY", // Replace with your actual API key
+  apiSecret: "YOUR_AMADEUS_API_SECRET" // Replace with your actual API secret
+};
+
 export default function FlightBookingConfirmation() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,30 +41,124 @@ export default function FlightBookingConfirmation() {
     refundDetails: true,
     visaRequirements: true
   });
+  const [apiToken, setApiToken] = useState(null);
 
-  // Fetch booking details from data.js
+  // Authenticate with Amadeus API (if enabled)
+  const authenticateAmadeus = async () => {
+    try {
+      // In a real implementation, you would make a POST request to Amadeus auth endpoint
+      // Example:
+      // const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/x-www-form-urlencoded',
+      //   },
+      //   body: `grant_type=client_credentials&client_id=${AMADEUS_API_CONFIG.apiKey}&client_secret=${AMADEUS_API_CONFIG.apiSecret}`
+      // });
+      // const data = await response.json();
+      // setApiToken(data.access_token);
+      
+      // For now, we'll just set a mock token
+      console.log("Authenticated with Amadeus API (mock)");
+      setApiToken("mock_amadeus_token");
+      return "mock_amadeus_token";
+    } catch (error) {
+      console.error("Failed to authenticate with Amadeus API:", error);
+      return null;
+    }
+  };
+
+  // Fetch booking details from Amadeus API
+  const fetchBookingFromApi = async (id) => {
+    try {
+      // Get token if not available
+      const token = apiToken || await authenticateAmadeus();
+      if (!token) {
+        throw new Error("Authentication failed");
+      }
+
+      // In a real implementation, you would make a GET request to Amadeus booking API
+      // Example:
+      // const response = await fetch(`${AMADEUS_API_CONFIG.baseUrl}/booking/flight-orders/${id}`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`
+      //   }
+      // });
+      // const data = await response.json();
+      // return transformBookingData(data);
+      
+      // For now, simulate API call with a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Return mock booking data
+      const mockBooking = flightBookingData.bookings.find(b => b.bookingId === id) || 
+                         flightBookingData.internationalBookings.find(b => b.bookingId === id) ||
+                         flightBookingData.bookings[0];
+      
+      return mockBooking;
+    } catch (error) {
+      console.error("Error fetching booking from API:", error);
+      return null;
+    }
+  };
+
+  // Transform Amadeus API booking data to our format
+  const transformBookingData = (apiData) => {
+    // In a real implementation, you would transform the API response data
+    // to match the structure expected by the UI
+    // For now, just return mock data
+    return flightBookingData.bookings[0];
+  };
+
+  // Fetch booking details from data source (API or mock)
   useEffect(() => {
-    // Simulate API call to get booking details
-    setTimeout(() => {
-      // Find booking by ID or use the first one by default
-      let mockBooking;
-      
-      if (bookingId) {
-        mockBooking = flightBookingData.bookings.find(b => b.bookingId === bookingId) || 
-                     flightBookingData.internationalBookings.find(b => b.bookingId === bookingId);
+    setLoading(true);
+    
+    const getBookingDetails = async () => {
+      try {
+        let bookingData;
+        
+        // First check if booking data was passed from search results page
+        if (location.state?.bookingData) {
+          console.log("Using booking data from search page", location.state.bookingData);
+          bookingData = location.state.bookingData;
+        } 
+        // Otherwise try to fetch from API or use mock data
+        else {
+          if (USE_AMADEUS_API && bookingId) {
+            console.log("Fetching booking data from Amadeus API");
+            bookingData = await fetchBookingFromApi(bookingId);
+          } else {
+            console.log("Using mock booking data");
+            // Find booking by ID or use the first one by default
+            bookingData = flightBookingData.bookings.find(b => b.bookingId === bookingId) || 
+                         flightBookingData.internationalBookings.find(b => b.bookingId === bookingId);
+                        
+            // If no booking found by ID, use the first booking as default
+            if (!bookingData) {
+              bookingData = flightBookingData.bookings[0];
+            }
+          }
+        }
+        
+        setBookingDetails(bookingData);
+        setPassengerData([...bookingData.passengers]);
+        updateFareSummary(bookingData.passengers.length, bookingData);
+      } catch (error) {
+        console.error("Error getting booking details:", error);
+        // Fallback to mock data
+        const fallbackData = flightBookingData.bookings[0];
+        setBookingDetails(fallbackData);
+        setPassengerData([...fallbackData.passengers]);
+        updateFareSummary(fallbackData.passengers.length, fallbackData);
+      } finally {
+        setLoading(false);
       }
-      
-      // If no booking found by ID, use the first booking as default
-      if (!mockBooking) {
-        mockBooking = flightBookingData.bookings[0];
-      }
-      
-      setBookingDetails(mockBooking);
-      setPassengerData([...mockBooking.passengers]);
-      updateFareSummary(mockBooking.passengers.length, mockBooking);
-      setLoading(false);
-    }, 1500);
-  }, [bookingId]);
+    };
+    
+    getBookingDetails();
+  }, [bookingId, location.state]);
 
   // Calculate and update fare summary based on selections
   const updateFareSummary = (passengerCount, bookingData = bookingDetails) => {
@@ -207,6 +311,11 @@ export default function FlightBookingConfirmation() {
     if (!isPassengerDataValid) {
       alert("Please fill in all required passenger details before proceeding.");
       return;
+    }
+    
+    if (USE_AMADEUS_API) {
+      // In a real app, you would make an API call to prepare the booking for payment
+      console.log("Preparing booking for payment with Amadeus API");
     }
     
     // Navigate to payment page with all the booking details

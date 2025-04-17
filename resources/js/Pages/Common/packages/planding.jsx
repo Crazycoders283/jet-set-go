@@ -1,4 +1,4 @@
-import { Search, Calendar, ChevronDown, MapPin, Users, Star, ArrowRight, DollarSign, Tag, Heart, Plane, Sunrise, Coffee, X, Clock, Check, Shield } from "lucide-react"
+import { Search, Calendar, ChevronDown, MapPin, Users, Star, ArrowRight, DollarSign, Tag, Heart, Plane, Sunrise, Coffee, X, Clock } from "lucide-react"
 import { useState } from "react"
 import packagesData from '../../../data/packages.json'
 import { Link } from "react-router-dom"
@@ -229,9 +229,9 @@ const TravelPackages = () => {
     <div className="bg-[#f8fafc] text-gray-800">
       <Navbar />
       
-      {/* Hero Section - Changed height from h-[75vh] to h-[650px] */}
+      {/* Hero Section */}
       <section
-        className="relative h-[90vh] flex items-center justify-center overflow-hidden"
+        className="relative h-[75vh] flex items-center justify-center overflow-hidden"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop')",
@@ -251,168 +251,89 @@ const TravelPackages = () => {
             </p>
           </div>
 
-          {/* Luxury Travel Search Experience - Premium UI */}
-          <form onSubmit={handleSearch} className="bg-white/90 backdrop-blur-xl rounded-2xl p-0 max-w-6xl mx-auto shadow-[0_10px_60px_rgba(0,0,0,0.2)] overflow-hidden animate-fadeUp">
-            {/* Header Section with Luxury Messaging */}
-            <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 p-8 relative overflow-hidden">
-              {/* Decorative Elements */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-300/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
-              
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">
-                Experience Luxury <span className="text-yellow-400">&</span> 
-              </h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
-                Exceptional Comfort
-              </h3>
-              <p className="text-blue-100 text-lg max-w-2xl">
-                — Your Perfect Getaway Awaits with Premium Amenities and World-Class Service
-              </p>
-            </div>
-            
-            {/* Search Form Inputs */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-              {/* Location */}
-              <div className="p-6 relative group hover:bg-blue-50/50 transition-colors duration-300">
-                <div className="flex items-center mb-2 text-gray-500">
-                  <MapPin size={18} className="mr-2 text-blue-600" />
-                  <span className="text-sm font-medium">Location</span>
-                </div>
+          <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-sm rounded-xl p-8 max-w-5xl mx-auto shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-medium mb-2">Destination</label>
                 <div className="relative">
-                  <h3 className="text-lg font-semibold text-gray-800">Jammu & Kashmir</h3>
-                  <p className="text-sm text-gray-500">Jammu district</p>
-                  
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronDown size={16} className="text-blue-600" />
+                  <input
+                    type="text"
+                    placeholder="Where do you want to go?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full p-3 pl-10 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-medium mb-2">Package Type</label>
+                <div className="relative">
+                  <select
+                    value={selectedPackageType}
+                    onChange={(e) => setSelectedPackageType(e.target.value)}
+                    className="w-full p-3 border rounded-md appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  >
+                    {packageTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-medium mb-2">Travel Date</label>
+                <div className="relative">
+                  <div className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all">
+                    <span>Select dates</span>
+                    <Calendar size={18} className="text-gray-500" />
                   </div>
                 </div>
-                
-                {/* Dropdown Options - Hidden initially */}
-                <div className="hidden group-hover:block absolute left-0 right-0 top-full mt-2 bg-white rounded-lg shadow-2xl border border-gray-100 z-20 animate-scaleUp p-2">
-                  {["Jammu & Kashmir", "New Delhi", "Mumbai", "Goa", "Himachal Pradesh"].map((location, idx) => (
-                    <div 
-                      key={idx} 
-                      className="px-4 py-3 rounded-lg hover:bg-blue-50 cursor-pointer transition-colors flex items-center justify-between"
-                      onClick={() => setSearchQuery(location)}
-                    >
-                      <div className="flex items-center">
-                        <MapPin size={16} className="mr-2 text-blue-600" />
-                        <span className="font-medium">{location}</span>
-                      </div>
-                      {location === "Jammu & Kashmir" && (
-                        <div className="bg-blue-600 text-white p-0.5 rounded-full">
-                          <Check size={14} />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-medium mb-2">Travelers</label>
+                <div className="relative">
+                  <div 
+                    className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all"
+                    onClick={() => setShowTravelersDropdown(!showTravelersDropdown)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Users size={18} className="text-gray-500" />
+                      <span>{travelers} Traveler{travelers !== 1 ? 's' : ''}</span>
+                    </div>
+                    <ChevronDown size={18} className="text-gray-500" />
+                  </div>
+                  {showTravelersDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border z-50">
+                      {[1, 2, 3, 4, 5, 6].map((num) => (
+                        <div
+                          key={`traveler-${num}`}
+                          className="px-4 py-2 hover:bg-blue-50 cursor-pointer flex items-center justify-between"
+                          onClick={() => {
+                            setTravelers(num)
+                            setShowTravelersDropdown(false)
+                          }}
+                        >
+                          <span>{num} Traveler{num !== 1 ? 's' : ''}</span>
+                          {travelers === num && <Star size={16} className="text-blue-500" />}
                         </div>
-                      )}
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
-              
-              {/* Guests */}
-              <div className="p-6 relative group hover:bg-blue-50/50 transition-colors duration-300">
-                <div className="flex items-center mb-2 text-gray-500">
-                  <Users size={18} className="mr-2 text-blue-600" />
-                  <span className="text-sm font-medium">Guests</span>
-                </div>
-                <div className="relative">
-                  <h3 className="text-lg font-semibold text-gray-800">3 Person</h3>
-                  <p className="text-sm text-gray-500">2 Adults, 1 Child</p>
-                  
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronDown size={16} className="text-blue-600" />
-                  </div>
-                </div>
-                
-                {/* Dropdown Options - Hidden initially */}
-                <div className="hidden group-hover:block absolute left-0 right-0 top-full mt-2 bg-white rounded-lg shadow-2xl border border-gray-100 z-20 animate-scaleUp p-3">
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">Adults</label>
-                    <div className="flex items-center justify-between">
-                      <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-500 transition-colors">-</button>
-                      <span className="font-medium text-gray-800">2</span>
-                      <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-500 transition-colors">+</button>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">Children</label>
-                    <div className="flex items-center justify-between">
-                      <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-500 transition-colors">-</button>
-                      <span className="font-medium text-gray-800">1</span>
-                      <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-500 transition-colors">+</button>
-                    </div>
-                  </div>
-                  <button type="button" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors text-sm font-medium">Apply</button>
-                </div>
+
+              <div className="flex items-end">
+                <button type="submit" className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-all duration-300 flex items-center gap-2 group">
+                  <Search size={20} />
+                  <span className="hidden md:inline group-hover:translate-x-1 transition-transform">
+                    Search
+                  </span>
+                </button>
               </div>
-              
-              {/* Check-in */}
-              <div className="p-6 relative group hover:bg-blue-50/50 transition-colors duration-300">
-                <div className="flex items-center mb-2 text-gray-500">
-                  <Calendar size={18} className="mr-2 text-blue-600" />
-                  <span className="text-sm font-medium">Check-in</span>
-                </div>
-                <div className="relative">
-                  <h3 className="text-lg font-semibold text-gray-800">24 July 2025</h3>
-                  <p className="text-sm text-gray-500">Select date</p>
-                  
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronDown size={16} className="text-blue-600" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Check-out */}
-              <div className="p-6 relative group hover:bg-blue-50/50 transition-colors duration-300">
-                <div className="flex items-center mb-2 text-gray-500">
-                  <Calendar size={18} className="mr-2 text-blue-600" />
-                  <span className="text-sm font-medium">Check-out</span>
-                </div>
-                <div className="relative">
-                  <h3 className="text-lg font-semibold text-gray-800">28 July 2025</h3>
-                  <p className="text-sm text-gray-500">Select date</p>
-                  
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronDown size={16} className="text-blue-600" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Features and Action Button */}
-            <div className="p-6 bg-gray-50/80 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex flex-wrap gap-3 justify-center">
-                <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
-                  <div className="bg-blue-100 p-1 rounded-full mr-2">
-                    <Shield size={16} className="text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium">Secure Booking</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
-                  <div className="bg-blue-100 p-1 rounded-full mr-2">
-                    <Check size={16} className="text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium">Best Price Guarantee</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
-                  <div className="bg-blue-100 p-1 rounded-full mr-2">
-                    <Clock size={16} className="text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium">24/7 Customer Support</span>
-                </div>
-              </div>
-              
-              <button 
-                type="submit" 
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 group shadow-lg min-w-[200px] justify-center relative overflow-hidden"
-              >
-                <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-                <Search size={20} className="group-hover:rotate-[15deg] transition-transform" />
-                <span className="font-medium">Search Rooms</span>
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
             </div>
           </form>
         </div>
@@ -718,36 +639,6 @@ const TravelPackages = () => {
         }
         .animate-fadeIn {
           animation: fadeIn 1s ease-out;
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeUp {
-          animation: fadeUp 0.8s ease-out 0.3s both;
-        }
-        @keyframes fadeDown {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeDown {
-          animation: fadeDown 0.3s ease-out forwards;
-        }
-        @keyframes scaleUp {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        .animate-scaleUp {
-          animation: scaleUp 0.2s ease-out forwards;
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        .animate-shimmer {
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-          background-size: 200% 100%;
-          animation: shimmer 2s infinite;
         }
       `}</style>
 

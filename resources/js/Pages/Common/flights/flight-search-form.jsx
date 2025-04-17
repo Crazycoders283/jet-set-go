@@ -4,8 +4,12 @@ import React, { useState, useEffect } from "react"
 import { Calendar, Users, Plane } from "lucide-react"
 import { defaultSearchData, specialFares } from "./data.js"
 
+// Get this from a config or parent component
+const USE_AMADEUS_API = false;
+
 export default function FlightSearchForm({ initialData, onSearch }) {
   const [formData, setFormData] = useState(initialData || defaultSearchData)
+  const [formErrors, setFormErrors] = useState({})
 
   // Update form data when initialData changes
   useEffect(() => {
@@ -20,15 +24,69 @@ export default function FlightSearchForm({ initialData, onSearch }) {
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value })
+    
+    // Clear validation error when field is changed
+    if (formErrors[field]) {
+      setFormErrors({
+        ...formErrors,
+        [field]: null
+      });
+    }
+  }
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.from) {
+      errors.from = "Please enter departure city";
+    }
+    
+    if (!formData.to) {
+      errors.to = "Please enter destination city";
+    }
+    
+    if (!formData.departDate) {
+      errors.departDate = "Please select departure date";
+    }
+    
+    if (formData.tripType === "roundTrip" && !formData.returnDate) {
+      errors.returnDate = "Please select return date";
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   }
 
   const handleSearch = () => {
-    // Call the onSearch prop with the form data
-    if (onSearch) {
-      onSearch(formData);
+    // Validate form before submitting
+    if (!validateForm()) {
+      return;
+    }
+    
+    // Check if using Amadeus API
+    if (USE_AMADEUS_API) {
+      // In a real app, we'd get airport codes for the API
+      const formattedData = {
+        ...formData,
+        // If using the real API, we'd need to format data for Amadeus
+        // originLocationCode: getAirportCode(formData.from),
+        // destinationLocationCode: getAirportCode(formData.to)
+      };
+      
+      console.log("Using Amadeus API with data:", formattedData);
+      
+      if (onSearch) {
+        onSearch(formattedData);
+      }
     } else {
-      // In a real app, this would submit the search data to an API or route
-      console.log("Search data:", formData)
+      // Using mock data from data.js
+      console.log("Using mock data with data:", formData);
+      
+      if (onSearch) {
+        onSearch(formData);
+      } else {
+        console.log("Search data:", formData)
+      }
     }
   }
 
@@ -58,7 +116,7 @@ export default function FlightSearchForm({ initialData, onSearch }) {
         </button>
       </div>
 
-      {/* Main Search Form */}
+      {/* Main Search Form - Will use either mock data or Amadeus API based on configuration */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-0 bg-white rounded-lg overflow-hidden shadow-lg">
         {/* From */}
         <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
@@ -66,10 +124,11 @@ export default function FlightSearchForm({ initialData, onSearch }) {
           <input
             type="text"
             placeholder="Washington D.C. (Any)"
-            className="w-full border-none outline-none text-gray-800 text-base"
+            className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.from ? 'border-red-500' : ''}`}
             value={formData.from}
             onChange={(e) => handleInputChange("from", e.target.value)}
           />
+          {formErrors.from && <div className="text-xs text-red-500 mt-1">{formErrors.from}</div>}
         </div>
 
         {/* To */}
@@ -78,10 +137,11 @@ export default function FlightSearchForm({ initialData, onSearch }) {
           <input
             type="text"
             placeholder="Country, city or airport"
-            className="w-full border-none outline-none text-gray-800 text-base"
+            className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.to ? 'border-red-500' : ''}`}
             value={formData.to}
             onChange={(e) => handleInputChange("to", e.target.value)}
           />
+          {formErrors.to && <div className="text-xs text-red-500 mt-1">{formErrors.to}</div>}
         </div>
 
         {/* Depart */}
@@ -91,12 +151,13 @@ export default function FlightSearchForm({ initialData, onSearch }) {
             <input
               type="text"
               placeholder="Add date"
-              className="w-full border-none outline-none text-gray-800 text-base"
+              className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.departDate ? 'border-red-500' : ''}`}
               value={formData.departDate}
               onChange={(e) => handleInputChange("departDate", e.target.value)}
             />
             <Calendar className="h-5 w-5 text-gray-400" />
           </div>
+          {formErrors.departDate && <div className="text-xs text-red-500 mt-1">{formErrors.departDate}</div>}
         </div>
 
         {/* Return */}
@@ -106,13 +167,14 @@ export default function FlightSearchForm({ initialData, onSearch }) {
             <input
               type="text"
               placeholder="Add date"
-              className="w-full border-none outline-none text-gray-800 text-base"
+              className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.returnDate ? 'border-red-500' : ''}`}
               disabled={formData.tripType === "oneWay"}
               value={formData.returnDate}
               onChange={(e) => handleInputChange("returnDate", e.target.value)}
             />
             <Calendar className="h-5 w-5 text-gray-400" />
           </div>
+          {formErrors.returnDate && <div className="text-xs text-red-500 mt-1">{formErrors.returnDate}</div>}
         </div>
 
         {/* Travelers and Class */}

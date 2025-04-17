@@ -766,19 +766,6 @@ export default function HotelDetails() {
                 </p>
               </div>
 
-              {/* Special offer banner */}
-              <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4 transform transition-all duration-300 hover:scale-105 hover:shadow-md">
-                <div className="flex items-start">
-                  <div className="text-blue-500 mr-3 mt-1">
-                    <Bookmark className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-blue-900">Special Offer</h4>
-                    <p className="text-sm text-blue-800">Book 4+ nights and get 15% off your stay. Use code <span className="font-semibold">SUMMER15</span> at checkout.</p>
-                  </div>
-                </div>
-              </div>
-
               {/* Contact host section */}
               <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                 <h4 className="font-semibold text-gray-900 mb-3">Contact Host</h4>
@@ -958,19 +945,6 @@ export default function HotelDetails() {
                         placeholder="Any special requests or questions"
                       ></textarea>
                     </div>
-                    
-                    {/* Interest in cruise packages */}
-                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                      <label className="flex items-start">
-                        <input
-                          type="checkbox"
-                          className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <span className="ml-2 text-sm text-blue-800">
-                          I'm also interested in learning about JetSet Cruise packages and special offers
-                        </span>
-                      </label>
-                    </div>
                   </div>
                   
                   <div className="mt-6">
@@ -1006,15 +980,6 @@ export default function HotelDetails() {
                 <div className="flex items-center justify-center gap-2 text-blue-600 mb-4">
                   <Clock size={18} />
                   <span>Processing your booking...</span>
-                </div>
-                
-                {/* Cruise upsell */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-lg mt-4 mb-4 text-left">
-                  <h4 className="font-semibold mb-2 flex items-center">
-                    <Sparkles className="h-4 w-4 text-yellow-300 mr-2" />
-                    Enhance Your Stay with JetSet Cruises
-                  </h4>
-                  <p className="text-sm mb-3">Ask our representative about our exclusive cruise packages when they call you back!</p>
                 </div>
                 
                 <div className="flex justify-center mt-4">

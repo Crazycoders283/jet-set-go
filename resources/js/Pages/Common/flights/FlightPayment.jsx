@@ -173,7 +173,7 @@ export default function FlightPayment() {
     }
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardDetails.expiryDate)) {
        alert("Please enter a valid expiry date in MM/YY format");
-       return false;
+      return false;
     }
     if (cardDetails.cvv.length < 3 || !/^\d{3,4}$/.test(cardDetails.cvv)) {
       alert("Please enter a valid 3 or 4 digit CVV");
@@ -420,7 +420,7 @@ export default function FlightPayment() {
                 onClick={toggleFareDetails}
               >
                 <h2 className="text-lg font-semibold text-gray-900">Order Summary</h2>
-                {showFareDetails ? (
+                  {showFareDetails ? (
                     <ChevronUp className="w-5 h-5 text-gray-500" />
                   ) : (
                     <ChevronDown className="w-5 h-5 text-gray-500" />
@@ -440,10 +440,10 @@ export default function FlightPayment() {
                        <ArrowRight className="w-4 h-4 text-gray-400"/>
                        <span>{paymentData.bookingDetails.flight.arrivalCity.substring(0, 3).toUpperCase()}</span>
                        <span className="text-gray-500 font-normal">({paymentData.bookingDetails.flight.duration})</span>
-                     </div>
+                    </div>
                      <p className="text-xs text-gray-500 mt-1">{paymentData.bookingDetails.flight.airline}</p>
-                  </div>
-
+                      </div>
+                      
                    <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                          <span className="text-gray-600">Base Fare ({paymentData.passengerData.length} Traveller{paymentData.passengerData.length > 1 ? 's' : ''})</span>
@@ -457,30 +457,30 @@ export default function FlightPayment() {
                          <div className="flex justify-between">
                             <span className="text-gray-600">Add-ons</span>
                             <span className="font-medium">₹{paymentData.calculatedFare.addonsTotal.toFixed(2)}</span>
-                         </div>
+                    </div>
                       )}
                       {paymentData.calculatedFare.vipServiceFee > 0 && (
                          <div className="flex justify-between">
                             <span className="text-gray-600">VIP Service</span>
                             <span className="font-medium">₹{paymentData.calculatedFare.vipServiceFee.toFixed(2)}</span>
-                         </div>
+                  </div>
                       )}
                        {discountAmount > 0 && (
                          <div className="flex justify-between text-green-600">
                            <span >Discount Applied</span>
                            <span className="font-medium">- ₹{discountAmount.toFixed(2)}</span>
-                         </div>
-                       )}
-                   </div>
-
+                </div>
+              )}
+          </div>
+          
                    <div className="border-t border-gray-200 pt-4 mt-4">
                      <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold text-gray-900">Total Payable</span>
                         <span className="text-xl font-bold text-blue-600">₹{finalAmount.toFixed(2)}</span>
-                     </div>
+                </div>
                      <p className="text-xs text-gray-500 mt-1 text-right">(Inclusive of all taxes)</p>
-                   </div>
-
+              </div>
+              
                   {paymentData.calculatedFare.baseFare > finalAmount && (
                     <div className="bg-green-50 p-3 rounded-lg mt-4 flex items-center border border-green-100">
                       <span className="text-green-700 text-sm font-medium flex items-center">
@@ -499,12 +499,12 @@ export default function FlightPayment() {
                       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1280px-MasterCard_Logo.svg.png" alt="MasterCard" className="h-5" />
                       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Rupay-Logo.png/1200px-Rupay-Logo.png" alt="RuPay" className="h-4" />
                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1280px-UPI-Logo-vector.svg.png" alt="UPI" className="h-6" />
-                     </div>
-                   </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-
+            
              {/* Promo Code Card */}
               <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 transform transition-all duration-300 hover:shadow-xl">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">Apply Promo Code</h2>
@@ -541,11 +541,11 @@ export default function FlightPayment() {
                   <div className="flex items-center">
                     <ShieldCheck className="w-4 h-4 text-green-600 mr-2" />
                     <span className="text-xs text-gray-600">256-bit SSL Encryption</span>
-                  </div>
+                    </div>
                   <div className="flex items-center">
                     <ShieldCheck className="w-4 h-4 text-green-600 mr-2" />
                     <span className="text-xs text-gray-600">PCI DSS Compliant</span>
-                  </div>
+                    </div>
                   <div className="flex items-center">
                     <ShieldCheck className="w-4 h-4 text-green-600 mr-2" />
                     <span className="text-xs text-gray-600">Verified Payment Gateways</span>
@@ -598,32 +598,32 @@ export default function FlightPayment() {
                                     <div className="w-8 h-6 bg-white/20 rounded"></div>
                                     <div className="w-8 h-6 bg-white/20 rounded"></div>
                                     <div className="w-8 h-6 bg-white/20 rounded"></div>
-                                  </div>
-                                </div>
-                              </div>
+                      </div>
+                      </div>
+                      </div>
                               <div className="text-right">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-8 ml-auto" />
-                              </div>
-                            </div>
-                            
-                            <div className="mt-4">
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
                               <p className="text-xl tracking-widest">
                                 {cardDetails.cardNumber || '•••• •••• •••• ••••'}
                               </p>
-                            </div>
+                  </div>
                             
                             <div className="flex justify-between items-end mt-4">
                               <div>
                                 <p className="text-xs uppercase tracking-wider opacity-80">Card Holder</p>
                                 <p className="font-medium truncate max-w-[140px]">{cardDetails.cardHolder || 'YOUR NAME'}</p>
-                              </div>
+                    </div>
                               <div className="text-right">
                                 <p className="text-xs uppercase tracking-wider opacity-80">Expires</p>
                                 <p>{cardDetails.expiryDate || 'MM/YY'}</p>
-                              </div>
-                            </div>
-                          </div>
-                          
+                    </div>
+                  </div>
+                </div>
+                
                           {/* Back of card */}
                           <div className={`absolute inset-0 backface-hidden rounded-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900 shadow-2xl rotate-y-180 ${isCardFlipped ? 'animate-back-card' : ''}`}>
                             <div className="h-10 bg-black mt-4"></div>
@@ -634,101 +634,101 @@ export default function FlightPayment() {
                               <div className="flex justify-end">
                                 <div className="bg-white/90 h-8 w-16 rounded flex items-center justify-center text-gray-800 font-mono">
                                   {cardDetails.cvv || 'CVV'}
-                                </div>
-                              </div>
-                            </div>
+                    </div>
+                    </div>
+                  </div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <div className="text-xs text-white/70">
                                 This card is property of the issuing bank. Use according to your card agreement.
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
+                </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+                
                       {/* Card Input Form */}
                       <form onSubmit={(e) => e.preventDefault()}>
                         <div className="grid grid-cols-1 gap-4">
-                           <div>
+                      <div>
                              <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
                              <div className="relative rounded-md shadow-sm">
                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                  <CreditCard className="h-5 w-5 text-gray-400" aria-hidden="true" />
                                </div>
-                               <input
-                                 type="text"
-                                 id="cardNumber"
-                                 name="cardNumber"
-                                 value={cardDetails.cardNumber}
-                                 onChange={handleCardDetailsChange}
+                          <input
+                            type="text"
+                            id="cardNumber"
+                            name="cardNumber"
+                            value={cardDetails.cardNumber}
+                            onChange={handleCardDetailsChange}
                                  onFocus={() => setIsCardFlipped(false)}
                                  placeholder="0000 0000 0000 0000"
-                                 maxLength="19"
+                            maxLength="19"
                                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                               />
-                             </div>
-                           </div>
-                            <div>
+                          />
+                        </div>
+                      </div>
+                      <div>
                                <label htmlFor="cardHolder" className="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
-                               <input
-                                 type="text"
-                                 id="cardHolder"
-                                 name="cardHolder"
-                                 value={cardDetails.cardHolder}
-                                 onChange={handleCardDetailsChange}
+                        <input
+                          type="text"
+                          id="cardHolder"
+                          name="cardHolder"
+                          value={cardDetails.cardHolder}
+                          onChange={handleCardDetailsChange}
                                  onFocus={() => setIsCardFlipped(false)}
                                  placeholder="John Doe"
                                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               />
-                            </div>
+                        />
+                      </div>
                            <div className="grid grid-cols-2 gap-4">
-                               <div>
+                      <div>
                                  <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                                 <div className="relative">
+                        <div className="relative">
                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                      <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
                                    </div>
-                                   <input
-                                     type="text"
-                                     id="expiryDate"
-                                     name="expiryDate"
-                                     value={cardDetails.expiryDate}
-                                     onChange={handleCardDetailsChange}
+                          <input
+                            type="text"
+                            id="expiryDate"
+                            name="expiryDate"
+                            value={cardDetails.expiryDate}
+                            onChange={handleCardDetailsChange}
                                      onFocus={() => setIsCardFlipped(false)}
-                                     placeholder="MM/YY"
-                                     maxLength="5"
+                            placeholder="MM/YY"
+                            maxLength="5"
                                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                                   />
-                                 </div>
-                               </div>
-                               <div>
+                          />
+                        </div>
+                      </div>
+                      <div>
                                  <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                                 <div className="relative">
+                        <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                        <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
                                     </div>
-                                   <input
-                                     type="password"
-                                     id="cvv"
-                                     name="cvv"
-                                     value={cardDetails.cvv}
-                                     onChange={handleCardDetailsChange}
+                          <input
+                            type="password"
+                            id="cvv"
+                            name="cvv"
+                            value={cardDetails.cvv}
+                            onChange={handleCardDetailsChange}
                                      onFocus={() => setIsCardFlipped(true)}
                                      onBlur={() => setIsCardFlipped(false)}
                                      placeholder="•••"
-                                     maxLength="4"
+                            maxLength="4"
                                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10"
-                                   />
-                                 </div>
-                               </div>
-                           </div>
+                          />
+                        </div>
+                      </div>
+                    </div>
                             <div className="mt-2">
                               <label className="flex items-center text-sm">
                                 <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2" />
                                 <span className="text-gray-700">Save this card securely for future payments</span>
-                              </label>
-                            </div>
-                        </div>
+                      </label>
+                    </div>
+                    </div>
                       </form>
                    </PaymentMethodOption>
 
@@ -740,7 +740,7 @@ export default function FlightPayment() {
                       description="Google Pay, PhonePe, Paytm & More"
                    >
                       <div className="space-y-4">
-                        <div>
+                    <div>
                            <label htmlFor="upiId" className="block text-sm font-medium text-gray-700 mb-1">Enter UPI ID</label>
                            <form onSubmit={(e) => e.preventDefault()}>
                              <input
@@ -753,7 +753,7 @@ export default function FlightPayment() {
                              />
                            </form>
                             <p className="text-xs text-gray-500 mt-1">We'll send a payment request to this ID.</p>
-                        </div>
+                          </div>
                          <div>
                              <p className="text-sm font-medium text-gray-700 mb-2">Or pay using UPI app:</p>
                              <div className="flex flex-wrap gap-3">
@@ -768,9 +768,9 @@ export default function FlightPayment() {
                                   <button type="button" className="flex items-center space-x-2 p-2 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
                                    <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png" alt="Paytm" className="w-6 h-6" />
                                    <span className="text-xs font-medium">Paytm</span>
-                                  </button>
-                             </div>
-                         </div>
+                      </button>
+                    </div>
+                  </div>
                      </div>
                    </PaymentMethodOption>
 
@@ -799,7 +799,7 @@ export default function FlightPayment() {
                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/ICICI_Bank_Logo.svg/1280px-ICICI_Bank_Logo.svg.png" alt="ICICI" className="h-6 mb-1" />
                            <span className="text-xs">ICICI Bank</span>
                          </button>
-                       </div>
+                    </div>
                        <form onSubmit={(e) => e.preventDefault()}>
                          <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option>Select Other Bank...</option>
@@ -831,13 +831,13 @@ export default function FlightPayment() {
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mobikwik_logo.svg/1280px-Mobikwik_logo.svg.png" alt="MobiKwik" className="h-5 mr-2" />
                           <span className="text-sm">MobiKwik</span>
                         </button>
-                      </div>
+                    </div>
                       <p className="text-sm text-gray-500">
                         Link your wallet and pay instantly. Enjoy cashback and exclusive offers.
                       </p>
                    </PaymentMethodOption>
-                </div>
               </div>
+            </div>
           </div>
         </div>
       </div>
