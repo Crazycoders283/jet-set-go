@@ -110,7 +110,7 @@ const HeroSection = () => {
         }}
       >
         <div className="floating-shape shape-1"></div>
-        <div className="floating-shape shape-2"></div>
+        {/* <div className="floating-shape shape-2"></div> */}
         <div className="floating-shape shape-3"></div>
         
         <div className="hero-content container" style={{ textAlign: 'left', maxWidth: '1100px', marginLeft: '8%' }}>
