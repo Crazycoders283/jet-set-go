@@ -248,19 +248,19 @@ const Login = React.lazy(() =>
 
 // Import FlightBookingConfirmation component
 const FlightBookingConfirmation = React.lazy(() => 
-  import('./pages/Common/flights/FlightBookingConfirmation')
+  import('./Pages/Common/flights/FlightBookingConfirmation')
     .catch(() => ({ default: () => <div>Loading Booking Confirmation...</div> }))
 );
 
 // Add the imports for FlightPayment and FlightBookingSuccess components
 const FlightPayment = React.lazy(() => 
-  import('./pages/Common/flights/FlightPayment')
+  import('./Pages/Common/flights/FlightPayment')
     .catch(() => ({ default: () => <div>Loading Payment Page...</div> }))
 );
 
 const FlightBookingSuccess = React.lazy(() => 
-  import('./pages/Common/flights/FlightBookingSuccess')
-    .catch(() => ({ default: () => <div>Loading Booking Success...</div> }))
+  import('./Pages/Common/flights/FlightBookingSuccess')
+    .catch(() => ({ default: () => <div>Loading Booking Success Page...</div> }))
 );
 
 const App = () => {
