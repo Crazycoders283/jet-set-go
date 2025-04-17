@@ -9,42 +9,24 @@ import {
   cheapFlights, 
   destinations,
   sourceCities,
-  specialFares,
-  flightBookingData
+  specialFares
 } from "./data.js";
-
-// CONFIGURATION: Set this to true when Amadeus API is available
-const USE_AMADEUS_API = false;
-
-// Amadeus API configuration (to be used when API is available)
-const AMADEUS_API_CONFIG = {
-  baseUrl: "https://test.api.amadeus.com/v2",
-  apiKey: "YOUR_AMADEUS_API_KEY", // Replace with your actual API key
-  apiSecret: "YOUR_AMADEUS_API_SECRET" // Replace with your actual API secret
-};
 
 export default function FlightSearchPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const initialSearchParams = location.state?.searchData || defaultSearchData;
-  
-  const [searchParams, setSearchParams] = useState(initialSearchParams);
+  const [searchParams, setSearchParams] = useState(defaultSearchData);
   const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [sortOrder, setSortOrder] = useState("price-low");
-  const [showFilters, setShowFilters] = useState(false);
-  const [filteredFlights, setFilteredFlights] = useState([]);
-  const [tripType, setTripType] = useState("oneWay");
+  const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("price");
+  const [dateRange, setDateRange] = useState([]);
   const [filters, setFilters] = useState({
-    priceRange: [0, 10000],
+    price: [0, 20000],
     stops: "any",
     airlines: []
   });
-  const [apiToken, setApiToken] = useState(null);
-  
-  // Date-based pricing state
-  const [selectedDateIndex, setSelectedDateIndex] = useState(3); // Middle date as default
-  const [dateRange, setDateRange] = useState([]);
+  const [error, setError] = useState(null);
+  const [expandedFlights, setExpandedFlights] = useState({});
 
   // Generate date range based on current date
   useEffect(() => {
@@ -52,7 +34,7 @@ export default function FlightSearchPage() {
     const dates = [];
     
     // Find the lowest price for highlighting
-    let lowestPrice = Number.MAX_SAFE_INTEGER;
+    let lowestPrice = Number.MAX_VALUE;
     let lowestPriceIndex = 0;
     
     for (let i = -3; i <= 3; i++) {
@@ -68,228 +50,143 @@ export default function FlightSearchPage() {
         lowestPriceIndex = i + 3; // Adjust index to 0-based array
       }
       
+      const formattedDate = date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+      
       dates.push({
-        date,
-        price: numericPrice,
-        isLowest: false // Will set the correct one after loop
+        date: formattedDate,
+        day: dayName,
+        price: price,
+        lowestPrice: i + 3 === lowestPriceIndex,
+        selected: i === 0 // Initially select today
       });
     }
-    
-    // Set the lowest price flag
-    dates[lowestPriceIndex].isLowest = true;
     
     setDateRange(dates);
-  }, []);
-
-  // Authenticate with Amadeus API when component mounts
-  useEffect(() => {
-    if (USE_AMADEUS_API) {
-      authenticateAmadeus();
-    }
-  }, []);
-
-  // Authenticate with Amadeus API and get token
-  const authenticateAmadeus = async () => {
-    try {
-      // In a real implementation, you would make a POST request to Amadeus auth endpoint
-      // Example:
-      // const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/x-www-form-urlencoded',
-      //   },
-      //   body: `grant_type=client_credentials&client_id=${AMADEUS_API_CONFIG.apiKey}&client_secret=${AMADEUS_API_CONFIG.apiSecret}`
-      // });
-      // const data = await response.json();
-      // setApiToken(data.access_token);
-      
-      // For now, we'll just set a mock token
-      console.log("Authenticated with Amadeus API (mock)");
-      setApiToken("mock_amadeus_token");
-    } catch (error) {
-      console.error("Failed to authenticate with Amadeus API:", error);
-    }
-  };
-
-  // Enhanced flight images from Unsplash
-  const flightImages = [
-    "https://images.unsplash.com/photo-1564698735457-9c2869f64ca1?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?q=80&w=1200&auto=format&fit=crop", 
-    "https://images.unsplash.com/photo-1507812984078-917a274065be?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1465552726352-de2b9d5400c3?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1559592892-cbabb419d205?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1570301926313-caac8c745d0d?q=80&w=1200&auto=format&fit=crop"
-  ];
-
-  // Generate mock flight data from data.js
-  const generateMockFlights = () => {
-    return [
-      ...cheapFlights.map((flight, index) => ({
-        id: flight.id,
-        from: searchParams.from || "Washington D.C.",
-        to: flight.destination,
-        departDate: flight.date,
-        returnDate: "",
-        airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
-        duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
-        stops: Math.floor(Math.random() * 3),
-        price: parseInt(flight.price.replace(/[^\d]/g, "")),
-        image: flightImages[index % flightImages.length]
-      })),
-      // Generate more flights for search results
-      ...[...Array(8)].map((_, i) => ({
-        id: cheapFlights.length + i + 1,
-        from: searchParams.from || "Washington D.C.",
-        to: destinations[Math.floor(Math.random() * destinations.length)].name,
-        departDate: "Wed, 15 Jan",
-        returnDate: "",
-        airline: ["IndiGo", "Air India", "SpiceJet", "Vistara"][Math.floor(Math.random() * 4)],
-        duration: `${Math.floor(Math.random() * 5) + 1}h ${Math.floor(Math.random() * 59) + 1}m`,
-        stops: Math.floor(Math.random() * 3),
-        price: Math.floor(Math.random() * 8000) + 1000,
-        image: flightImages[i % flightImages.length]
-      }))
-    ];
-  };
-
-  // Search flights using Amadeus API
-  const searchFlightsWithApi = async (params) => {
-    try {
-      if (!apiToken) {
-        await authenticateAmadeus();
-      }
-
-      // In a real implementation, you would make a GET request to Amadeus flight offers search endpoint
-      // Example:
-      // const originLocationCode = params.from.substring(0, 3).toUpperCase();
-      // const destinationLocationCode = params.to.substring(0, 3).toUpperCase();
-      // const departureDate = formatDateForAmadeus(params.departDate);
-      // const returnDate = params.tripType === 'roundTrip' ? formatDateForAmadeus(params.returnDate) : '';
-      // const adults = parseInt(params.travelers.split(' ')[0]);
-      
-      // const url = `${AMADEUS_API_CONFIG.baseUrl}/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&departureDate=${departureDate}${returnDate ? '&returnDate=' + returnDate : ''}&adults=${adults}&max=20`;
-      
-      // const response = await fetch(url, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Authorization': `Bearer ${apiToken}`
-      //   }
-      // });
-      
-      // const data = await response.json();
-      // const apiFlights = transformAmadeusResponse(data);
-      // return apiFlights;
-
-      // For now, return mock data with a delay to simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return generateMockFlights();
-    } catch (error) {
-      console.error("Error fetching flights from Amadeus API:", error);
-      // Fallback to mock data if API call fails
-      return generateMockFlights();
-    }
-  };
-
-  // Transform Amadeus API response to our format
-  const transformAmadeusResponse = (apiResponse) => {
-    // This would parse and transform the Amadeus API response into our flight format
-    // For now, just returning mock data
-    return generateMockFlights();
-  };
-
-  // Format date for Amadeus API (YYYY-MM-DD)
-  const formatDateForAmadeus = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
-
-  // Get flights data when search parameters change
-  useEffect(() => {
-    setLoading(true);
     
-    const getFlights = async () => {
-      try {
-        let flightData;
-        
-        if (USE_AMADEUS_API) {
-          // Use real API if enabled
-          flightData = await searchFlightsWithApi(searchParams);
-        } else {
-          // Use mock data as fallback
-          flightData = generateMockFlights();
-        }
-        
-        setFlights(flightData);
-      } catch (error) {
-        console.error("Error getting flights:", error);
-        // Fallback to mock data if there's an error
-        setFlights(generateMockFlights());
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Generate flight data based on search parameters or default data
+    const flightData = location.state?.searchData ? generateFlights(location.state.searchData) : [];
     
-    // Simulate delay for better UX
+    // Simulate API call delay
     const timer = setTimeout(() => {
-      getFlights();
-    }, 500);
+      setFlights(flightData);
+      setLoading(false);
+    }, 1500);
     
     return () => clearTimeout(timer);
-  }, [searchParams]);
-
-  // Apply filters and sorting
+  }, [location.state]);
+  
+  // Update search params when location state changes
   useEffect(() => {
-    let result = [...flights];
+    if (location.state?.searchData) {
+      setSearchParams(location.state.searchData);
+    }
+  }, [location.state]);
+  
+  // Generate flights based on search params
+  const generateFlights = (searchParams) => {
+    // In a real app, this would be replaced with an API call to get flight data
     
-    // Apply filters
-    if (filters.priceRange) {
-      result = result.filter(flight => 
-        flight.price >= filters.priceRange[0] && 
-        flight.price <= filters.priceRange[1]
-      );
+    // Use the cheapFlights data from data.js to generate more realistic flights
+    const flightList = [];
+    
+    // Generate 15-20 flights
+    const numFlights = 15 + Math.floor(Math.random() * 6);
+    
+    // Airline data with codes for generating flight numbers
+    const airlineCodes = {
+      'IndiGo': 'IGO',
+      'Air India': 'AIC',
+      'SpiceJet': 'SJT',
+      'GoAir': 'GAI',
+      'Vistara': 'VTI',
+      'AirAsia India': 'IAD'
+    };
+    
+    // List of airlines to use
+    const airlines = [
+      { name: 'IndiGo', code: 'IGO' },
+      { name: 'Air India', code: 'AIC' },
+      { name: 'SpiceJet', code: 'SJT' },
+      { name: 'GoAir', code: 'GAI' },
+      { name: 'Vistara', code: 'VTI' },
+      { name: 'AirAsia India', code: 'IAD' }
+    ];
+    
+    for (let i = 0; i < numFlights; i++) {
+      // Get a random flight from cheapFlights for price data
+      const baseFlightData = cheapFlights[Math.floor(Math.random() * cheapFlights.length)];
+      const stops = Math.random() > 0.6 ? '0' : (Math.random() > 0.5 ? '1' : '2');
+      const isDirect = stops === '0';
+      
+      const durationInMinutes = isDirect ? 
+        120 + Math.floor(Math.random() * 180) : 
+        240 + Math.floor(Math.random() * 240);
+      
+      const hours = Math.floor(durationInMinutes / 60);
+      const minutes = durationInMinutes % 60;
+      const duration = `${hours}h ${minutes}m`;
+      
+      // Generate departure time between 6 AM and 11 PM
+      const departureHour = 6 + Math.floor(Math.random() * 18);
+      const departureMinute = Math.floor(Math.random() * 60);
+      const departureTime = `${departureHour.toString().padStart(2, '0')}:${departureMinute.toString().padStart(2, '0')}`;
+      
+      // Calculate arrival time based on departure and duration
+      const departTimeObj = new Date();
+      departTimeObj.setHours(departureHour, departureMinute, 0);
+      const arriveTimeObj = new Date(departTimeObj.getTime() + durationInMinutes * 60 * 1000);
+      const arrivalTime = `${arriveTimeObj.getHours().toString().padStart(2, '0')}:${arriveTimeObj.getMinutes().toString().padStart(2, '0')}`;
+      
+      // Get a random airline
+      const airlineData = airlines[Math.floor(Math.random() * airlines.length)];
+      
+      const flight = {
+        id: `FL-${1000 + i}`,
+        airline: airlineData,
+        flightNumber: `${airlineData.code}${100 + Math.floor(Math.random() * 900)}`,
+        departureTime,
+        arrivalTime,
+        departureAirport: {
+          name: searchParams.from || 'Mumbai',
+          code: searchParams.from ? searchParams.from.substring(0, 3).toUpperCase() : 'BOM'
+        },
+        arrivalAirport: {
+          name: searchParams.to || 'Delhi',
+          code: searchParams.to ? searchParams.to.substring(0, 3).toUpperCase() : 'DEL'
+        },
+        duration,
+        stops,
+        price: baseFlightData.price,
+        aircraft: ['Boeing 737', 'Airbus A320', 'Boeing 777', 'Airbus A380'][Math.floor(Math.random() * 4)],
+        class: ['Economy', 'Premium Economy', 'Business'][Math.floor(Math.random() * 3)],
+        baggage: ['15 kg', '20 kg', '25 kg', '30 kg'][Math.floor(Math.random() * 4)],
+        inFlightServices: Math.random() > 0.5 ? 'Meal & Entertainment' : 'Snacks & Wi-Fi'
+      };
+      
+      flightList.push(flight);
     }
     
-    if (filters.stops !== "any") {
-      result = result.filter(flight => 
-        filters.stops === "0" ? flight.stops === 0 : 
-        filters.stops === "1" ? flight.stops === 1 : 
-        flight.stops > 1
-      );
-    }
-    
-    if (filters.airlines.length > 0) {
-      result = result.filter(flight => 
-        filters.airlines.includes(flight.airline)
-      );
-    }
-    
-    // Apply sorting
-    if (sortOrder === "price-low") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortOrder === "price-high") {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortOrder === "duration") {
-      result.sort((a, b) => {
-        const getMinutes = (duration) => {
-          const [hours, minutes] = duration.split("h ").map(part => 
-            parseInt(part.replace(/[^\d]/g, ""))
-          );
-          return hours * 60 + minutes;
-        };
-        return getMinutes(a.duration) - getMinutes(b.duration);
-      });
-    }
-    
-    setFilteredFlights(result);
-  }, [flights, filters, sortOrder]);
-
-  // Handle search form submission
-  const handleSearch = (formData) => {
-    setSearchParams(formData);
-    setLoading(true);
+    return flightList;
   };
 
+  // Handle search form submission
+  const handleSearch = (searchData) => {
+    setLoading(true);
+    setSearchParams(searchData);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      const flightData = generateFlights(searchData);
+      setFlights(flightData);
+      setLoading(false);
+    }, 1500);
+  };
+  
   // Handle filter changes
   const handleFilterChange = (filterType, value) => {
     setFilters({
@@ -298,864 +195,562 @@ export default function FlightSearchPage() {
     });
   };
   
-  // Handle date selection for date-based pricing
-  const handleDateSelection = (index) => {
-    setSelectedDateIndex(index);
-    setLoading(true);
-    
-    // Get new search date
-    const newDate = dateRange[index].date;
-    const formattedDate = formatDate(newDate);
-    
-    // Update search params with the new date
-    const updatedParams = {
-      ...searchParams,
-      departDate: formattedDate
-    };
-    
-    setSearchParams(updatedParams);
-  };
-  
-  // Handle trip type change
-  const handleTripTypeChange = (type) => {
-    setTripType(type);
-  };
-  
-  // Shift date range left or right
-  const shiftDateRange = (direction) => {
-    const newDates = [...dateRange];
-    
-    if (direction === "left") {
-      // Shift dates one day back
-      newDates.forEach(dateObj => {
-        const newDate = new Date(dateObj.date);
-        newDate.setDate(newDate.getDate() - 7);
-        dateObj.date = newDate;
-        // Get a new price from cheap flights data
-        const newPrice = cheapFlights[Math.floor(Math.random() * cheapFlights.length)].price;
-        dateObj.price = parseInt(newPrice.replace(/[^\d]/g, ""));
-      });
-    } else {
-      // Shift dates one day forward
-      newDates.forEach(dateObj => {
-        const newDate = new Date(dateObj.date);
-        newDate.setDate(newDate.getDate() + 7);
-        dateObj.date = newDate;
-        // Get a new price from cheap flights data
-        const newPrice = cheapFlights[Math.floor(Math.random() * cheapFlights.length)].price;
-        dateObj.price = parseInt(newPrice.replace(/[^\d]/g, ""));
-      });
-    }
-    
-    // Find the lowest price
-    let lowestPrice = Number.MAX_SAFE_INTEGER;
-    let lowestPriceIndex = 0;
-    
-    newDates.forEach((dateObj, index) => {
-      dateObj.isLowest = false;
-      if (dateObj.price < lowestPrice) {
-        lowestPrice = dateObj.price;
-        lowestPriceIndex = index;
+  // Apply filters to flights
+  const getFilteredFlights = () => {
+    return flights.filter(flight => {
+      // Filter by price
+      const flightPrice = parseInt(flight.price.replace(/[^\d]/g, ""));
+      if (flightPrice < filters.price[0] || flightPrice > filters.price[1]) {
+        return false;
       }
+      
+      // Filter by stops
+      if (filters.stops !== "any" && flight.stops !== filters.stops) {
+        return false;
+      }
+      
+      // Filter by airlines
+      if (filters.airlines.length > 0) {
+        const airlineName = typeof flight.airline === 'string' ? flight.airline : flight.airline.name;
+        if (!filters.airlines.includes(airlineName)) {
+          return false;
+        }
+      }
+      
+      return true;
+    }).sort((a, b) => {
+      // Sort by selected order
+      const aPrice = parseInt(a.price.replace(/[^\d]/g, ""));
+      const bPrice = parseInt(b.price.replace(/[^\d]/g, ""));
+      
+      if (sortOrder === "price") {
+        return aPrice - bPrice;
+      } else if (sortOrder === "-price") {
+        return bPrice - aPrice;
+      } else if (sortOrder === "duration") {
+        const aDuration = a.duration.split("h")[0] * 60 + parseInt(a.duration.split("h")[1]);
+        const bDuration = b.duration.split("h")[0] * 60 + parseInt(b.duration.split("h")[1]);
+        return aDuration - bDuration;
+      } else if (sortOrder === "departure") {
+        return a.departureTime.localeCompare(b.departureTime);
+      } else if (sortOrder === "arrival") {
+        return a.arrivalTime.localeCompare(b.arrivalTime);
+      }
+      
+      return 0;
     });
-    
-    newDates[lowestPriceIndex].isLowest = true;
-    
-    setDateRange(newDates);
   };
 
-  // Available airlines from the flights data
-  const availableAirlines = [...new Set(flights.map(flight => flight.airline))];
-  
-  // Format date for display
-  const formatDate = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // Handle date navigation in the date bar
+  const handleDateNavigate = (direction) => {
+    // In a real app, this would adjust the date range shown in the date selector
+    console.log("Navigate date range:", direction);
+  };
+
+  // Handle date selection in the date bar
+  const handleDateSelect = (date) => {
+    // In a real app, this would update the search with the selected date
+    console.log("Selected date:", date);
     
-    return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+    // Update the date range to mark the selected date
+    setDateRange(prev => 
+      prev.map(item => ({
+        ...item,
+        selected: item.date === date
+      }))
+    );
+  };
+
+  // Toggle an airline in the filter
+  const toggleAirlineFilter = (airline) => {
+    const updatedAirlines = filters.airlines.includes(airline)
+      ? filters.airlines.filter(a => a !== airline)
+      : [...filters.airlines, airline];
+    
+    handleFilterChange('airlines', updatedAirlines);
+  };
+
+  // Get unique airlines from available flights
+  const getUniqueAirlines = () => {
+    return [...new Set(flights.map(flight => 
+      typeof flight.airline === 'string' ? flight.airline : flight.airline.name
+    ))];
   };
 
   // Handle booking a flight
   const handleBookFlight = (flight) => {
-    if (USE_AMADEUS_API) {
-      // In a real app, you would make an API call to create a booking
-      console.log("Creating booking with Amadeus API for flight:", flight);
-    }
+    // Create a booking reference to pass to the confirmation page
+    const bookingReference = {
+      flight: flight,
+      passengers: parseInt(searchParams.travelers) || 1,
+      tripType: searchParams.tripType,
+      departDate: searchParams.departDate,
+      returnDate: searchParams.returnDate,
+      bookingId: `JET${Math.floor(Math.random() * 100000)}`
+    };
     
-    // Navigate to booking confirmation page with flight details
-    navigate("/flights/booking-confirmation", { 
-      state: { 
-        bookingData: {
-          ...flightBookingData.bookings[0], // Use mock booking data
-          flight: {
-            ...flightBookingData.bookings[0].flight,
-            departureCity: flight.from,
-            arrivalCity: flight.to,
-            departureDate: flight.departDate,
-            airline: flight.airline
-          }
-        }
-      }
+    // Navigate to the booking confirmation page with flight details
+    navigate('/flights/booking-confirmation', { 
+      state: { bookingDetails: bookingReference } 
     });
   };
 
+  const filteredFlights = getFilteredFlights();
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-100 min-h-screen">
       <Navbar />
       
-      {/* Search Form Section */}
-      <section className="bg-blue-600 pt-20 pb-6">
-        <div className="container mx-auto px-4">
-          <h1 className="text-center text-white text-2xl font-semibold mb-6">Search for Flights</h1>
-          
-          {/* Trip Type Selection */}
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-700/30 inline-flex rounded-full p-1">
-              <button
-                className={`px-6 py-2 rounded-full ${
-                  tripType === "oneWay" 
-                    ? "bg-white text-blue-700 shadow-sm" 
-                    : "text-white hover:bg-blue-500/30"
-                } transition-colors`}
-                onClick={() => handleTripTypeChange("oneWay")}
-              >
-                One Way
-              </button>
-              <button
-                className={`px-6 py-2 rounded-full ${
-                  tripType === "roundTrip" 
-                    ? "bg-white text-blue-700 shadow-sm" 
-                    : "text-white hover:bg-blue-500/30"
-                } transition-colors`}
-                onClick={() => handleTripTypeChange("roundTrip")}
-              >
-                Round Trip
-              </button>
-            </div>
-          </div>
-          
-          {/* Main Search Form */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
-              {/* From */}
-              <div className="p-4">
-                <label className="block text-xs text-gray-500 font-medium mb-1">From</label>
-                <input
-                  type="text"
-                  placeholder="Washington D.C."
-                  className="w-full border-none outline-none text-gray-800 text-base"
-                  defaultValue={searchParams.from}
-                  readOnly
-                  onClick={() => handleSearch(searchParams)}
-                />
-              </div>
-
-              {/* To */}
-              <div className="p-4">
-                <label className="block text-xs text-gray-500 font-medium mb-1">To</label>
-                <input
-                  type="text"
-                  placeholder="Country, city or airport"
-                  className="w-full border-none outline-none text-gray-800 text-base"
-                  defaultValue={searchParams.to}
-                  readOnly
-                  onClick={() => handleSearch(searchParams)}
-                />
-              </div>
-
-              {/* Depart */}
-              <div className="p-4">
-                <label className="block text-xs text-gray-500 font-medium mb-1">Depart</label>
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Add date"
-                    className="w-full border-none outline-none text-gray-800 text-base"
-                    defaultValue={searchParams.departDate}
-                    readOnly
-                    onClick={() => handleSearch(searchParams)}
-                  />
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Return */}
-              <div className="p-4">
-                <label className="block text-xs text-gray-500 font-medium mb-1">Return</label>
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Add date"
-                    className="w-full border-none outline-none text-gray-800 text-base"
-                    disabled={tripType === "oneWay"}
-                    defaultValue={searchParams.returnDate}
-                    readOnly
-                    onClick={() => handleSearch(searchParams)}
-                  />
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Search Button */}
-              <div className="p-4 flex items-center justify-between">
-                <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Travellers and cabin class</label>
-                  <div className="flex items-center text-sm">
-                    1 Adult, Economy
-                  </div>
-                </div>
-                <button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors flex items-center gap-2"
-                  onClick={() => handleSearch(searchParams)}
-                >
-                  <Plane size={18} className="rotate-90" />
-                  <span>Search</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Special Fares */}
-          <div className="max-w-5xl mx-auto mt-4 flex flex-wrap justify-center gap-3">
-            <span className="text-sm text-white">Special Fares:</span>
-            {specialFares.map((fare) => (
-              <button
-                key={fare.id}
-                className="px-4 py-1 bg-blue-500/30 hover:bg-blue-500/50 text-white rounded-full text-sm transition-colors"
-              >
-                {fare.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
-        {/* Background decorative elements */}
-        <div className="absolute left-0 top-32 w-full overflow-hidden -z-10 opacity-5 pointer-events-none">
+      {/* Enhanced Header Section with Background Image */}
+      <div className="relative px-4 py-12 bg-gradient-to-r from-blue-800 to-indigo-900 text-white overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
           <img 
-            src="https://cdn-icons-png.flaticon.com/512/6357/6357049.png" 
-            alt="" 
-            className="w-96 h-96 object-contain"
+            src="https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=2070&auto=format&fit=crop" 
+            alt="Clouds from airplane window" 
+            className="w-full h-full object-cover opacity-20"
           />
-        </div>
-        <div className="absolute right-0 bottom-32 w-full overflow-hidden -z-10 opacity-5 pointer-events-none">
-          <img 
-            src="https://cdn-icons-png.flaticon.com/512/6357/6357049.png" 
-            alt="" 
-            className="w-96 h-96 object-contain ml-auto transform rotate-180"
-          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-indigo-900/80"></div>
         </div>
         
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Filter Sidebar */}
-          <div className="w-full md:w-1/4">
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 sticky top-24 overflow-hidden">
-              {/* Filter Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-white">
-                <h3 className="text-lg font-bold flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                  FILTER
-                </h3>
-              </div>
-              
-              {/* Popular Filters */}
-              <div className="p-4 border-b border-gray-200 bg-blue-50">
-                <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                  Popular Filters
-                </h4>
-                <div className="space-y-2">
-                  <label className="flex items-center p-2 hover:bg-blue-100 rounded-md transition-colors cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
-                      checked={filters.stops === "0"}
-                      onChange={() => handleFilterChange('stops', filters.stops === "0" ? "any" : "0")}
-                    />
-                    <span className="ml-2 flex items-center">
-                      Nonstop
-                      <span className="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">Fastest</span>
-                    </span>
-                  </label>
-                  <label className="flex items-center p-2 hover:bg-blue-100 rounded-md transition-colors cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="ml-2">Morning Departure</span>
-                  </label>
-                  {availableAirlines.slice(0, 5).map((airline) => (
-                    <label key={airline} className="flex items-center p-2 hover:bg-blue-100 rounded-md transition-colors cursor-pointer">
-                      <input 
-                        type="checkbox"
-                        checked={filters.airlines.includes(airline)}
-                        onChange={() => {
-                          const newAirlines = filters.airlines.includes(airline)
-                            ? filters.airlines.filter(a => a !== airline)
-                            : [...filters.airlines, airline];
-                          handleFilterChange('airlines', newAirlines);
-                        }}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="ml-2">{airline}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Price Range */}
-              <div className="p-4 border-b border-gray-200">
-                <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Price Range
-                </h4>
-                <div className="relative pt-5">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="20000" 
-                    step="500"
-                    value={filters.priceRange[1]}
-                    onChange={(e) => handleFilterChange('priceRange', [filters.priceRange[0], parseInt(e.target.value)])}
-                    className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  />
-                  <div className="flex justify-between text-sm text-gray-600 mt-2">
-                    <span className="font-medium">₹ {filters.priceRange[0]}</span>
-                    <span className="font-medium">₹ {filters.priceRange[1]}</span>
-                  </div>
-                  <div 
-                    className="absolute top-0 left-0 right-0 text-xs text-gray-500 text-center"
-                    style={{ 
-                      left: `${Math.min(100, Math.max(0, (filters.priceRange[1] / 20000) * 100 - 10))}%` 
-                    }}
-                  >
-                    ₹ {filters.priceRange[1]}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Stops */}
-              <div className="p-4 border-b border-gray-200">
-                <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                  Stops
-                </h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <div 
-                    className={`${filters.stops === "0" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"} text-center py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:text-white transition-colors shadow-sm`}
-                    onClick={() => handleFilterChange('stops', filters.stops === "0" ? "any" : "0")}
-                  >
-                    <div className="font-bold">0</div>
-                    <div className="text-xs">nonstop</div>
-                  </div>
-                  <div 
-                    className={`${filters.stops === "1" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"} text-center py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:text-white transition-colors shadow-sm`}
-                    onClick={() => handleFilterChange('stops', filters.stops === "1" ? "any" : "1")}
-                  >
-                    <div className="font-bold">1</div>
-                    <div className="text-xs">Stop</div>
-                  </div>
-                  <div 
-                    className={`${filters.stops === "2+" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"} text-center py-2 rounded-lg cursor-pointer hover:bg-blue-400 hover:text-white transition-colors shadow-sm`}
-                    onClick={() => handleFilterChange('stops', filters.stops === "2+" ? "any" : "2+")}
-                  >
-                    <div className="font-bold">2+</div>
-                    <div className="text-xs">Stop</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Departure from Source */}
-              <div className="p-4 border-b border-gray-200">
-                <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Departure from {searchParams.from || sourceCities[0]}
-                </h4>
-                <div className="grid grid-cols-4 gap-1">
-                  <div className="text-center border border-gray-200 py-2 rounded-lg cursor-pointer hover:bg-blue-50 text-xs shadow-sm transition-colors">
-                    <div>Before</div>
-                    <div className="font-medium">6 AM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded-lg cursor-pointer hover:bg-blue-50 text-xs shadow-sm transition-colors">
-                    <div>6 AM -</div>
-                    <div className="font-medium">12 PM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded-lg cursor-pointer hover:bg-blue-50 text-xs shadow-sm transition-colors">
-                    <div>12 PM -</div>
-                    <div className="font-medium">6 PM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded-lg cursor-pointer hover:bg-blue-50 text-xs shadow-sm transition-colors">
-                    <div>After</div>
-                    <div className="font-medium">6 PM</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Arrival at Destination */}
-              <div className="p-4 border-b border-gray-200">
-                <h4 className="font-medium text-gray-700 mb-3">Arrival at {searchParams.to || "Any Destination"}</h4>
-                <div className="grid grid-cols-4 gap-1">
-                  <div className="text-center border border-gray-200 py-2 rounded cursor-pointer hover:bg-blue-50 text-xs">
-                    <div>Before</div>
-                    <div>6 AM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded cursor-pointer hover:bg-blue-50 text-xs">
-                    <div>6 AM -</div>
-                    <div>12 PM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded cursor-pointer hover:bg-blue-50 text-xs">
-                    <div>12 PM -</div>
-                    <div>6 PM</div>
-                  </div>
-                  <div className="text-center border border-gray-200 py-2 rounded cursor-pointer hover:bg-blue-50 text-xs">
-                    <div>After</div>
-                    <div>6 PM</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Flight Quality */}
-              <div className="p-4 border-b border-gray-200">
-                <h4 className="font-medium text-gray-700 mb-3">Flight Quality</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded" />
-                    <span className="ml-2">Show Wi-Fi flights only</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded" />
-                    <span className="ml-2">Show Red-Eye</span>
-                  </label>
-                </div>
-              </div>
-              
-              {/* Airlines */}
-              <div className="p-4">
-                <h4 className="font-medium text-gray-700 mb-3">Airlines</h4>
-                <div className="space-y-2">
-                  {availableAirlines.map((airline, index) => {
-                    // Get the minimum price for this airline
-                    const airlineFlights = flights.filter(f => f.airline === airline);
-                    const minPrice = airlineFlights.length ? Math.min(...airlineFlights.map(f => f.price)) : 0;
-                    
-                    // Airline colors
-                    const airlineColors = {
-                      "SpiceJet": "bg-red-700",
-                      "Indigo": "bg-blue-900",
-                      "Air India": "bg-red-800",
-                      "Vistara": "bg-purple-700",
-                      "Air India Express": "bg-red-600",
-                      "AkasaAir": "bg-orange-500"
-                    };
-                    
-                    return (
-                      <label key={airline} className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <input 
-                            type="checkbox"
-                            checked={filters.airlines.includes(airline)}
-                            onChange={() => {
-                              const newAirlines = filters.airlines.includes(airline)
-                                ? filters.airlines.filter(a => a !== airline)
-                                : [...filters.airlines, airline];
-                              handleFilterChange('airlines', newAirlines);
-                            }}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-                          />
-                          <span className="ml-2 flex items-center">
-                            <span className={`inline-block w-5 h-5 ${airlineColors[airline] || "bg-gray-500"} rounded mr-1`}></span>
-                            {airline}
-                          </span>
-                        </div>
-                        {minPrice > 0 && <span className="text-sm text-gray-600">₹ {minPrice}</span>}
-                      </label>
-                    );
-                  })}
-                </div>
-                {availableAirlines.length > 5 && (
-                  <button className="text-blue-600 font-medium mt-3 text-sm flex items-center">
-                    More +
-                  </button>
-                )}
-              </div>
+        <div className="container mx-auto relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex items-center mb-3">
+              <div className="h-0.5 w-10 bg-blue-400 mr-3"></div>
+              <span className="text-blue-300 uppercase tracking-wider text-sm font-medium">Flight Search</span>
+              <div className="h-0.5 w-10 bg-blue-400 ml-3"></div>
             </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3 text-center">Find Your Perfect Flight</h1>
+            <p className="text-blue-200 text-center max-w-2xl mb-6">Compare prices, schedules, and amenities from top airlines to book the best deal for your trip</p>
           </div>
           
-          {/* Right Side Content */}
-          <div className="w-full md:w-3/4">
-            {/* Sort By */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-sm text-gray-600">
-                Showing <span className="font-medium">{filteredFlights.length}</span> flights
-              </div>
-              <div className="text-sm text-gray-700 flex items-center bg-white p-2 rounded-lg shadow-sm">
-                <span className="mr-2 font-medium">Sort By:</span>
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-xl border border-white/20 transform hover:scale-[1.01] transition-transform duration-300">
+            <FlightSearchForm 
+              initialData={searchParams}
+              onSearch={handleSearch}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Enhanced Date Navigation Bar */}
+      <div className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-20">
+        <div className="container mx-auto max-w-6xl px-4 py-3">
+          <div className="flex items-center justify-between">
+            <button 
+              className="p-2 rounded-full hover:bg-blue-50 transition-colors group"
+              onClick={() => handleDateNavigate(-1)}
+            >
+              <ChevronLeft className="h-5 w-5 text-gray-700 group-hover:text-blue-600" />
+            </button>
+            
+            <div className="flex-1 grid grid-cols-7 gap-1">
+              {dateRange.map((item, index) => (
+                <div 
+                  key={index}
+                  onClick={() => handleDateSelect(item.date)}
+                  className={`cursor-pointer text-center px-2 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 ${
+                    item.selected 
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md' 
+                      : 'hover:bg-blue-50'
+                  }`}
                 >
-                  <option value="price-low">Price (Lowest)</option>
-                  <option value="price-high">Price (Highest)</option>
-                  <option value="duration">Duration (Shortest)</option>
-                </select>
-              </div>
+                  <p className={`text-xs font-bold ${item.selected ? 'text-blue-100' : 'text-blue-500'}`}>{item.day}</p>
+                  <p className={`text-sm font-medium ${item.selected ? 'text-white' : 'text-gray-700'}`}>{item.date}</p>
+                  <p className={`text-xs font-medium ${
+                    item.lowestPrice 
+                      ? 'text-green-400' 
+                      : item.selected ? 'text-white' : 'text-gray-500'
+                  }`}>
+                    {item.price}
+                  </p>
+                </div>
+              ))}
             </div>
             
-            {/* Date-based Pricing Section */}
-            <section className="bg-white rounded-lg shadow-lg border border-gray-200 mb-6 overflow-hidden">
-              <div className="relative flex items-center">
-                {/* Left Arrow */}
-                <button 
-                  onClick={() => shiftDateRange("left")}
-                  className="p-6 hover:bg-gray-50 border-r border-gray-200 flex items-center justify-center transition-colors"
-                  aria-label="Previous dates"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                
-                {/* Date Selection */}
-                <div className="flex-1 overflow-x-auto">
-                  <div className="grid grid-cols-7">
-                    {dateRange.map((dateObj, index) => {
-                      const dayNum = dateObj.date.getDate();
-                      const monthName = dateObj.date.toLocaleDateString('en-US', { month: 'short' });
+            <button 
+              className="p-2 rounded-full hover:bg-blue-50 transition-colors group"
+              onClick={() => handleDateNavigate(1)}
+            >
+              <ChevronRight className="h-5 w-5 text-gray-700 group-hover:text-blue-600" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-gray-50 min-h-screen pb-12 pt-8">
+        <div className="container mx-auto max-w-6xl px-4">
+          {loading ? (
+            <div className="flex flex-col justify-center items-center h-64 bg-white rounded-xl shadow-md p-8">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                <Plane className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-blue-500" />
+              </div>
+              <p className="mt-6 text-gray-600 font-medium">Searching for the best flights...</p>
+              <p className="text-gray-400 text-sm mt-2">This may take a few moments</p>
+            </div>
+          ) : (
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Enhanced Filter Sidebar */}
+              <div className="w-full md:w-1/4">
+                <div className="bg-white rounded-xl shadow-md border border-gray-200 sticky top-24 overflow-hidden">
+                  {/* Filter Header */}
+                  <div className="bg-gradient-to-r from-indigo-600 to-blue-500 p-4 text-white relative overflow-hidden">
+                    <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-white/10"></div>
+                    <div className="absolute -right-1 top-8 h-8 w-8 rounded-full bg-white/10"></div>
+                    <h3 className="text-lg font-bold flex items-center relative z-10">
+                      <Filter className="h-5 w-5 mr-2" />
+                      Filters
+                    </h3>
+                  </div>
+                  
+                  {/* Price Range */}
+                  <div className="p-5 border-b border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-4">Price Range</h4>
+                    <div className="px-2">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium text-blue-600">₹{filters.price[0]}</span>
+                        <span className="text-sm font-medium text-blue-600">₹{filters.price[1]}</span>
+                      </div>
                       
-                      return (
-                        <div 
-                          key={index}
-                          onClick={() => handleDateSelection(index)}
-                          className={`cursor-pointer border-r last:border-r-0 transition-all ${
-                            index === selectedDateIndex 
-                              ? 'bg-yellow-50 relative transform scale-105 z-10 shadow-md'
-                              : 'hover:bg-blue-50'
-                          }`}
+                      <input
+                        type="range"
+                        min="0"
+                        max="50000"
+                        step="1000"
+                        value={filters.price[1]}
+                        onChange={(e) => handleFilterChange('price', [filters.price[0], parseInt(e.target.value)])}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Stops */}
+                  <div className="p-5 border-b border-gray-200">
+                    <h4 className="font-medium text-gray-800 mb-4">Stops</h4>
+                    <div className="space-y-2">
+                      <label className="flex items-center p-2 hover:bg-blue-50 rounded-md transition-colors cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="stops"
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500" 
+                          checked={filters.stops === "any"}
+                          onChange={() => handleFilterChange('stops', "any")}
+                        />
+                        <span className="ml-2 text-gray-700">Any number of stops</span>
+                      </label>
+                      
+                      <label className="flex items-center p-2 hover:bg-blue-50 rounded-md transition-colors cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="stops"
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500" 
+                          checked={filters.stops === "0"}
+                          onChange={() => handleFilterChange('stops', "0")}
+                        />
+                        <span className="ml-2 text-gray-700">Non-stop only</span>
+                      </label>
+                      
+                      <label className="flex items-center p-2 hover:bg-blue-50 rounded-md transition-colors cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="stops"
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500" 
+                          checked={filters.stops === "1"}
+                          onChange={() => handleFilterChange('stops', "1")}
+                        />
+                        <span className="ml-2 text-gray-700">1 stop max</span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {/* Airlines */}
+                  <div className="p-5">
+                    <h4 className="font-medium text-gray-800 mb-4">Airlines</h4>
+                    <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      {getUniqueAirlines().map(airline => (
+                        <label key={airline} className="flex items-center p-2 hover:bg-blue-50 rounded-md transition-colors cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                            checked={filters.airlines.includes(airline)}
+                            onChange={() => toggleAirlineFilter(airline)}
+                          />
+                          <span className="ml-2 text-gray-700">{airline}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Reset Filters */}
+                  <div className="p-5 border-t border-gray-200 bg-gray-50">
+                    <button
+                      onClick={() => {
+                        setFilters({
+                          price: [0, 20000],
+                          stops: "any",
+                          airlines: []
+                        });
+                      }}
+                      className="w-full py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Reset Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Results */}
+              <div className="w-full md:w-3/4">
+                {/* Sort Controls */}
+                <div className="bg-white rounded-xl shadow-md p-5 mb-6 border border-gray-200">
+                  <div className="flex flex-col md:flex-row items-center justify-between">
+                    <div className="mb-4 md:mb-0">
+                      <p className="text-gray-600">
+                        <span className="font-bold text-blue-600 text-lg">{filteredFlights.length}</span> 
+                        <span className="text-gray-700"> flights found</span>
+                        {searchParams.from && searchParams.to && (
+                          <span className="inline-flex items-center ml-2">
+                            <span className="font-medium text-gray-800">{searchParams.from}</span>
+                            <ArrowRight className="h-4 w-4 mx-1 text-gray-500" />
+                            <span className="font-medium text-gray-800">{searchParams.to}</span>
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <span className="text-gray-700 font-medium">Sort by:</span>
+                      <div className="relative">
+                        <select
+                          value={sortOrder}
+                          onChange={(e) => setSortOrder(e.target.value)}
+                          className="appearance-none pl-3 pr-10 py-2 bg-blue-50 border border-blue-200 rounded-lg text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         >
-                          {index === selectedDateIndex && (
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
-                          )}
-                          <div className="text-center py-5 px-4">
-                            <p className="text-lg font-medium">
-                              {monthName} {String(dayNum).padStart(2, '0')}
-                            </p>
-                            <p className={`text-lg font-semibold mt-1 ${
-                              index === selectedDateIndex 
-                                ? 'text-blue-700' 
-                                : dateObj.isLowest ? 'text-green-600' : 'text-gray-800'
-                            }`}>
-                              ₹ {dateObj.price}
-                              {dateObj.isLowest && !index === selectedDateIndex && (
-                                <span className="inline-block ml-1 text-xs bg-green-100 text-green-800 px-1 rounded">Lowest</span>
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                          <option value="price">Price - Low to High</option>
+                          <option value="-price">Price - High to Low</option>
+                          <option value="duration">Duration - Shortest</option>
+                          <option value="departure">Departure - Earliest</option>
+                          <option value="arrival">Arrival - Earliest</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 h-4 w-4 pointer-events-none" />
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                {/* Right Arrow */}
-                <button 
-                  onClick={() => shiftDateRange("right")}
-                  className="p-6 hover:bg-gray-50 border-l border-gray-200 flex items-center justify-center transition-colors"
-                  aria-label="Next dates"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-                
-                {/* Calendar Button */}
-                <button
-                  className="p-6 hover:bg-gray-50 border-l border-gray-200 flex items-center justify-center transition-colors"
-                  aria-label="Open calendar"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                </button>
-              </div>
-            </section>
-            
-            {/* Flight Results */}
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-              {/* Flight Results Header */}
-              <div className="grid grid-cols-6 bg-gradient-to-r from-blue-700 to-blue-600 text-white px-4 py-3 text-sm font-medium">
-                <div>AIRLINES</div>
-                <div>DEPARTURE</div>
-                <div>DURATION</div>
-                <div>ARRIVE</div>
-                <div>PRICE</div>
-                <div className="text-right">BOOK</div>
-              </div>
-              
-              {/* Loading State */}
-              {loading && (
-                <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-                </div>
-              )}
-              
-              {/* No Results State */}
-              {!loading && filteredFlights.length === 0 && (
-                <div className="p-8 text-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=600&auto=format&fit=crop" 
-                    alt="No flights found" 
-                    className="w-32 h-32 object-contain mx-auto mb-4 opacity-60"
-                  />
-                  <h3 className="text-xl font-semibold mb-2">No flights found</h3>
-                  <p className="text-gray-600 mb-4">Try adjusting your search criteria or filters</p>
-                  <button 
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-                    onClick={() => setFilters({
-                      priceRange: [0, 10000],
-                      stops: "any",
-                      airlines: []
-                    })}
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-              )}
-              
-              {/* Flight Results */}
-              {!loading && filteredFlights.length > 0 && (
-                <div>
-                  {filteredFlights.map((flight, index) => {
-                    // Airline colors
-                    const airlineColors = {
-                      "SpiceJet": "bg-red-700",
-                      "Indigo": "bg-blue-900",
-                      "Air India": "bg-red-800",
-                      "Vistara": "bg-purple-700"
-                    };
-                    
-                    // Airline code prefixes
-                    const airlinePrefixes = {
-                      "SpiceJet": "SG-",
-                      "Indigo": "6E-",
-                      "Air India": "AI-",
-                      "Vistara": "UK-"
-                    };
-                    
-                    // Generate flight number
-                    const flightNumber = `${airlinePrefixes[flight.airline] || "XX-"}${1000 + flight.id}`;
-                    
-                    // Random seats left (only show on some flights)
-                    const seatsLeft = index % 3 === 2 ? Math.floor(Math.random() * 10) + 1 : null;
-                    
-                    // Random discount from special fares
-                    const discount = specialFares[index % specialFares.length]?.discount || 350;
-                    
-                    // Calculate arrival time based on departure and duration
-                    const getArrivalTime = () => {
-                      const durationHours = parseInt(flight.duration.split('h')[0]);
-                      const durationMinutes = parseInt(flight.duration.split('h ')[1].replace('m', ''));
-                      
-                      // Assume departure time is a random hour between 8-23
-                      const departHour = 8 + (flight.id % 16); // Between 8 and 23
-                      const departMinute = (flight.id * 7) % 60; // Random minute
-                      
-                      // Calculate arrival time
-                      let arrivalHour = (departHour + durationHours) % 24;
-                      let arrivalMinute = (departMinute + durationMinutes) % 60;
-                      
-                      // Adjust for minute overflow
-                      if (departMinute + durationMinutes >= 60) {
-                        arrivalHour = (arrivalHour + 1) % 24;
-                      }
-                      
-                      return `${arrivalHour.toString().padStart(2, '0')}:${arrivalMinute.toString().padStart(2, '0')}`;
-                    };
-                    
-                    // Format departure time
-                    const getDepartureTime = () => {
-                      const departHour = 8 + (flight.id % 16); // Between 8 and 23
-                      const departMinute = (flight.id * 7) % 60; // Random minute
-                      return `${departHour.toString().padStart(2, '0')}:${departMinute.toString().padStart(2, '0')}`;
-                    };
-                    
-                    // Get flight amenities
-                    const amenities = [
-                      { name: "Wi-Fi", available: flight.id % 2 === 0 },
-                      { name: "In-flight Entertainment", available: flight.id % 3 === 0 },
-                      { name: "Power Outlets", available: flight.id % 4 === 0 }
-                    ];
-                    
-                    return (
-                      <div key={flight.id} className="border-b border-gray-200 last:border-b-0 hover:bg-blue-50 transition-colors group">
-                        <div className="p-4">
-                          <div className="grid grid-cols-6 items-center">
-                            {/* Airline */}
-                            <div className="flex items-center gap-3">
-                              <div className={`w-16 h-16 ${airlineColors[flight.airline] || "bg-gray-600"} rounded-lg flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform`}>
+                {/* Enhanced Flight Cards */}
+                {filteredFlights.length === 0 ? (
+                  <div className="bg-white rounded-xl shadow-md p-10 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-6">
+                      <Plane className="h-10 w-10 text-blue-500" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3">No flights found</h3>
+                    <p className="text-gray-600 mb-6 max-w-md mx-auto">We couldn't find any flights matching your criteria. Try adjusting your search filters or dates.</p>
+                    <button 
+                      onClick={() => {
+                        setFilters({
+                          price: [0, 20000],
+                          stops: "any",
+                          airlines: []
+                        });
+                      }}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md inline-flex items-center"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Reset All Filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {filteredFlights.map((flight, index) => (
+                      <div 
+                        key={index} 
+                        className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                      >
+                        {/* Top section with airline and price */}
+                        <div className="p-5">
+                          <div className="flex flex-col md:flex-row items-center justify-between">
+                            {/* Airline and Flight Info */}
+                            <div className="flex items-center mb-4 md:mb-0">
+                              <div className="w-14 h-14 flex items-center justify-center bg-gray-100 rounded-lg mr-4 overflow-hidden shadow-sm">
                                 <img 
-                                  src={`https://placehold.co/40x40/5272F2/FFFFFF?text=${flight.airline[0]}`}
-                                  alt={flight.airline}
-                                  className="w-12 h-12 object-contain"
+                                  src={`https://www.gstatic.com/flights/airline_logos/70px/${flight.airline.code}_padded.png`} 
+                                  alt={flight.airline.name}
+                                  className="w-10 h-10 object-contain"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://via.placeholder.com/40?text=✈️';
+                                  }}
                                 />
                               </div>
                               <div>
-                                <div className="font-medium text-lg">{flight.airline}</div>
-                                <div className="text-gray-500 flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                                  </svg>
-                                  {flightNumber}
+                                <h3 className="font-bold text-gray-900 text-lg">{flight.airline.name}</h3>
+                                <div className="text-sm text-gray-500 flex items-center">
+                                  <span className="font-medium text-blue-600">{flight.flightNumber}</span>
+                                  <span className="mx-2">•</span>
+                                  <span>{flight.aircraft}</span>
                                 </div>
                               </div>
                             </div>
                             
-                            {/* Departure */}
-                            <div>
-                              <div className="text-xl font-bold group-hover:text-blue-700 transition-colors">{getDepartureTime()}</div>
-                              <div className="text-gray-600 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {flight.from}
-                              </div>
-                            </div>
-                            
-                            {/* Duration */}
-                            <div className="text-center">
-                              <div className="text-sm text-gray-600 mb-1 font-medium">{flight.duration}</div>
-                              <div className="relative">
-                                <div className="h-px bg-gradient-to-r from-blue-400 to-blue-600 w-32 mx-auto my-2 relative">
-                                  <div className="absolute -top-1 left-0 w-2 h-2 rounded-full bg-blue-500"></div>
-                                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                                    <svg width="8" height="8" viewBox="0 0 8 8">
-                                      <polygon points="0,4 8,0 8,8" fill="#3B82F6" />
-                                    </svg>
-                                  </div>
-                                </div>
-                                <div className="text-sm">
-                                  {flight.stops === 0 ? (
-                                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs font-medium">Non-stop</span>
-                                  ) : (
-                                    <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">{flight.stops}-stop</span>
+                            {/* Price and Book Button */}
+                            <div className="flex flex-col items-end">
+                              <div className="text-right mb-3">
+                                <div className="text-3xl font-bold text-blue-600 flex items-center">
+                                  {flight.price}
+                                  {Math.random() > 0.7 && (
+                                    <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 rounded-full">DEAL</span>
                                   )}
                                 </div>
+                                <div className="text-xs text-gray-500">per passenger</div>
+                              </div>
+                              <button 
+                                onClick={() => handleBookFlight(flight)}
+                                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-md font-medium"
+                              >
+                                Book Now
+                              </button>
+                            </div>
+                          </div>
+                          
+                          {/* Flight Details */}
+                          <div className="mt-8 flex items-center">
+                            {/* Departure */}
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-gray-800">{flight.departureTime}</div>
+                              <div className="text-sm font-medium text-blue-600">{flight.departureAirport.code}</div>
+                              <div className="text-xs text-gray-500 max-w-[140px] truncate">{flight.departureAirport.name}</div>
+                            </div>
+                            
+                            {/* Flight Path */}
+                            <div className="flex-1 mx-6">
+                              <div className="text-xs text-center text-gray-600 mb-2 font-medium">{flight.duration}</div>
+                              <div className="relative flex items-center">
+                                <div className="h-1 flex-1 bg-gray-300 rounded"></div>
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                  <div className="bg-white p-1 rounded-full shadow-sm">
+                                    <Plane className="text-blue-500 h-5 w-5 transform rotate-90" />
+                                  </div>
+                                </div>
+                                
+                                {/* Stops indicators */}
+                                {flight.stops !== "0" && (
+                                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full mt-1">
+                                    <div className="h-2 w-2 rounded-full bg-orange-500 "></div>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-xs text-center mt-2">
+                                {flight.stops === "0" ? (
+                                  <span className="text-green-600 font-bold px-2 py-0.5 bg-green-50 rounded-full">Nonstop</span>
+                                ) : (
+                                  <span className="text-orange-600 font-bold px-2 py-0.5 bg-orange-50 rounded-full">
+                                    {flight.stops} {parseInt(flight.stops) === 1 ? "stop" : "stops"}
+                                  </span>
+                                )}
                               </div>
                             </div>
                             
                             {/* Arrival */}
-                            <div>
-                              <div className="text-xl font-bold group-hover:text-blue-700 transition-colors">{getArrivalTime()}</div>
-                              <div className="text-gray-600 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {flight.to}
-                              </div>
-                            </div>
-                            
-                            {/* Price */}
-                            <div>
-                              <div className="text-2xl font-bold text-blue-700">₹ {flight.price}</div>
-                              <button className="mt-1 text-blue-500 border border-blue-300 rounded-full px-3 py-1 text-sm hover:bg-blue-500 hover:text-white transition-colors">
-                                + More Fare
-                              </button>
-                            </div>
-                            
-                            {/* Book Button */}
-                            <div className="flex flex-col items-end">
-                              <button 
-                                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg transition-all duration-300 uppercase font-bold mb-2 shadow-md transform hover:scale-105"
-                                onClick={() => handleBookFlight(flight)}
-                              >
-                                BOOK NOW
-                              </button>
-                              {seatsLeft && (
-                                <div className="text-sm text-blue-700 flex items-center gap-1 font-medium bg-blue-50 px-2 py-1 rounded-full">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                                  </svg>
-                                  {seatsLeft} Seats Left
-                                </div>
-                              )}
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-gray-800">{flight.arrivalTime}</div>
+                              <div className="text-sm font-medium text-blue-600">{flight.arrivalAirport.code}</div>
+                              <div className="text-xs text-gray-500 max-w-[140px] truncate">{flight.arrivalAirport.name}</div>
                             </div>
                           </div>
                           
-                          {/* Promo Message */}
-                          <div className="mt-3 bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-300 p-2 text-sm text-gray-800 font-medium rounded-r-md shadow-sm">
-                            <div className="flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              BOOKNOW: Get extra Rs.{discount} instant discount on this flight
-                            </div>
-                          </div>
-                          
-                          {/* Amenities Row */}
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {amenities.map((amenity, idx) => (
-                              <span 
-                                key={idx} 
-                                className={`text-xs px-2 py-1 rounded-full flex items-center ${
-                                  amenity.available 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : 'bg-gray-100 text-gray-500 line-through'
-                                }`}
-                              >
-                                {amenity.available ? (
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                ) : (
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                )}
-                                {amenity.name}
-                              </span>
-                            ))}
-                          </div>
-                          
-                          {/* Flight Detail Link */}
-                          <div className="mt-2 flex justify-start">
-                            <button className="text-blue-500 text-sm hover:text-blue-700 transition-colors flex items-center group">
-                              <span>Flight Detail</span>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                              </svg>
+                          {/* Additional Details Toggle */}
+                          <div className="mt-5 pt-4 border-t border-gray-200">
+                            <button 
+                              className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 focus:outline-none font-medium"
+                              onClick={() => setExpandedFlights(prev => ({
+                                ...prev,
+                                [index]: !prev[index]
+                              }))}
+                            >
+                              <span>{expandedFlights[index] ? 'Hide details' : 'Show flight details'}</span>
+                              <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${expandedFlights[index] ? 'transform rotate-180' : ''}`} />
                             </button>
                           </div>
+                          
+                          {/* Enhanced Expanded Details */}
+                          {expandedFlights[index] && (
+                            <div className="mt-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-5 border border-blue-100 overflow-hidden transition-all duration-300 ease-in-out animate-fadeIn">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <div className="text-xs text-blue-600 uppercase font-bold mb-1.5">Class</div>
+                                  <div className="text-base font-medium text-gray-800">{flight.class}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <div className="text-xs text-blue-600 uppercase font-bold mb-1.5">Baggage Allowance</div>
+                                  <div className="text-base font-medium text-gray-800">{flight.baggage}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg shadow-sm">
+                                  <div className="text-xs text-blue-600 uppercase font-bold mb-1.5">In-flight Services</div>
+                                  <div className="text-base font-medium text-gray-800">{flight.inFlightServices || "Standard service"}</div>
+                                </div>
+                              </div>
+                              
+                              {/* Additional amenities */}
+                              <div className="mt-5 flex flex-wrap gap-2">
+                                {Math.random() > 0.5 && (
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">In-flight Wi-Fi</span>
+                                )}
+                                {Math.random() > 0.5 && (
+                                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Vegetarian Meal</span>
+                                )}
+                                {Math.random() > 0.5 && (
+                                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Entertainment System</span>
+                                )}
+                                {Math.random() > 0.5 && (
+                                  <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Power Outlet</span>
+                                )}
+                                {Math.random() > 0.5 && (
+                                  <span className="px-2 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-medium">Extra Legroom</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+                
+                {/* Enhanced Pagination */}
+                {filteredFlights.length > 0 && (
+                  <div className="mt-8 flex justify-center">
+                    <nav className="inline-flex items-center gap-1 bg-white rounded-lg shadow-md p-1.5">
+                      <button className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50">
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      
+                      <button className="w-9 h-9 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center shadow-sm">
+                        1
+                      </button>
+                      
+                      <button className="w-9 h-9 rounded-md text-gray-700 hover:bg-blue-50 font-medium flex items-center justify-center">
+                        2
+                      </button>
+                      
+                      <button className="w-9 h-9 rounded-md text-gray-700 hover:bg-blue-50 font-medium flex items-center justify-center">
+                        3
+                      </button>
+                      
+                      <button className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </nav>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       
       <Footer />
     </div>
-  );
-} 
+  )
+}

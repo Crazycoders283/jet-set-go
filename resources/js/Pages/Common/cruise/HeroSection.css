@@ -466,13 +466,13 @@ ww.hero-section {
 }
 
 .filter-tag.active {
-  background: rgba(13, 153, 255, 0.25);
-  border: 1px solid rgba(13, 153, 255, 0.5);
-  box-shadow: 0 4px 10px rgba(13, 153, 255, 0.2);
+  background-color: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+  color: #1e40af;
 }
 
 .filter-tag.active .tag-dot {
-  background: #ffffff;
+  background-color: #3b82f6;
 }
 
 .tag-dot {
@@ -905,4 +905,104 @@ ww.hero-section {
   font-weight: 600;
   font-size: 14px;
   white-space: nowrap;
+}
+
+/* Add styling for active filter tags */
+.filter-tag.active {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.filter-tag.active .tag-dot {
+  background-color: #3b82f6;
+}
+
+/* Search state styling */
+.search-bar.searching .search-button {
+  background-color: #1e40af;
+  cursor: wait;
+}
+
+.search-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Improve dropdown suggestions */
+.suggestion-empty {
+  padding: 10px;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Improve cruise line items to be more interactive */
+.cruise-line-item {
+  transition: all 0.2s ease;
+}
+
+.cruise-line-item:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Style for cruise line info */
+.cruise-line-price {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+/* Make date selection more interactive */
+.date-option {
+  transition: all 0.15s ease;
+}
+
+.date-option:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: scale(1.05);
+}
+
+/* Improve search bar responsiveness */
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .search-items {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .search-item {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .divider {
+    display: none;
+  }
+  
+  .search-button {
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+  }
+  
+  .dropdown-suggestions {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
 }

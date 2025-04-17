@@ -15,7 +15,11 @@ const ItineraryPackage = () => {
     email: '',
     phone: '',
     request: '',
-    isRobot: false
+    isRobot: false,
+    travelDate: '',
+    guests: '2',
+    budget: '500-1000',
+    terms: false
   })
 
   const packageData = itineraryData[selectedPackage]?.packages[0]
@@ -404,7 +408,7 @@ const ItineraryPackage = () => {
                   type="checkbox"
                   checked={formData.isRobot}
                   onChange={handleInputChange}
-                  className="w-4 h-4 border border-gray-300 rounded"
+                  className="w-4 h-4 border border-gray-300 rounded text-blue-600 focus:ring-blue-500"
                 />
               </div>
               <label htmlFor="robot" className="ml-2 text-sm text-gray-600">
@@ -469,168 +473,203 @@ const ItineraryPackage = () => {
 
         {/* Quote Request Modal */}
         {showQuoteModal && (
-          <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div 
-              className="bg-white rounded-xl w-full max-w-md relative animate-modal-entry"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button */}
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in">
+              {/* Close button */}
               <button 
-                onClick={() => setShowQuoteModal(false)}
-                className="absolute -top-2 -right-2 bg-white w-7 h-7 rounded-full shadow-lg flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                onClick={() => setShowQuoteModal(false)} 
+                className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow-md transition-all"
               >
                 <X size={16} />
               </button>
+              
+              {/* Popup Header with gradient */}
+              <div className="h-20 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 flex items-center justify-center bg-white rounded-full shadow-lg border-4 border-white">
+                  <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
+                    <FaPlane className="text-white text-lg" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="pt-10 px-5 pb-5">
+                {/* Title Section with improved design */}
+                <div className="text-center mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Get Your Quote
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Custom travel package just for you
+                  </p>
+                </div>
 
-              {/* Modal Content */}
-              <div className="relative overflow-hidden">
-                {/* Top Decoration */}
-                <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-t-xl" />
+                {/* Package Summary with improved design */}
+                <div className="bg-gray-50 rounded-lg p-3 mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="text-blue-600">
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">Dubai Experience</h4>
+                      <p className="text-xs text-gray-500">4N/5D • from $499</p>
+                    </div>
+                  </div>
+                  <div className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-medium">
+                    BEST VALUE
+                  </div>
+                </div>
                 
-                <div className="relative pt-8 px-6 pb-6">
-                  {/* Title Section */}
-                  <div className="text-center mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      Get Your Personalized Quote
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Fill in your details for the perfect travel package
-                    </p>
-                  </div>
-
-                  {/* Package Summary */}
-                  <div className="bg-gray-50 rounded-lg p-3 mb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <FaPlane className="text-blue-600 text-lg" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900 text-sm">Dubai Package</h4>
-                        <p className="text-xs text-gray-600">4 Nights, 5 Days</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600">Starting from</p>
-                      <p className="text-base font-bold text-gray-900">$499</p>
-                    </div>
-                  </div>
-                  
-                  {/* Form */}
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-4">
-                      {/* Full Name */}
-                      <div>
-                        <label htmlFor="name" className="block text-xs font-medium text-gray-700 mb-1">
-                          Full Name
-                        </label>
+                {/* Form with improved design */}
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="space-y-3">
+                    {/* Full Name, Email, Phone */}
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="relative">
                         <input
                           id="name"
                           type="text"
                           name="name"
-                          placeholder="John Smith"
+                          placeholder="Full Name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-400 text-sm"
+                          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
                         />
-                      </div>
-
-                      {/* Email and Phone in Grid */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
-                            Email Address
-                          </label>
-                          <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            placeholder="john@example.com"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-400 text-sm"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="phone" className="block text-xs font-medium text-gray-700 mb-1">
-                            Phone Number
-                          </label>
-                          <input
-                            id="phone"
-                            type="tel"
-                            name="phone"
-                            placeholder="Your phone number"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-400 text-sm"
-                          />
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                          <Users size={15} />
                         </div>
                       </div>
-
-                      {/* Special Requests */}
-                      <div>
-                        <label htmlFor="request" className="block text-xs font-medium text-gray-700 mb-1">
-                          Special Requests
-                        </label>
-                        <textarea
-                          id="request"
-                          name="request"
-                          rows="2"
-                          placeholder="Any special requirements or questions?"
-                          value={formData.request}
+                      
+                      <div className="relative">
+                        <input
+                          id="email"
+                          type="email"
+                          name="email"
+                          placeholder="Email Address"
+                          value={formData.email}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-400 text-sm resize-none"
+                          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
                         />
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                          <FaEnvelope size={14} />
+                        </div>
+                      </div>
+                      
+                      <div className="relative">
+                        <input
+                          id="phone"
+                          type="tel"
+                          name="phone"
+                          placeholder="Phone Number"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+                        />
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                          <FaPhoneAlt size={14} />
+                        </div>
                       </div>
                     </div>
 
-                    {/* reCAPTCHA */}
-                    <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg">
-                      <input
-                        id="robot"
-                        name="isRobot"
-                        type="checkbox"
-                        checked={formData.isRobot}
+                    {/* Travel Info */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="relative">
+                        <input
+                          id="travelDate"
+                          type="date"
+                          name="travelDate"
+                          value={formData.travelDate || ""}
+                          onChange={handleInputChange}
+                          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+                        />
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                          <Calendar size={15} />
+                        </div>
+                      </div>
+                      
+                      <div className="relative">
+                        <select
+                          id="guests"
+                          name="guests"
+                          value={formData.guests || "2"}
+                          onChange={handleInputChange}
+                          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 appearance-none"
+                        >
+                          <option value="1">1 Person</option>
+                          <option value="2">2 People</option>
+                          <option value="3">3 People</option>
+                          <option value="4+">4+ People</option>
+                        </select>
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                          <Users size={15} />
+                        </div>
+                        <div className="absolute right-3 top-2.5 text-gray-400">
+                          <ChevronDown size={15} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Special Requests */}
+                    <div className="relative">
+                      <textarea
+                        id="request"
+                        name="request"
+                        rows="2"
+                        placeholder="Special requests or questions"
+                        value={formData.request}
                         onChange={handleInputChange}
-                        className="w-4 h-4 border-2 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
+                        className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 resize-none"
                       />
-                      <label htmlFor="robot" className="text-xs text-gray-600 flex-1">
-                        I'm not a robot
-                      </label>
-                      <div className="text-right">
-                        <div className="text-[10px] text-gray-400">reCAPTCHA</div>
-                        <div className="text-[10px] text-gray-400">Privacy-Terms</div>
+                      <div className="absolute left-3 top-2.5 text-gray-400">
+                        <FaShieldAlt size={14} />
                       </div>
                     </div>
+                  </div>
 
-                    {/* Submit Button */}
-                    <button 
+                  {/* Terms Checkbox */}
+                  <div className="flex items-start gap-2">
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      checked={formData.terms || false}
+                      onChange={handleInputChange}
+                      className="mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                    />
+                    <label htmlFor="terms" className="text-xs text-gray-500 flex-1">
+                      I agree to receive promotional emails about special offers from JetSetters
+                    </label>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
+                    <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-2.5 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm"
+                      className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg shadow-sm text-sm flex items-center justify-center gap-1"
                     >
-                      Request Quote
+                      <span>Get Quote</span>
+                      <ChevronRight size={16} />
                     </button>
-                  </form>
+                    
+                    <p className="text-[10px] text-center text-gray-400 mt-2">
+                      A travel expert will contact you within 24 hours
+                    </p>
+                  </div>
+                </form>
 
-                  {/* Trust Indicators */}
-                  <div className="grid grid-cols-3 gap-2 mt-4">
-                    <div className="text-center">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-1">
-                        <FaShieldAlt className="text-green-600 text-xs" />
-                      </div>
-                      <p className="text-[10px] text-gray-600">Secure Booking</p>
+                {/* Trust Indicators */}
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <FaShieldAlt className="text-green-500 mr-1" size={10} />
+                      <span>Secure</span>
                     </div>
-                    <div className="text-center">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                        <FaPhoneAlt className="text-blue-600 text-xs" />
-                      </div>
-                      <p className="text-[10px] text-gray-600">24/7 Support</p>
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <FaCheck className="text-green-500 mr-1" size={10} />
+                      <span>Trusted</span>
                     </div>
-                    <div className="text-center">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-1">
-                        <FaEnvelope className="text-purple-600 text-xs" />
-                      </div>
-                      <p className="text-[10px] text-gray-600">Instant Quote</p>
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <FaStar className="text-yellow-500 mr-1" size={10} />
+                      <span>5-Star Rated</span>
                     </div>
                   </div>
                 </div>
@@ -638,7 +677,7 @@ const ItineraryPackage = () => {
             </div>
           </div>
         )}
-
+        
         {/* Add these styles to your CSS */}
         <style jsx>{`
           @keyframes modalEntry {

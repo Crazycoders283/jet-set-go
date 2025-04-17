@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './HeroSection.css';
 import { FaMapMarkerAlt, FaCalendarAlt, FaShip, FaAnchor, FaDollarSign, FaSearch, FaStar, FaArrowRight, FaChevronRight, FaAngleDown } from 'react-icons/fa';
 import cruiseData from './data/cruiselines.json';
+import destinationsData from './data/destinations.json';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const HeroSection = () => {
   const [cruiseLines, setCruiseLines] = useState([]);
   const [cruiseLinesDetails, setCruiseLinesDetails] = useState([]);
   const [destinations, setDestinations] = useState([]);
-  const [departurePorts, setDeparturePorts] = useState(['Miami', 'Vancouver', 'Seattle', 'New York', 'Barcelona', 'Sydney', 'Los Angeles']);
+  const [departurePorts, setDeparturePorts] = useState([]);
   const [scrolled, setScrolled] = useState(false);
   const [availableMonths] = useState([
     'January', 'February', 'March', 'April', 'May', 'June', 
@@ -27,6 +28,8 @@ const HeroSection = () => {
   const [priceRanges] = useState([
     '$100-$500', '$500-$1000', '$1000-$1500', '$1500-$2000', '$2000+'
   ]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     // Extract cruise lines and unique destinations from the JSON data
@@ -42,7 +45,25 @@ const HeroSection = () => {
           allDestinations.add(destination);
         });
       });
-      setDestinations(Array.from(allDestinations));
+      setDestinations(Array.from(allDestinations).sort());
+    }
+
+    // Load destination data from JSON if available
+    if (destinationsData && destinationsData.destinations) {
+      // Extract unique departure ports from destinations data
+      const ports = new Set();
+      destinationsData.destinations.forEach(dest => {
+        if (dest.departurePorts) {
+          dest.departurePorts.forEach(port => ports.add(port));
+        }
+      });
+      
+      // If we have ports from destinations, use those, otherwise fallback to default list
+      if (ports.size > 0) {
+        setDeparturePorts(Array.from(ports).sort());
+      } else {
+        setDeparturePorts(['Miami', 'Vancouver', 'Seattle', 'New York', 'Barcelona', 'Sydney', 'Los Angeles', 'Singapore', 'Tokyo', 'Venice', 'Reykjavik']);
+      }
     }
   }, []);
 
@@ -74,6 +95,48 @@ const HeroSection = () => {
       ...searchValues,
       [field]: value
     });
+    
+    // If selecting a cruise line, filter the destinations
+    if (field === 'cruiseLine') {
+      filterDestinationsByCruiseLine(value);
+    }
+    
+    // If selecting a destination, filter the cruise lines
+    if (field === 'location') {
+      filterCruiseLinesByDestination(value);
+    }
+  };
+  
+  const filterDestinationsByCruiseLine = (cruiseLineName) => {
+    if (!cruiseLineName) return;
+    
+    const selectedCruiseLine = cruiseLinesDetails.find(line => line.name === cruiseLineName);
+    if (selectedCruiseLine && selectedCruiseLine.destinations) {
+      // If the currently selected location isn't offered by this cruise line, clear it
+      if (searchValues.location && !selectedCruiseLine.destinations.includes(searchValues.location)) {
+        setSearchValues(prev => ({
+          ...prev,
+          location: ''
+        }));
+      }
+    }
+  };
+  
+  const filterCruiseLinesByDestination = (destination) => {
+    if (!destination) return;
+    
+    // Find cruise lines that offer this destination
+    const linesWithDestination = cruiseLinesDetails.filter(line => 
+      line.destinations && line.destinations.includes(destination)
+    );
+    
+    // If the currently selected cruise line doesn't offer this destination, clear it
+    if (searchValues.cruiseLine && !linesWithDestination.some(line => line.name === searchValues.cruiseLine)) {
+      setSearchValues(prev => ({
+        ...prev,
+        cruiseLine: ''
+      }));
+    }
   };
   
   const handleSelectDate = (month, year) => {
@@ -87,6 +150,7 @@ const HeroSection = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setIsSearching(true);
     
     // Create query parameters from search values
     const queryParams = new URLSearchParams();
@@ -94,8 +158,73 @@ const HeroSection = () => {
       if (value) queryParams.append(key, value);
     });
     
+    // Filter cruise results based on search criteria
+    const filteredResults = cruiseData.cruiseLines.filter(cruise => {
+      let matches = true;
+      
+      // Filter by cruise line
+      if (searchValues.cruiseLine && cruise.name !== searchValues.cruiseLine) {
+        matches = false;
+      }
+      
+      // Filter by destination
+      if (searchValues.location && !cruise.destinations.includes(searchValues.location)) {
+        matches = false;
+      }
+      
+      // Filter by price range (basic implementation)
+      if (searchValues.price) {
+        const priceRange = searchValues.price;
+        const cruisePrice = parseInt(cruise.price.replace(/\D/g, ''));
+        
+        if (priceRange === '$100-$500' && (cruisePrice < 100 || cruisePrice > 500)) {
+          matches = false;
+        } else if (priceRange === '$500-$1000' && (cruisePrice < 500 || cruisePrice > 1000)) {
+          matches = false;
+        } else if (priceRange === '$1000-$1500' && (cruisePrice < 1000 || cruisePrice > 1500)) {
+          matches = false;
+        } else if (priceRange === '$1500-$2000' && (cruisePrice < 1500 || cruisePrice > 2000)) {
+          matches = false;
+        } else if (priceRange === '$2000+' && cruisePrice < 2000) {
+          matches = false;
+        }
+      }
+      
+      return matches;
+    });
+    
+    setSearchResults(filteredResults);
+    
     // Navigate to cruises page with search parameters
-    navigate(`/cruises?${queryParams.toString()}`);
+    setTimeout(() => {
+      setIsSearching(false);
+      navigate(`/cruises?${queryParams.toString()}`);
+    }, 500);
+  };
+
+  // Function to get available destinations based on selected cruise line
+  const getAvailableDestinations = () => {
+    if (!searchValues.cruiseLine) {
+      return destinations;
+    }
+    
+    const selectedCruiseLine = cruiseLinesDetails.find(line => line.name === searchValues.cruiseLine);
+    if (selectedCruiseLine && selectedCruiseLine.destinations) {
+      return selectedCruiseLine.destinations.sort();
+    }
+    
+    return destinations;
+  };
+  
+  // Function to get available cruise lines based on selected destination
+  const getAvailableCruiseLines = () => {
+    if (!searchValues.location) {
+      return cruiseLinesDetails;
+    }
+    
+    return cruiseLinesDetails.filter(line => 
+      line.destinations && line.destinations.includes(searchValues.location)
+    );
   };
 
   return (
@@ -110,7 +239,6 @@ const HeroSection = () => {
         }}
       >
         <div className="floating-shape shape-1"></div>
-        {/* <div className="floating-shape shape-2"></div> */}
         <div className="floating-shape shape-3"></div>
         
         <div className="hero-content container" style={{ textAlign: 'left', maxWidth: '1100px', marginLeft: '8%' }}>
@@ -125,7 +253,7 @@ const HeroSection = () => {
           
           <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <div className="search-bar-wrapper">
-              <div className={`search-bar ${activeField ? 'active' : ''}`}>
+              <div className={`search-bar ${activeField ? 'active' : ''} ${isSearching ? 'searching' : ''}`}>
                 <div className="search-items">
                   <div className={`search-item ${activeField === 'location' ? 'active' : ''}`}>
                     <div className="icon-label">
@@ -147,7 +275,7 @@ const HeroSection = () => {
                       <div className="dropdown-suggestions">
                         <p className="suggestion-title">Popular Destinations</p>
                         <div className="suggestion-items">
-                          {destinations.map((dest, index) => (
+                          {getAvailableDestinations().map((dest, index) => (
                             <div 
                               key={index} 
                               className="suggestion-item"
@@ -157,6 +285,9 @@ const HeroSection = () => {
                               <span>{dest}</span>
                             </div>
                           ))}
+                          {getAvailableDestinations().length === 0 && (
+                            <div className="suggestion-empty">No destinations available for the selected criteria</div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -245,7 +376,7 @@ const HeroSection = () => {
                       <div className="dropdown-suggestions">
                         <p className="suggestion-title">Cruise Lines</p>
                         <div className="cruise-lines-list">
-                          {cruiseLinesDetails.map((line, index) => (
+                          {getAvailableCruiseLines().map((line, index) => (
                             <div 
                               key={index} 
                               className="cruise-line-item"
@@ -261,6 +392,9 @@ const HeroSection = () => {
                               <div className="cruise-line-price">{line.price}</div>
                             </div>
                           ))}
+                          {getAvailableCruiseLines().length === 0 && (
+                            <div className="suggestion-empty">No cruise lines available for the selected criteria</div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -341,10 +475,17 @@ const HeroSection = () => {
                   </div>
                 </div>
 
-                <button onClick={handleSearch} className="search-button">
+                <button 
+                  onClick={handleSearch} 
+                  className={`search-button ${isSearching ? 'searching' : ''}`}
+                  disabled={isSearching}
+                >
                   <div className="search-button-content">
-                    <FaSearch className="search-icon" />
-                    <span>Find Cruises</span>
+                    {isSearching ? 
+                      <div className="search-spinner"></div> : 
+                      <FaSearch className="search-icon" />
+                    }
+                    <span>{isSearching ? 'Searching...' : 'Find Cruises'}</span>
                   </div>
                   <div className="search-button-hover">
                     <FaChevronRight className="arrow-icon" />
@@ -360,21 +501,33 @@ const HeroSection = () => {
                 <span className="filter-label">Popular filters:</span>
               </div>
               <div className="filter-tags">
-                <button className="filter-tag">
+                <button 
+                  className={`filter-tag ${searchValues.cruiseLine === 'Royal Caribbean' ? 'active' : ''}`}
+                  onClick={() => handleQuickSelect('Royal Caribbean', 'cruiseLine')}
+                >
                   <span className="tag-dot"></span>
-                  Luxury
+                  Royal Caribbean
                 </button>
-                <button className="filter-tag">
+                <button 
+                  className={`filter-tag ${searchValues.location === 'Caribbean' ? 'active' : ''}`}
+                  onClick={() => handleQuickSelect('Caribbean', 'location')}
+                >
                   <span className="tag-dot"></span>
-                  Family
+                  Caribbean
                 </button>
-                <button className="filter-tag">
+                <button 
+                  className={`filter-tag ${searchValues.location === 'Mediterranean' ? 'active' : ''}`}
+                  onClick={() => handleQuickSelect('Mediterranean', 'location')}
+                >
                   <span className="tag-dot"></span>
-                  Ocean View
+                  Mediterranean
                 </button>
-                <button className="filter-tag">
+                <button 
+                  className={`filter-tag ${searchValues.price === '$1000-$1500' ? 'active' : ''}`}
+                  onClick={() => handleQuickSelect('$1000-$1500', 'price')}
+                >
                   <span className="tag-dot"></span>
-                  All-Inclusive
+                  $1000-$1500
                 </button>
               </div>
             </div>

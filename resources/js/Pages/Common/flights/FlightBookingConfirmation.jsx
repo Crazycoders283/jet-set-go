@@ -160,6 +160,123 @@ export default function FlightBookingConfirmation() {
     getBookingDetails();
   }, [bookingId, location.state]);
 
+  useEffect(() => {
+    // If booking details were passed via navigation state
+    if (location.state && location.state.bookingDetails) {
+      console.log("Received booking details:", location.state.bookingDetails);
+      
+      // Create a more complete booking details object
+      const flightData = location.state.bookingDetails.flight;
+      const numPassengers = location.state.bookingDetails.passengers || 1;
+      
+      // Extract price from string (e.g., "$450") or use default
+      const priceString = flightData.price || "$450";
+      const basePrice = parseInt(priceString.replace(/[^\d]/g, ""));
+      const taxAmount = Math.round(basePrice * 0.18);
+      const totalPerPassenger = basePrice + taxAmount;
+      const totalAmount = totalPerPassenger * numPassengers;
+      
+      // Create a complete booking details object
+      const enhancedBookingDetails = {
+        ...location.state.bookingDetails,
+        baggage: {
+          cabin: "1 piece, 7 kg",
+          checkIn: "1 piece, 23 kg"
+        },
+        contact: {
+          email: "guest@jetsetter.com",
+          phone: "+1 123-456-7890"
+        },
+        addOns: [
+          {
+            id: 1,
+            name: "Travel Insurance",
+            title: "Travel Insurance",
+            description: "Comprehensive coverage for your journey",
+            price: 25,
+            popular: true,
+            selected: false,
+            benefits: [
+              "Trip cancellation coverage",
+              "Medical emergency coverage",
+              "Lost baggage protection"
+            ]
+          },
+          {
+            id: 2,
+            name: "Airport Transfer",
+            title: "Airport Transfer",
+            description: "Comfortable ride to/from your accommodation",
+            price: 35,
+            popular: false,
+            selected: false,
+            benefits: [
+              "24/7 service availability",
+              "Professional drivers",
+              "Free waiting time"
+            ]
+          }
+        ],
+        vipServiceFee: 30,
+        isInternational: flightData.departureCity !== flightData.arrivalCity,
+        visaRequirements: {
+          destination: flightData.arrivalCity,
+          visaType: "Tourist/Business",
+          processingTime: "3-5 business days",
+          requirements: [
+            "Valid passport with at least 6 months validity",
+            "Completed visa application form",
+            "Recent passport-sized photographs",
+            "Proof of accommodation"
+          ],
+          officialWebsite: "https://visa.gov.example"
+        },
+        flight: {
+          ...flightData,
+          departureDate: location.state.bookingDetails.departDate,
+          arrivalDate: location.state.bookingDetails.returnDate || location.state.bookingDetails.departDate,
+          cabin: "Economy",
+          fareType: "Standard"
+        }
+      };
+      
+      setBookingDetails(enhancedBookingDetails);
+      
+      // Generate passenger data based on number of passengers
+      const newPassengerData = Array.from({ length: numPassengers }, (_, i) => ({
+        id: i,
+        title: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        passport: "",
+        passportExpiry: "",
+        nationality: "",
+        meal: "Regular",
+        seat: "",
+        isComplete: false
+      }));
+      setPassengerData(newPassengerData);
+      
+      // Set fare details
+      setCalculatedFare({
+        baseFare: basePrice,
+        tax: taxAmount,
+        addonsTotal: 0,
+        vipServiceFee: 0,
+        totalAmount: totalAmount
+      });
+      
+      setLoading(false);
+    } else if (bookingId) {
+      // If booking ID was provided via URL params
+      fetchBookingDetails(bookingId);
+    } else {
+      // Generate demo booking data if no actual data available
+      generateDemoBookingData();
+    }
+  }, [location, bookingId]);
+
   // Calculate and update fare summary based on selections
   const updateFareSummary = (passengerCount, bookingData = bookingDetails) => {
     if (!bookingData) return;
@@ -359,40 +476,62 @@ export default function FlightBookingConfirmation() {
                 <div className="text-sm text-gray-500">{passengerData.length} Traveller</div>
               </div>
               
-              <div className="p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="text-gray-700">Fare Type</div>
-                  <div className="text-green-600 font-medium">Partially Refundable</div>
-                </div>
+              <div className="p-8 border-t border-gray-300">
+                <h3 className="font-bold text-xl mb-4">Fare Summary</h3>
                 
-                <div className="flex justify-between items-center">
-                  <div className="text-gray-700">Base Fare</div>
-                  <div className="font-medium">₹{calculatedFare.baseFare}</div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="text-gray-700">Taxes & Fees</div>
-                  <div className="font-medium">₹{calculatedFare.tax}</div>
-                </div>
-                
-                {calculatedFare.addonsTotal > 0 && (
-                  <div className="flex justify-between items-center">
-                    <div className="text-gray-700">Add-ons</div>
-                    <div className="font-medium">₹{calculatedFare.addonsTotal}</div>
+                <div className="space-y-3">
+                  {/* Base Fare */}
+                  <div className="flex justify-between items-center text-sm">
+                    <div>
+                      Base Fare
+                      <span className="text-xs text-gray-500 ml-1">
+                        ({bookingDetails?.passengers || passengerData.length} {(bookingDetails?.passengers || passengerData.length) > 1 ? 'Travelers' : 'Traveler'})
+                      </span>
+                    </div>
+                    <div className="font-medium">
+                      ${calculatedFare.baseFare * (bookingDetails?.passengers || passengerData.length)}
+                    </div>
                   </div>
-                )}
-                
-                {calculatedFare.vipServiceFee > 0 && (
-                  <div className="flex justify-between items-center">
-                    <div className="text-gray-700">VIP Service</div>
-                    <div className="font-medium">₹{calculatedFare.vipServiceFee}</div>
+                  
+                  {/* Taxes & Fees */}
+                  <div className="flex justify-between items-center text-sm">
+                    <div>
+                      Taxes & Fees
+                      <span className="text-xs text-gray-500 ml-1">
+                        ({bookingDetails?.passengers || passengerData.length} {(bookingDetails?.passengers || passengerData.length) > 1 ? 'Travelers' : 'Traveler'})
+                      </span>
+                    </div>
+                    <div className="font-medium">
+                      ${calculatedFare.tax * (bookingDetails?.passengers || passengerData.length)}
+                    </div>
                   </div>
-                )}
-                
-                <div className="border-t border-gray-200 pt-3 mt-3">
-                  <div className="flex justify-between items-center">
-                    <div className="text-gray-800 font-semibold">Total Amount</div>
-                    <div className="font-bold text-lg">₹{calculatedFare.totalAmount}</div>
+                  
+                  {/* Add-ons if any */}
+                  {calculatedFare.addonsTotal > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <div>Add-Ons</div>
+                      <div className="font-medium">${calculatedFare.addonsTotal}</div>
+                    </div>
+                  )}
+                  
+                  {/* VIP Service if selected */}
+                  {calculatedFare.vipServiceFee > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <div>VIP Service</div>
+                      <div className="font-medium">${calculatedFare.vipServiceFee}</div>
+                    </div>
+                  )}
+                  
+                  {/* Total */}
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-200 font-bold text-lg">
+                    <div>Total</div>
+                    <div>${calculatedFare.totalAmount}</div>
+                  </div>
+                  
+                  {/* Price Guarantee */}
+                  <div className="flex items-center justify-center mt-4 text-xs text-green-700 bg-green-50 rounded-full py-1">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Price Guaranteed • Won't Find It Lower
                   </div>
                 </div>
               </div>
@@ -406,21 +545,21 @@ export default function FlightBookingConfirmation() {
               <div className="p-4 bg-gray-50 border-b border-gray-200">
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-lg font-semibold">
-                    {bookingDetails.flight.departureCity} → {bookingDetails.flight.arrivalCity}
+                    {bookingDetails?.flight?.departureCity} → {bookingDetails?.flight?.arrivalCity}
                   </div>
                   <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                     CANCELLATION FEES APPLY
                   </div>
                 </div>
                 <div className="text-sm text-gray-600">
-                  {formatShortDate(bookingDetails.flight.departureDate) === formatShortDate(bookingDetails.flight.arrivalDate) ? (
-                    <>Wednesday, {formatShortDate(bookingDetails.flight.departureDate)}</>
+                  {formatShortDate(bookingDetails?.flight?.departureDate) === formatShortDate(bookingDetails?.flight?.arrivalDate) ? (
+                    <>Wednesday, {formatShortDate(bookingDetails?.flight?.departureDate)}</>
                   ) : (
-                    <>Wednesday, {formatShortDate(bookingDetails.flight.departureDate)} - {formatShortDate(bookingDetails.flight.arrivalDate)}</>
+                    <>Wednesday, {formatShortDate(bookingDetails?.flight?.departureDate)} - {formatShortDate(bookingDetails?.flight?.arrivalDate)}</>
                   )}
                 </div>
                 <div className="flex items-center text-sm text-gray-600 mt-1">
-                  <span className="mr-2">Non Stop · {bookingDetails.flight.duration}</span>
+                  <span className="mr-2">Non Stop · {bookingDetails?.flight?.duration}</span>
                 </div>
               </div>
               
@@ -428,17 +567,23 @@ export default function FlightBookingConfirmation() {
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-2">
                     <span className="text-white font-medium text-xs">
-                      {bookingDetails.flight.airline.split(' ').map(word => word[0]).join('')}
+                      {typeof bookingDetails?.flight?.airline === 'string'
+                        ? bookingDetails?.flight?.airline?.split(' ').map(word => word[0]).join('')
+                        : bookingDetails?.flight?.airline?.name?.split(' ').map(word => word[0]).join('') || 'JS'}
                     </span>
                   </div>
                   <div>
                     <div className="flex items-center">
-                      <div className="font-medium">{bookingDetails.flight.airline}</div>
-                      <div className="text-sm text-gray-600 ml-2">{bookingDetails.flight.flightNumber}</div>
+                      <div className="font-medium">
+                        {typeof bookingDetails?.flight?.airline === 'string'
+                          ? bookingDetails?.flight?.airline
+                          : bookingDetails?.flight?.airline?.name || 'JetSetters Airlines'}
+                      </div>
+                      <div className="text-sm text-gray-600 ml-2">{bookingDetails?.flight?.flightNumber}</div>
                     </div>
                     <div className="flex items-center text-sm">
-                      <div className="text-gray-600">{bookingDetails.flight.cabin}</div>
-                      <div className="text-green-600 ml-2">→ {bookingDetails.flight.fareType}</div>
+                      <div className="text-gray-600">{bookingDetails?.flight?.cabin}</div>
+                      <div className="text-green-600 ml-2">→ {bookingDetails?.flight?.fareType}</div>
                     </div>
                   </div>
                 </div>
@@ -446,34 +591,45 @@ export default function FlightBookingConfirmation() {
                 <div className="grid grid-cols-12 gap-4 mb-4">
                   {/* Departure */}
                   <div className="col-span-5">
-                    <div className="text-2xl font-bold">{bookingDetails.flight.departureTime}</div>
+                    <div className="text-2xl font-bold">{bookingDetails?.flight?.departureTime}</div>
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-gray-600 rounded-full mr-2"></div>
-                      <div className="text-gray-700">{bookingDetails.flight.departureCity}</div>
+                      <div className="text-gray-700">{bookingDetails?.flight?.departureCity || bookingDetails?.flight?.departureAirport?.city || "Departure City"}</div>
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">{bookingDetails.flight.departureAirport.split('(')[0]}</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      {bookingDetails?.flight?.departureAirport?.name || 
+                       (typeof bookingDetails?.flight?.departureAirport === 'string' ? 
+                         bookingDetails.flight.departureAirport.split('(')[0] : 
+                         "Departure Airport")}
+                    </div>
                   </div>
                   
                   {/* Flight Duration */}
                   <div className="col-span-2 flex flex-col items-center justify-center">
-                    <div className="text-sm text-gray-600">{bookingDetails.flight.duration}</div>
+                    <div className="text-sm text-gray-600">{bookingDetails?.flight?.duration || "Duration"}</div>
                     <div className="h-px w-full bg-gray-300 relative my-2">
                       <div className="absolute h-2 w-2 rounded-full bg-gray-400 -top-1 left-0"></div>
                       <div className="absolute h-2 w-2 rounded-full bg-gray-400 -top-1 right-0"></div>
                     </div>
                     <div className="text-xs text-gray-500">
-                      {bookingDetails.flight.stops === 0 ? 'Non-stop' : `${bookingDetails.flight.stops} stops`}
+                      {bookingDetails?.flight?.stops === "0" ? "Nonstop" : 
+                       `${bookingDetails?.flight?.stops || "0"} ${parseInt(bookingDetails?.flight?.stops || "0") === 1 ? "stop" : "stops"}`}
                     </div>
                   </div>
                   
                   {/* Arrival */}
                   <div className="col-span-5">
-                    <div className="text-2xl font-bold">{bookingDetails.flight.arrivalTime}</div>
+                    <div className="text-2xl font-bold">{bookingDetails?.flight?.arrivalTime}</div>
                     <div className="flex items-center">
                       <div className="w-2 h-2 bg-gray-600 rounded-full mr-2"></div>
-                      <div className="text-gray-700">{bookingDetails.flight.arrivalCity}</div>
+                      <div className="text-gray-700">{bookingDetails?.flight?.arrivalCity || bookingDetails?.flight?.arrivalAirport?.city || "Arrival City"}</div>
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">{bookingDetails.flight.arrivalAirport.split(',')[0]}</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      {bookingDetails?.flight?.arrivalAirport?.name || 
+                       (typeof bookingDetails?.flight?.arrivalAirport === 'string' ? 
+                         bookingDetails.flight.arrivalAirport.split('(')[0] : 
+                         "Arrival Airport")}
+                    </div>
                   </div>
                 </div>
                 
@@ -487,7 +643,7 @@ export default function FlightBookingConfirmation() {
                       </svg>
                     </div>
                     <div className="text-sm">
-                      <span className="font-medium">Cabin Baggage:</span> {bookingDetails.baggage.cabin}
+                      <span className="font-medium">Cabin Baggage:</span> {bookingDetails?.baggage?.cabin || "Cabin Baggage"}
                     </div>
                   </div>
                   
@@ -500,7 +656,7 @@ export default function FlightBookingConfirmation() {
                       </svg>
                     </div>
                     <div className="text-sm">
-                      <span className="font-medium">Check-In Baggage:</span> {bookingDetails.baggage.checkIn}
+                      <span className="font-medium">Check-In Baggage:</span> {bookingDetails?.baggage?.checkIn || "Check-In Baggage"}
                     </div>
                   </div>
                 </div>
@@ -511,7 +667,7 @@ export default function FlightBookingConfirmation() {
                     <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    Got excess baggage? Don't stress, buy extra check-in baggage allowance for {bookingDetails.flight.departureCity.substring(0, 3).toUpperCase()}-{bookingDetails.flight.arrivalCity.substring(0, 3).toUpperCase()} at fab rates!
+                    Got excess baggage? Don't stress, buy extra check-in baggage allowance for {bookingDetails?.flight?.departureCity?.substring(0, 3)?.toUpperCase() || 'DEP'}-{bookingDetails?.flight?.arrivalCity?.substring(0, 3)?.toUpperCase() || 'ARR'} at fab rates!
                   </div>
                   <button className="text-blue-600 font-medium text-sm bg-white px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition-colors">
                     ADD BAGGAGE
@@ -537,7 +693,7 @@ export default function FlightBookingConfirmation() {
                   </div>
                   <button 
                     onClick={handleLogin}
-                    className="text-blue-600 font-medium hover:underline"
+                    className="text-blue-600 font-medium flex items-center mt-2 hover:underline"
                   >
                     LOGIN NOW
                   </button>
@@ -703,7 +859,7 @@ export default function FlightBookingConfirmation() {
                       <input 
                         type="text" 
                         className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        value={bookingDetails.contact.phone}
+                        value={bookingDetails?.contact?.phone}
                         readOnly
                       />
                     </div>
@@ -712,7 +868,7 @@ export default function FlightBookingConfirmation() {
                       <input 
                         type="email" 
                         className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        value={bookingDetails.contact.email}
+                        value={bookingDetails?.contact?.email}
                         readOnly
                       />
                     </div>
@@ -739,59 +895,65 @@ export default function FlightBookingConfirmation() {
                 <p className="text-sm text-gray-600 mb-4">Get full flexibility with add-ons</p>
                 
                 {/* Add-on Options */}
-                {bookingDetails.addOns.map((addon) => (
-                  <div 
-                    key={addon.id} 
-                    className={`p-4 rounded-lg mb-3 ${addon.popular ? 'bg-blue-50 border border-blue-200' : 'bg-purple-50 border border-purple-200'}`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-start">
-                        <svg 
-                          className="w-5 h-5 text-green-500 mr-2 mt-1" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <div>
-                          <div className="flex items-center">
-                            <h3 className="font-medium">{addon.title}</h3>
-                            {addon.popular && (
-                              <span className="ml-2 text-xs font-medium text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
-                                Most Popular
-                              </span>
-                            )}
+                {bookingDetails?.addOns && bookingDetails.addOns.length > 0 ? (
+                  bookingDetails.addOns.map((addon) => (
+                    <div 
+                      key={addon.id} 
+                      className={`p-4 rounded-lg mb-3 ${addon.popular ? 'bg-blue-50 border border-blue-200' : 'bg-purple-50 border border-purple-200'}`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-start">
+                          <svg 
+                            className="w-5 h-5 text-green-500 mr-2 mt-1" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                          <div>
+                            <div className="flex items-center">
+                              <h3 className="font-medium">{addon.title}</h3>
+                              {addon.popular && (
+                                <span className="ml-2 text-xs font-medium text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
+                                  Most Popular
+                                </span>
+                              )}
+                            </div>
+                            <ul className="mt-1">
+                              {addon.benefits && addon.benefits.map((benefit, i) => (
+                                <li key={i} className="text-sm text-gray-600 flex items-center">
+                                  <svg className="w-3 h-3 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                  </svg>
+                                  {benefit}
+                                </li>
+                              ))}
+                            </ul>
+                            <button className="text-sm text-blue-600 hover:text-blue-800 mt-1">
+                              Know More
+                            </button>
                           </div>
-                          <ul className="mt-1">
-                            {addon.benefits.map((benefit, i) => (
-                              <li key={i} className="text-sm text-gray-600 flex items-center">
-                                <svg className="w-3 h-3 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                          <button className="text-sm text-blue-600 hover:text-blue-800 mt-1">
-                            Know More
+                        </div>
+                        <div className="text-right">
+                          <div className="text-gray-600 text-sm">
+                            @₹{addon.price}{addon.perTraveller ? '/traveller' : ''}
+                          </div>
+                          <button 
+                            onClick={() => toggleAddon(addon.id)}
+                            className={`mt-2 ${selectedAddons.includes(addon.id) ? 'bg-green-600' : 'bg-blue-600'} text-white px-4 py-1 rounded hover:opacity-90 transition-colors text-sm`}
+                          >
+                            {selectedAddons.includes(addon.id) ? 'Added' : 'Add'}
                           </button>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-gray-600 text-sm">
-                          @₹{addon.price}{addon.perTraveller ? '/traveller' : ''}
-                        </div>
-                        <button 
-                          onClick={() => toggleAddon(addon.id)}
-                          className={`mt-2 ${selectedAddons.includes(addon.id) ? 'bg-green-600' : 'bg-blue-600'} text-white px-4 py-1 rounded hover:opacity-90 transition-colors text-sm`}
-                        >
-                          {selectedAddons.includes(addon.id) ? 'Added' : 'Add'}
-                        </button>
-                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="p-4 rounded-lg mb-3 bg-gray-50 border border-gray-200">
+                    <p className="text-gray-500 text-center">No add-ons available for this flight</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
             
@@ -802,12 +964,16 @@ export default function FlightBookingConfirmation() {
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
                       <span className="text-white font-medium text-xs">
-                        {bookingDetails.flight.airline.split(' ').map(word => word[0]).join('')}
+                        {typeof bookingDetails?.flight?.airline === 'string'
+                          ? bookingDetails?.flight?.airline?.split(' ').map(word => word[0]).join('')
+                          : bookingDetails?.flight?.airline?.name?.split(' ').map(word => word[0]).join('') || 'JS'}
                       </span>
                     </div>
                     <div>
-                      <h3 className="font-medium">Fly Like a VIP @ Just ${bookingDetails.vipServiceFee}</h3>
-                      <p className="text-sm text-gray-600">Be amongst the first to check-in and get your bags tagged with priority status with {bookingDetails.flight.airline} Priority Check-in & Bag Services.</p>
+                      <h3 className="font-medium">Fly Like a VIP @ Just ${bookingDetails?.vipServiceFee || '25'}</h3>
+                      <p className="text-sm text-gray-600">Be amongst the first to check-in and get your bags tagged with priority status with {typeof bookingDetails?.flight?.airline === 'string'
+                        ? bookingDetails?.flight?.airline
+                        : bookingDetails?.flight?.airline?.name || 'JetSetters Airlines'} Priority Check-in & Bag Services.</p>
                     </div>
                   </div>
                   <button 
@@ -837,13 +1003,13 @@ export default function FlightBookingConfirmation() {
                     Priority Bag Service
                   </div>
                   <span>=</span>
-                  <span className="font-medium">${bookingDetails.vipServiceFee}</span>
+                  <span className="font-medium">${bookingDetails?.vipServiceFee}</span>
                 </div>
               </div>
             </div>
             
             {/* Visa Requirements Section - Only shown for international flights */}
-            {bookingDetails.isInternational && bookingDetails.visaRequirements && (
+            {bookingDetails?.isInternational && bookingDetails?.visaRequirements && (
               <div className="bg-white rounded-lg shadow-md mb-6">
                 <div 
                   className="p-4 border-b flex justify-between items-center cursor-pointer" 
@@ -870,7 +1036,7 @@ export default function FlightBookingConfirmation() {
                           </div>
                           <div className="ml-3">
                             <p className="text-sm text-yellow-700">
-                              This is an international flight to {bookingDetails.visaRequirements.destination}. Please ensure you have all required travel documents before your journey.
+                              This is an international flight to {bookingDetails?.visaRequirements?.destination}. Please ensure you have all required travel documents before your journey.
                             </p>
                           </div>
                         </div>
@@ -881,28 +1047,28 @@ export default function FlightBookingConfirmation() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                       <div>
                         <p className="text-gray-600">Destination</p>
-                        <p className="font-semibold">{bookingDetails.visaRequirements.destination}</p>
+                        <p className="font-semibold">{bookingDetails?.visaRequirements?.destination}</p>
                       </div>
                       <div>
                         <p className="text-gray-600">Visa Type</p>
-                        <p className="font-semibold">{bookingDetails.visaRequirements.visaType}</p>
+                        <p className="font-semibold">{bookingDetails?.visaRequirements?.visaType}</p>
                       </div>
                       <div>
                         <p className="text-gray-600">Typical Processing Time</p>
-                        <p className="font-semibold">{bookingDetails.visaRequirements.processingTime}</p>
+                        <p className="font-semibold">{bookingDetails?.visaRequirements?.processingTime}</p>
                       </div>
                     </div>
                     
                     <h3 className="text-lg font-semibold mb-3">Required Documents</h3>
                     <ul className="list-disc pl-5 space-y-2 mb-6">
-                      {bookingDetails.visaRequirements.requirements.map((req, index) => (
+                      {bookingDetails?.visaRequirements?.requirements && bookingDetails.visaRequirements.requirements.map((req, index) => (
                         <li key={index} className="text-gray-700">{req}</li>
                       ))}
                     </ul>
                     
                     <div className="mt-4">
                       <a 
-                        href={bookingDetails.visaRequirements.officialWebsite} 
+                        href={bookingDetails?.visaRequirements?.officialWebsite} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-primary hover:text-primary-dark font-semibold flex items-center"

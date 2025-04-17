@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Calendar, Users, Plane } from "lucide-react"
+import { Calendar, Users, MapPin, Search, ChevronDown } from "lucide-react"
 import { defaultSearchData, specialFares } from "./data.js"
 
 // Get this from a config or parent component
@@ -63,158 +63,162 @@ export default function FlightSearchForm({ initialData, onSearch }) {
       return;
     }
     
-    // Check if using Amadeus API
-    if (USE_AMADEUS_API) {
-      // In a real app, we'd get airport codes for the API
-      const formattedData = {
-        ...formData,
-        // If using the real API, we'd need to format data for Amadeus
-        // originLocationCode: getAirportCode(formData.from),
-        // destinationLocationCode: getAirportCode(formData.to)
-      };
-      
-      console.log("Using Amadeus API with data:", formattedData);
-      
-      if (onSearch) {
-        onSearch(formattedData);
-      }
+    if (onSearch) {
+      onSearch(formData);
     } else {
-      // Using mock data from data.js
-      console.log("Using mock data with data:", formData);
-      
-      if (onSearch) {
-        onSearch(formData);
-      } else {
-        console.log("Search data:", formData)
-      }
+      console.log("Search data:", formData)
     }
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      {/* Trip Type Selection */}
-      <div className="flex mb-4">
-        <button
-          className={`px-8 py-2 rounded-l-full ${
-            formData.tripType === "oneWay" 
-              ? "bg-blue-600 text-white" 
-              : "bg-white/90 text-gray-700 hover:bg-white"
-          } transition-colors`}
-          onClick={() => handleTripTypeChange("oneWay")}
-        >
-          One Way
-        </button>
-        <button
-          className={`px-8 py-2 rounded-r-full ${
-            formData.tripType === "roundTrip" 
-              ? "bg-blue-600 text-white" 
-              : "bg-white/90 text-gray-700 hover:bg-white"
-          } transition-colors`}
-          onClick={() => handleTripTypeChange("roundTrip")}
-        >
-          Round Trip
-        </button>
-      </div>
-
-      {/* Main Search Form - Will use either mock data or Amadeus API based on configuration */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-0 bg-white rounded-lg overflow-hidden shadow-lg">
-        {/* From */}
-        <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
-          <label className="block text-xs text-gray-500 font-medium mb-1">From</label>
-          <input
-            type="text"
-            placeholder="Washington D.C. (Any)"
-            className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.from ? 'border-red-500' : ''}`}
-            value={formData.from}
-            onChange={(e) => handleInputChange("from", e.target.value)}
-          />
-          {formErrors.from && <div className="text-xs text-red-500 mt-1">{formErrors.from}</div>}
-        </div>
-
-        {/* To */}
-        <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
-          <label className="block text-xs text-gray-500 font-medium mb-1">To</label>
-          <input
-            type="text"
-            placeholder="Country, city or airport"
-            className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.to ? 'border-red-500' : ''}`}
-            value={formData.to}
-            onChange={(e) => handleInputChange("to", e.target.value)}
-          />
-          {formErrors.to && <div className="text-xs text-red-500 mt-1">{formErrors.to}</div>}
-        </div>
-
-        {/* Depart */}
-        <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
-          <label className="block text-xs text-gray-500 font-medium mb-1">Depart</label>
-          <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Add date"
-              className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.departDate ? 'border-red-500' : ''}`}
-              value={formData.departDate}
-              onChange={(e) => handleInputChange("departDate", e.target.value)}
-            />
-            <Calendar className="h-5 w-5 text-gray-400" />
-          </div>
-          {formErrors.departDate && <div className="text-xs text-red-500 mt-1">{formErrors.departDate}</div>}
-        </div>
-
-        {/* Return */}
-        <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
-          <label className="block text-xs text-gray-500 font-medium mb-1">Return</label>
-          <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Add date"
-              className={`w-full border-none outline-none text-gray-800 text-base ${formErrors.returnDate ? 'border-red-500' : ''}`}
-              disabled={formData.tripType === "oneWay"}
-              value={formData.returnDate}
-              onChange={(e) => handleInputChange("returnDate", e.target.value)}
-            />
-            <Calendar className="h-5 w-5 text-gray-400" />
-          </div>
-          {formErrors.returnDate && <div className="text-xs text-red-500 mt-1">{formErrors.returnDate}</div>}
-        </div>
-
-        {/* Travelers and Class */}
-        <div className="p-4 border-b md:border-b-0 md:border-r border-gray-200">
-          <label className="block text-xs text-gray-500 font-medium mb-1">Travellers and cabin class</label>
-          <div className="flex items-center">
-            <input
-              type="text"
-              value={formData.travelers}
-              className="w-full border-none outline-none text-gray-800 text-base"
-              onChange={(e) => handleInputChange("travelers", e.target.value)}
-            />
-            <Users className="h-5 w-5 text-gray-400" />
-          </div>
-        </div>
-
-        {/* Search Button */}
-        <div className="flex items-center justify-center p-3">
-          <button 
-            className="w-full h-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors flex items-center justify-center gap-2"
-            onClick={handleSearch}
+    <div className="flex flex-col gap-4">
+      {/* Trip Type Selector */}
+      <div className="w-72 rounded-full overflow-hidden bg-white">
+        <div className="flex">
+          <button
+            onClick={() => handleTripTypeChange("oneWay")}
+            className={`w-1/2 py-3 text-center font-medium transition-colors ${
+              formData.tripType === "oneWay" 
+                ? "bg-blue-500 text-white" 
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
           >
-            <Plane size={18} className="rotate-90" />
-            <span>Search</span>
+            One Way
+          </button>
+          <button
+            onClick={() => handleTripTypeChange("roundTrip")}
+            className={`w-1/2 py-3 text-center font-medium transition-colors ${
+              formData.tripType === "roundTrip" 
+                ? "bg-blue-500 text-white" 
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            Round Trip
           </button>
         </div>
       </div>
 
-      {/* Special Fares */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <span className="text-sm text-white">Special Fares:</span>
-        <div className="flex flex-wrap gap-2">
-          {specialFares.map((fare) => (
+      {/* Main Search Form */}
+      <div className="w-full mx-auto bg-white rounded-xl shadow-md p-6" style={{ width: "1200px" }}>
+        <div className="flex flex-row items-end justify-between gap-4">
+          {/* From */}
+          <div className="flex-1">
+            <label className="text-gray-600 text-sm font-medium mb-2 block">From</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={formData.from || ""}
+                onChange={(e) => handleInputChange("from", e.target.value)}
+                className="w-full p-3 border border-gray-200 rounded-md text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Departure city"
+              />
+              <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+            {formErrors.from && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.from}</p>
+            )}
+          </div>
+          
+          {/* To */}
+          <div className="flex-1">
+            <label className="text-gray-600 text-sm font-medium mb-2 block">To</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={formData.to || ""}
+                onChange={(e) => handleInputChange("to", e.target.value)}
+                className="w-full p-3 border border-gray-200 rounded-md text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Destination city"
+              />
+              <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+            {formErrors.to && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.to}</p>
+            )}
+          </div>
+          
+          {/* Depart Date */}
+          <div className="flex-1">
+            <label className="text-gray-600 text-sm font-medium mb-2 block">Depart Date</label>
+            <div className="relative">
+              <input
+                type="date"
+                value={formData.departDate || ""}
+                onChange={(e) => handleInputChange("departDate", e.target.value)}
+                className="w-full p-3 border border-gray-200 rounded-md text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Select date"
+              />
+              <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+            </div>
+            {formErrors.departDate && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.departDate}</p>
+            )}
+          </div>
+          
+          {/* Return Date - Only visible for Round Trip */}
+          {formData.tripType === "roundTrip" && (
+            <div className="flex-1">
+              <label className="text-gray-600 text-sm font-medium mb-2 block">Return Date</label>
+              <div className="relative">
+                <input
+                  type="date"
+                  value={formData.returnDate || ""}
+                  onChange={(e) => handleInputChange("returnDate", e.target.value)}
+                  className="w-full p-3 border border-gray-200 rounded-md text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Select date"
+                />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+              </div>
+              {formErrors.returnDate && (
+                <p className="text-red-500 text-xs mt-1">{formErrors.returnDate}</p>
+              )}
+            </div>
+          )}
+          
+          {/* Travelers */}
+          <div className="flex-1">
+            <label className="text-gray-600 text-sm font-medium mb-2 block">Travelers</label>
+            <div className="relative">
+              <select
+                value={formData.travelers || "2"}
+                onChange={(e) => handleInputChange("travelers", e.target.value)}
+                className="w-full p-3 appearance-none border border-gray-200 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="1">1 Traveler</option>
+                <option value="2">2 Travelers</option>
+                <option value="3">3 Travelers</option>
+                <option value="4">4+ Travelers</option>
+              </select>
+              <Users className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+          </div>
+          
+          {/* Search Button */}
+          <div className="ml-2">
             <button
-              key={fare.id}
-              className="px-4 py-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm border border-white/30 transition-colors"
+              onClick={handleSearch}
+              className="h-12 bg-[#1a56db] hover:bg-blue-700 text-white px-8 rounded-md flex items-center justify-center transition-colors"
             >
-              {fare.label}
+              <Search className="h-5 w-5 mr-2" />
+              <span className="font-medium">Search</span>
             </button>
-          ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Special Fares */}
+      <div className="flex items-center gap-3">
+        <span className="text-white font-medium">Special Fares:</span>
+        <div className="flex gap-3">
+          <button className="px-6 py-2 bg-gray-100 bg-opacity-30 hover:bg-opacity-40 text-white rounded-full border border-white">
+            Student
+          </button>
+          <button className="px-6 py-2 bg-gray-100 bg-opacity-30 hover:bg-opacity-40 text-white rounded-full border border-white">
+            Senior Citizen
+          </button>
+          <button className="px-6 py-2 bg-gray-100 bg-opacity-30 hover:bg-opacity-40 text-white rounded-full border border-white">
+            Armed Forces
+          </button>
         </div>
       </div>
     </div>
