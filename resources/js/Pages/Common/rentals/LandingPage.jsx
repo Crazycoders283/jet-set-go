@@ -31,6 +31,13 @@ export default function LandingPage() {
   const [isFavorite, setIsFavorite] = useState({});
   const [isHovered, setIsHovered] = useState(null);
   const carouselRef = useRef(null);
+  
+  // Search states
+  const [searchDestination, setSearchDestination] = useState("");
+  const [searchPackageType, setSearchPackageType] = useState("All Inclusive");
+  const [searchDates, setSearchDates] = useState("Select dates");
+  const [searchTravelers, setSearchTravelers] = useState(2);
+  const [filteredHotels, setFilteredHotels] = useState([]);
 
   // Handle scroll animations
   useEffect(() => {
@@ -99,7 +106,7 @@ export default function LandingPage() {
       <Navbar />
       
       {/* Hero Section */}
-      <div className="relative h-[650px] overflow-hidden">
+      <div className="relative h-[650px] md:h-[750px] overflow-hidden">
         {/* Hero Background with Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-black/40 z-10"></div>
         <img
@@ -123,8 +130,8 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Content */}
-        <div className="absolute top-1/4 left-0 w-full px-12 z-20">
-          <div className="max-w-6xl mx-auto">
+        <div className="absolute top-1/4 left-0 w-full px-8 md:px-12 z-20">
+          <div className="max-w-7xl mx-auto">
             <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-2 tracking-tight leading-tight">Experience Luxury <span className="text-yellow-300">&</span></h1>
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">Exceptional Comfort</h1>
@@ -132,53 +139,121 @@ export default function LandingPage() {
             </div>
 
             {/* Search Form */}
-            <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl p-6 max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="relative border-r border-gray-200 hover:bg-blue-50 transition-all duration-300 p-3 rounded-md cursor-pointer group">
-                  <div className="absolute left-3 top-[18px] transition-all duration-300 group-hover:text-blue-600">
-                    <Globe className="h-5 w-5 text-gray-400 group-hover:text-blue-600" />
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-5 max-w-5xl mx-auto animate-fade-in-up overflow-hidden" style={{ animationDelay: '0.4s' }}>
+              <div className="relative">
+                {/* Background Decorative Elements */}
+                <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-blue-100/40 z-0"></div>
+                <div className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-blue-50/30 z-0"></div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-3 items-center px-3 py-2 relative z-10">
+                  <div className="flex flex-col px-3 py-2 md:border-r border-gray-200/70">
+                    <label className="text-sm text-gray-700 font-medium mb-2 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-blue-500" />
+                      Destination
+                    </label>
+                    <div className="relative group">
+                      <input
+                        type="text"
+                        value={searchDestination}
+                        onChange={(e) => setSearchDestination(e.target.value)}
+                        placeholder="Where do you want"
+                        className="w-full py-3 pl-4 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-200 group-hover:shadow-sm"
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <div className="p-1 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300">
+                          <Globe className="h-4 w-4 text-blue-500" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="pl-10 text-xs text-gray-500 font-medium">Location</p>
-                  <p className="pl-10 text-gray-800 font-semibold group-hover:text-blue-700">Jammu & Kashmir</p>
-                  <p className="text-xs text-gray-500 pl-10">Jammu district</p>
-                </div>
 
-                <div className="relative border-r border-gray-200 hover:bg-blue-50 transition-all duration-300 p-3 rounded-md cursor-pointer group">
-                  <div className="absolute left-3 top-[18px] transition-all duration-300 group-hover:text-blue-600">
-                    <Users className="h-5 w-5 text-gray-400 group-hover:text-blue-600" />
+                  <div className="flex flex-col px-3 py-2 md:border-r border-gray-200/70">
+                    <label className="text-sm text-gray-700 font-medium mb-2 flex items-center gap-2">
+                      <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                      </svg>
+                      Package Type
+                    </label>
+                    <div className="relative group">
+                      <select 
+                        value={searchPackageType}
+                        onChange={(e) => setSearchPackageType(e.target.value)}
+                        className="w-full py-3 pl-4 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-blue-200 group-hover:shadow-sm"
+                      >
+                        <option>All Inclusive</option>
+                        <option>Premium</option>
+                        <option>Standard</option>
+                        <option>Budget</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <div className="p-1 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300">
+                          <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="pl-10 text-xs text-gray-500 font-medium">Guests</p>
-                  <p className="pl-10 text-gray-800 font-semibold group-hover:text-blue-700">3 Person</p>
-                  <p className="text-xs text-gray-500 pl-10">2 Adults, 1 Child</p>
-                </div>
 
-                <div className="relative border-r border-gray-200 hover:bg-blue-50 transition-all duration-300 p-3 rounded-md cursor-pointer group">
-                  <div className="absolute left-3 top-[18px] transition-all duration-300 group-hover:text-blue-600">
-                    <Calendar className="h-5 w-5 text-gray-400 group-hover:text-blue-600" />
+                  <div className="flex flex-col px-3 py-2 md:border-r border-gray-200/70">
+                    <label className="text-sm text-gray-700 font-medium mb-2 flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-blue-500" />
+                      Travel Date
+                    </label>
+                    <div className="relative group">
+                      <div 
+                        onClick={() => setSearchDates(searchDates === "Select dates" ? "25 Jul - 30 Jul 2025" : "Select dates")} 
+                        className="flex items-center w-full py-3 pl-4 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:border-blue-200 group-hover:shadow-sm"
+                      >
+                        <span className="text-gray-700">{searchDates}</span>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <div className="p-1 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300">
+                            <Calendar className="h-4 w-4 text-blue-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="pl-10 text-xs text-gray-500 font-medium">Check-in</p>
-                  <p className="pl-10 text-gray-800 font-semibold group-hover:text-blue-700">24 July 2025</p>
-                  <p className="text-xs text-gray-500 pl-10">Select date</p>
-                </div>
 
-                <div className="relative hover:bg-blue-50 transition-all duration-300 p-3 rounded-md cursor-pointer group">
-                  <div className="absolute left-3 top-[18px] transition-all duration-300 group-hover:text-blue-600">
-                    <Calendar className="h-5 w-5 text-gray-400 group-hover:text-blue-600" />
+                  <div className="flex flex-col px-3 py-2">
+                    <label className="text-sm text-gray-700 font-medium mb-2 flex items-center gap-2">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      Travelers
+                    </label>
+                    <div className="relative group">
+                      <div 
+                        onClick={() => setSearchTravelers(searchTravelers === 2 ? 4 : 2)}
+                        className="flex items-center w-full py-3 pl-4 pr-10 bg-gray-50/80 border border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:border-blue-200 group-hover:shadow-sm"
+                      >
+                        <span className="text-gray-700">{searchTravelers} Travelers</span>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <div className="p-1 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300">
+                            <Users className="h-4 w-4 text-blue-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="pl-10 text-xs text-gray-500 font-medium">Check-out</p>
-                  <p className="pl-10 text-gray-800 font-semibold group-hover:text-blue-700">28 July 2025</p>
-                  <p className="text-xs text-gray-500 pl-10">Select date</p>
                 </div>
-              </div>
-
-              <div className="flex justify-end mt-6">
-                <Link to="/hotel-details">
-                  <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-8 rounded-lg transition-all duration-300 font-medium flex items-center gap-2 group shadow-lg hover:shadow-blue-500/30">
-                    <Search size={20} />
-                    <span>Search Rooms</span>
-                    <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
-                  </button>
-                </Link>
+                
+                <div className="flex justify-center md:justify-end px-3 mt-4 mb-1 relative z-10">
+                  <Link 
+                    to={`/hotel-details?destination=${encodeURIComponent(searchDestination)}&packageType=${encodeURIComponent(searchPackageType)}&dates=${encodeURIComponent(searchDates)}&travelers=${searchTravelers}`} 
+                    className="w-full md:w-auto"
+                    onClick={(e) => {
+                      // If destination is empty and there's a first hotel, navigate directly to it
+                      if (!searchDestination.trim() && hotels.length > 0) {
+                        e.preventDefault();
+                        window.location.href = `/hotel-details?id=${hotels[0].id}`;
+                      }
+                    }}
+                  >
+                    <button className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3.5 px-10 rounded-xl transition-all duration-300 font-medium flex items-center justify-center gap-3 shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-0.5">
+                      <Search size={20} />
+                      <span>Search</span>
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
