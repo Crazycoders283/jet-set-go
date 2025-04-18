@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import sequelize from '../config/database.js';
 
-const User = sequelize.define('User', {
+const User = sequelize.define('users', {
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -19,25 +19,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  role: {
-    type: DataTypes.STRING,
-    defaultValue: 'user',
-    validate: {
-      isIn: [['user', 'admin']]
-    }
-  },
-  profileImage: {
-    type: DataTypes.STRING,
-    defaultValue: ''
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-  }
+ 
 }, {
   hooks: {
     beforeCreate: async (user) => {

@@ -55,32 +55,48 @@ export const register = async (req, res) => {
 // @desc    Login user & get token
 // @route   POST /api/auth/login
 // @access  Public
+// export const login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Find user by email
+//     const user = await User.findOne({ where: { email } });
+
+//     // Check if user exists and password matches
+//     if (user && (await user.matchPassword(password))) {
+//       res.json({
+//         success: true,
+//         user: {
+//           id: user.id,
+//           name: user.name,
+//           email: user.email,
+//           role: user.role
+//         },
+//         token: generateToken(user.id)
+//       });
+//     } else {
+//       res.status(401).json({ message: 'Invalid email or password' });
+//     }
+//   } catch (error) {
+//     console.error('Login error:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+
 export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
+  const user = await User.findOne({ where: { email } });
 
-    // Find user by email
-    const user = await User.findOne({ where: { email } });
-
-    // Check if user exists and password matches
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        success: true,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role
-        },
-        token: generateToken(user.id)
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+  if (!user || !(await user.matchPassword(password))) {
+    return res.status(401).json({ message: 'Invalid credentials' });
   }
+
+  // Generate JWT Token
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  // Send token in the response
+  res.json({ token });
 };
 
 // @desc    Get current logged in user

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './login.css';
+import { authAPI } from '../../../api'; // Import the authAPI for making API calls
 
 export default function Login() {
     const navigate = useNavigate();
-    
+
     const [data, setData] = useState({
         email: '',
         password: '',
         remember: false,
     });
-    
+
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
 
@@ -22,23 +23,31 @@ export default function Login() {
         });
     };
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
         setProcessing(true);
         
-        // Simulate form submission
-        setTimeout(() => {
-            // Here you would normally make an API call
-            console.log('Login data:', data);
-            
-            // Set authenticated status in localStorage
-            localStorage.setItem('isAuthenticated', 'true');
-            
+        try {
+            // Make the login API call using the authAPI
+            const response = await authAPI.login({ email: data.email, password: data.password });
+
+            // If login is successful, store the token in localStorage
+            localStorage.setItem('token', response.data.token);
+
             setProcessing(false);
-            
+
             // Redirect to profile dashboard on successful login
             navigate('/profiledashboard');
-        }, 1000);
+        } catch (error) {
+            setProcessing(false);
+            
+            // Handle error if login failed
+            if (error.response && error.response.status === 401) {
+                setErrors({ login: 'Invalid credentials. Please try again.' });
+            } else {
+                setErrors({ login: 'An error occurred. Please try again later.' });
+            }
+        }
     };
 
     return (
@@ -106,6 +115,7 @@ export default function Login() {
                             >
                                 {processing ? 'Signing in...' : 'Sign In'}
                             </button>
+                            {errors.login && <div className="error-message">{errors.login}</div>}
                             <div className="login-divider">or continue with</div>
                             <div className="social-login">
                                 <button type="button" className="social-button">
