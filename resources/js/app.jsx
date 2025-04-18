@@ -263,6 +263,18 @@ const FlightBookingSuccess = React.lazy(() =>
     .catch(() => ({ default: () => <div>Loading Booking Success Page...</div> }))
 );
 
+// Import profiledashboard component
+const ProfileDashboard = React.lazy(() => 
+  import('./Pages/Common/login/profiledashboard')
+    .catch(() => ({ default: () => <div>Loading Profile Dashboard...</div> }))
+);
+
+// Import mytrips component
+const MyTripsPage = React.lazy(() => 
+  import('./Pages/Common/login/mytrips')
+    .catch(() => ({ default: () => <div>Loading My Trips Page...</div> }))
+);
+
 const App = () => {
   return (
     <React.Suspense fallback={<LoadingComponent />}>
@@ -270,6 +282,8 @@ const App = () => {
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profiledashboard" element={<ProfileDashboard />} />
+        <Route path="/my-trips" element={<MyTripsPage />} />
         <Route path="/forgot-password" element={<Navigate to="/login" />} /> {/* Redirect to login for now */}
         <Route path="/cruises" element={<CruiseCards />} />
         <Route path="/itinerary" element={<Itinerary />} />

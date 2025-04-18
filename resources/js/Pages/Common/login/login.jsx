@@ -30,10 +30,14 @@ export default function Login() {
         setTimeout(() => {
             // Here you would normally make an API call
             console.log('Login data:', data);
+            
+            // Set authenticated status in localStorage
+            localStorage.setItem('isAuthenticated', 'true');
+            
             setProcessing(false);
             
-            // Redirect to dashboard on successful login
-            navigate('/dashboard');
+            // Redirect to profile dashboard on successful login
+            navigate('/profiledashboard');
         }, 1000);
     };
 

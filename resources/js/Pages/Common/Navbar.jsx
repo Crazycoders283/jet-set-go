@@ -40,7 +40,7 @@ const Navbar = () => {
   };
 
   const handleProfile = () => {
-    window.location.href = '/profile';
+    window.location.href = '/profiledashboard';
     setIsDropdownOpen(false);
   };
 
