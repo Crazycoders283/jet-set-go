@@ -19,14 +19,16 @@ export const protect = async (req, res, next) => {
         attributes: { exclude: ['password'] }
       });
 
+      if (!req.user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
       next();
     } catch (error) {
-      console.error(error);
+      console.error('Token verification failed:', error);
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
+  } else {
     res.status(401).json({ message: 'Not authorized, no token' });
   }
 };

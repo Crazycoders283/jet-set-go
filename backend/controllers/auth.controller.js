@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+// import authMiddleware from '../middleware/auth.middleware';  // Authentication middleware
 
 // Environment variable for JWT secret (should be in .env file)
 const JWT_SECRET = process.env.JWT_SECRET || 'jetset-app-secret-key';
@@ -114,12 +115,53 @@ export const getCurrentUser = async (req, res) => {
 
     res.json({
       id: user.id,
-      name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      first_name:user.first_name,
+      last_name:user.last_name,
+      profile_picture: user.profile_picture,
+      gender:user.gender,
+      date_of_birth:user.date_of_birth,
+      mobile_number:user.mobile_number
     });
   } catch (error) {
     console.error('Get current user error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const updateUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from the protected request
+    const { first_name, last_name, email, mobile_number, date_of_birth, gender, profile_picture } = req.body;
+
+    if (!first_name || !last_name || !email) {
+      return res.status(400).json({ message: 'First name, last name, and email are required.' });
+    }
+
+    // Find the user by primary key (ID)
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Update the user's details
+    user.first_name = first_name || user.first_name;
+    user.last_name = last_name || user.last_name;
+    user.email = email || user.email;
+    user.mobile_number = mobile_number || user.mobile_number;
+    user.date_of_birth = date_of_birth || user.date_of_birth;
+    user.gender = gender || user.gender;
+    user.profile_picture = profile_picture || user.profile_picture;
+
+    // Save the updated user
+    await user.save();
+
+    // Return updated user details as response
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error updating user details:', error);
+    res.status(500).json({ message: 'An error occurred while updating the profile.' });
   }
 };

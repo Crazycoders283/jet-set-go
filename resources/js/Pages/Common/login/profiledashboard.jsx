@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { authAPI , userAPI} from "../../../api"  // Import your auth API
 
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -10,7 +11,7 @@ export default function ProfilePage() {
   const [processing, setProcessing] = useState(false)
   const [recentlySuccessful, setRecentlySuccessful] = useState(false)
   const [errors, setErrors] = useState({})
-  
+
   const [data, setData] = useState({
     first_name: "",
     last_name: "",
@@ -21,21 +22,34 @@ export default function ProfilePage() {
     profile_photo: null,
   })
 
-  // Load user data from localStorage if available
+  // Load authenticated user data from API
   useEffect(() => {
-    const savedUserData = localStorage.getItem('userData')
-    if (savedUserData) {
+    const fetchUserData = async () => {
       try {
-        const parsedData = JSON.parse(savedUserData)
-        setData(prevData => ({
-          ...prevData,
-          ...parsedData
-        }))
-      } catch (e) {
-        console.error("Failed to parse user data from localStorage", e)
+        const res = await authAPI.getCurrentUser(); // Get authenticated user
+        const user = res?.data;
+
+        if (user) {
+          setData(prevData => ({
+            ...prevData,
+            first_name: user.first_name || "",
+            last_name: user.last_name || "",
+            email: user.email || "",
+            mobile_number: user.mobile_number || "",
+            date_of_birth: user.date_of_birth || "",
+            gender: user.gender || "Male",
+          }));
+
+          // Optionally save to localStorage for persistence
+          localStorage.setItem("userData", JSON.stringify(user));
+        }
+      } catch (error) {
+        console.error("Failed to fetch current user:", error);
       }
-    }
-  }, [])
+    };
+
+    fetchUserData();
+  }, []);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0]
@@ -44,7 +58,7 @@ export default function ProfilePage() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setProcessing(true)
     
@@ -58,25 +72,38 @@ export default function ProfilePage() {
       setProcessing(false)
       return
     }
-
-    // Save the user data to localStorage
+  
+    // Prepare data to be sent in the request
     const dataToSave = {...data}
     if (data.profile_photo) {
-      // Don't try to stringify the File object
+      // Don't try to stringify the File object, you can upload it separately
       delete dataToSave.profile_photo
     }
-    localStorage.setItem('userData', JSON.stringify(dataToSave))
-    
-    // Simulate API call
-    setTimeout(() => {
+  
+    try {
+      // Send API request to update user
+      const response = await authAPI.updateUserDetails(dataToSave);  // Assuming you have an `updateUserDetails` endpoint in your API
+  
+      if (response.status === 200) {
+        setProcessing(false)
+        setRecentlySuccessful(true)
+  
+        // Optionally save to localStorage if needed
+        localStorage.setItem('userData', JSON.stringify(dataToSave))
+  
+        // Reset success message after a delay
+        setTimeout(() => {
+          setRecentlySuccessful(false)
+        }, 2000)
+      } else {
+        setProcessing(false)
+        setErrors({ general: "Failed to update profile. Please try again later." })
+      }
+    } catch (error) {
+      console.error("Error updating user details:", error)
       setProcessing(false)
-      setRecentlySuccessful(true)
-      
-      // Reset success message after a delay
-      setTimeout(() => {
-        setRecentlySuccessful(false)
-      }, 2000)
-    }, 800)
+      setErrors({ general: "An error occurred while updating the profile." })
+    }
   }
 
   return (

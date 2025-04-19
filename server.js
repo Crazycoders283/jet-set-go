@@ -18,9 +18,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
+
+// Handle CORS preflight request
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Allow frontend URL
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow these methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow these headers
+  res.status(200).end();
+});
+
+// Enable CORS for the frontend origin and methods
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Allow frontend URL
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow headers
+  next(); // Continue to the next middleware or route
+});
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+
 
 // Database connection helper
 const connectDatabase = async () => {

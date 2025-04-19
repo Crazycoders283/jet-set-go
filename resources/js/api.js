@@ -29,6 +29,7 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
   getCurrentUser: () => api.get('/auth/me'),
+  updateUserDetails: (userData) => api.put('/auth/update', userData),
   logout: () => {
     localStorage.removeItem('token');
     return Promise.resolve();
